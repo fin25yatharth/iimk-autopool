@@ -201,19 +201,21 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       </div>
       <div class="input-group">
         <span class="lbl">When</span>
-        <div class="slot-row">
-          <button class="slot-btn sel" onclick="selSlot(this,'Now')">🕐 Now</button>
-          <button class="slot-btn" onclick="selSlot(this,'Later today')">📅 Later today</button>
-        </div>
-        <div id="later-wrap" style="display:none;margin-top:8px">
-          <select id="h-slot-later">
-            <option>7–8 AM</option><option>8–9 AM</option><option>12–1 PM</option>
-            <option>5–6 PM</option><option>6–7 PM</option><option>8–9 PM</option>
-            <option>10–11 PM</option><option>Custom time</option>
-          </select>
-          <div id="custom-time-wrap" style="display:none;margin-top:6px">
-            <input type="text" id="custom-time" placeholder="e.g. 3:30 PM">
+        <div style="background:var(--gold-pale);border:1.5px solid rgba(201,168,76,0.35);border-radius:12px;padding:12px 14px;margin-top:4px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div id="time-display" style="font-size:22px;font-weight:700;color:var(--maroon-dark);font-family:'Playfair Display',serif;letter-spacing:0.01em">Now</div>
+            <div style="display:flex;gap:6px">
+              <button id="ampm-am" onclick="setAmPm('AM')" style="padding:5px 12px;border-radius:8px;border:1.5px solid var(--maroon);background:var(--maroon);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">AM</button>
+              <button id="ampm-pm" onclick="setAmPm('PM')" style="padding:5px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);color:var(--text-sec);font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">PM</button>
+            </div>
           </div>
+          <input type="range" id="time-slider" min="0" max="287" value="0" step="1"
+            oninput="onTimeSlider(this.value)"
+            style="width:100%;accent-color:var(--maroon);height:4px;cursor:pointer">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-sec);font-weight:600;margin-top:5px">
+            <span>12:00</span><span>3:00</span><span>6:00</span><span>9:00</span><span>11:45</span>
+          </div>
+          <div id="bus-match-hint" style="display:none;margin-top:8px;padding:7px 10px;background:rgba(123,18,38,0.07);border-radius:8px;border-left:3px solid var(--maroon);font-size:12px;color:var(--maroon-dark);font-weight:600"></div>
         </div>
       </div>
       <div id="home-fare"></div>
@@ -226,7 +228,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <button class="quick-btn" onclick="goTo('s-chettas')"><span>📞</span>Chetta directory</button>
   </div>
   <div class="bus-quick">
-    <button class="bus-quick-btn" onclick="goTo('s-bus');initBus()">🚌 Campus bus schedule - live timings</button>
+    <button class="bus-quick-btn" onclick="goTo('s-bus');initBus()">🚌 Campus bus schedule — live timings</button>
   </div>
 </div>
 
@@ -570,6 +572,86 @@ function renderBus(){
 
 // ── HELPERS ──────────────────────────────────────────────────
 window.selectedSlot='Now';
+window.sliderAmPm='AM';
+
+// Slider: 0..287 = 5-min steps across 12 hours (0..143 = AM half, then resets)
+// We store full 24h minutes internally; display as 12h + AM/PM
+function sliderValToMins(v){
+  // v=0..287, each step = 5 mins across 0..1435 (00:00..23:55)
+  return v*5; // 0..1435
+}
+function minsToDisplay(totalMins){
+  let h=Math.floor(totalMins/60)%24,m=totalMins%60;
+  const ap=h>=12?'PM':'AM';
+  const hh=h%12||12;
+  const mm=String(m).padStart(2,'0');
+  return{h:hh,m:mm,ap,label:`${hh}:${mm} ${ap}`};
+}
+
+window.setAmPm=function(ap){
+  window.sliderAmPm=ap;
+  document.getElementById('ampm-am').style.background=ap==='AM'?'var(--maroon)':'var(--white)';
+  document.getElementById('ampm-am').style.color=ap==='AM'?'#fff':'var(--text-sec)';
+  document.getElementById('ampm-am').style.borderColor=ap==='AM'?'var(--maroon)':'var(--border)';
+  document.getElementById('ampm-pm').style.background=ap==='PM'?'var(--maroon)':'var(--white)';
+  document.getElementById('ampm-pm').style.color=ap==='PM'?'#fff':'var(--text-sec)';
+  document.getElementById('ampm-pm').style.borderColor=ap==='PM'?'var(--maroon)':'var(--border)';
+  // Recalculate display based on current slider + new AM/PM
+  onTimeSlider(document.getElementById('time-slider').value);
+}
+
+window.onTimeSlider=function(v){
+  v=parseInt(v);
+  // 0 = "Now"
+  if(v===0){
+    document.getElementById('time-display').textContent='Now';
+    window.selectedSlot='Now';
+    document.getElementById('bus-match-hint').style.display='none';
+    return;
+  }
+  // Map slider 1..143 to 12:05..12:00 in chosen AM/PM half
+  // Each step = 5 mins, starting from 0:05 in the chosen half
+  const halfMins=v*5; // 5 to 715 mins within 12h block
+  const baseHour=window.sliderAmPm==='AM'?0:12;
+  const totalMins=baseHour*60+halfMins;
+  const d=minsToDisplay(totalMins);
+  // Keep AM/PM buttons in sync if slider crosses noon
+  const ap=totalMins>=720?'PM':'AM';
+  document.getElementById('time-display').textContent=d.label;
+  window.selectedSlot=d.label;
+  checkBusMatch(totalMins, window.pickupFilter||'');
+}
+
+function checkBusMatch(sliderMins, from){
+  const hint=document.getElementById('bus-match-hint');
+  const pickup=document.getElementById('h-from').value||from;
+  if(!pickup){hint.style.display='none';return;}
+  // Find bus departures from same checkpoint within +/- 15 mins
+  const CHECKPOINTS={'C&D Housing':'C&D Housing','PGP Auditorium':'PGP Auditorium','Maingate':'Maingate'};
+  const campusFrom=CHECKPOINTS[pickup]||null;
+  if(!campusFrom){hint.style.display='none';return;}
+  const nearby=BUS.filter(b=>{
+    if(b[1]!==campusFrom)return false;
+    const bm=toMins(b[0]);
+    return Math.abs(bm-sliderMins)<=15;
+  });
+  if(!nearby.length){hint.style.display='none';return;}
+  const b=nearby[0],bm=toMins(b[0]),diff=bm-sliderMins;
+  const diffStr=diff===0?'at the same time':diff>0?`in ${diff} min${diff>1?'s':''}`:`${Math.abs(diff)} min${Math.abs(diff)>1?'s':''} ago`;
+  hint.style.display='block';
+  hint.innerHTML=`🚌 Campus bus also leaves from ${campusFrom} at <strong>${b[0]}</strong> (${diffStr}) — going ${b[2]}`;
+}
+
+// Also trigger bus check when pickup changes
+document.getElementById('h-from').addEventListener('change',function(){
+  updateHomeFare();
+  const v=parseInt(document.getElementById('time-slider').value);
+  if(v>0){
+    const baseHour=window.sliderAmPm==='AM'?0:12;
+    checkBusMatch(baseHour*60+v*5,'');
+  }
+});
+
 window.goTo=function(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -579,14 +661,7 @@ window.goTo=function(id){
   window.scrollTo(0,0);
   if(id!=='s-bus'&&clockInterval){clearInterval(clockInterval);clockInterval=null;}
 }
-window.selSlot=function(btn,val){
-  document.querySelectorAll('.slot-btn').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');window.selectedSlot=val;
-  document.getElementById('later-wrap').style.display=val==='Later today'?'block':'none';
-}
-document.getElementById('h-slot-later').addEventListener('change',function(){
-  document.getElementById('custom-time-wrap').style.display=this.value==='Custom time'?'block':'none';
-});
+
 window.swapLocs=function(){
   const f=document.getElementById('h-from'),t=document.getElementById('h-to');
   const tmp=f.value;f.value=t.value;t.value=tmp;updateHomeFare();

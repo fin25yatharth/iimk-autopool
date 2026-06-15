@@ -2,132 +2,235 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>IIMK AutoPool</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;max-width:480px;margin:0 auto;min-height:100vh;position:relative}
-#app{background:#fff;min-height:100vh;padding-bottom:70px}
-.screen{display:none;padding:0 0 1rem}
+:root{
+  --maroon:#7B1226;
+  --maroon-dark:#5A0D1A;
+  --maroon-light:#9B1E35;
+  --gold:#C9A84C;
+  --gold-light:#E8C96A;
+  --gold-pale:#FBF4E3;
+  --cream:#FDF8F0;
+  --text:#1A0A0E;
+  --text-sec:#6B4A52;
+  --border:#E8D5D9;
+  --white:#FFFFFF;
+  --green:#166534;
+  --green-bg:#DCFCE7;
+  --red:#991B1B;
+  --red-bg:#FEE2E2;
+  --blue:#1E40AF;
+  --blue-bg:#DBEAFE;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;background:var(--cream);max-width:480px;margin:0 auto;min-height:100vh}
+#app{background:var(--cream);min-height:100vh;padding-bottom:74px}
+.screen{display:none}
 .screen.active{display:block}
-.topbar{display:flex;align-items:center;gap:10px;padding:14px 16px 12px;border-bottom:1px solid #eee}
-.topbar h2{font-size:17px;font-weight:600;flex:1;color:#111}
-.back-btn{background:none;border:none;cursor:pointer;font-size:22px;color:#555;padding:0;line-height:1}
-nav{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;z-index:100}
-.nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:#888;padding:8px 0}
-.nav-btn.active{color:#1a56db}
-.nav-btn svg{width:22px;height:22px}
-.card{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:14px 16px;margin:0 12px 10px}
-label.lbl{font-size:12px;color:#888;display:block;margin-bottom:4px;margin-top:10px}
-label.lbl:first-child{margin-top:0}
-select,input[type=text],input[type=tel],textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:9px;font-size:14px;color:#111;background:#fff;outline:none;-webkit-appearance:none}
-select:focus,input:focus,textarea:focus{border-color:#1a56db}
-.btn-primary{width:calc(100% - 24px);margin:4px 12px 0;padding:13px;background:#1a56db;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:0.01em}
-.btn-primary:active{opacity:0.88}
-.btn-sm{padding:7px 14px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#333;font-size:13px;cursor:pointer}
-.btn-call{padding:9px 0;background:#0f9b6e;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;text-decoration:none;flex:1}
-.btn-wa{padding:9px 0;background:#25d366;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;text-decoration:none;flex:1}
-.ride-card{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:14px;margin:0 12px 10px}
-.badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
-.badge-open{background:#e6f4ea;color:#137333}
-.badge-full{background:#fce8e6;color:#c5221f}
-.dot-blue{width:9px;height:9px;border-radius:50%;background:#1a56db;flex-shrink:0}
-.dot-red{width:9px;height:9px;border-radius:50%;background:#e53935;flex-shrink:0}
-.vline{width:1px;height:14px;background:#ddd;margin-left:4px}
-.join-btn{margin-top:10px;width:100%;padding:9px;background:#e8f0fe;color:#1a56db;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer}
-.join-btn:disabled{background:#f5f5f5;color:#aaa;cursor:default}
-.wa-join{margin-top:10px;width:100%;padding:9px;background:#e7f8ef;color:#137333;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
-.avatar{width:46px;height:46px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#1e40af;flex-shrink:0}
-.stars{color:#f59e0b;font-size:15px;letter-spacing:1px}
-.star-input span{font-size:26px;color:#ddd;cursor:pointer}
-.star-input span.lit{color:#f59e0b}
-.slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
-.slot-btn{padding:8px 4px;border:1px solid #ddd;border-radius:9px;background:#fff;color:#333;font-size:12px;cursor:pointer;text-align:center}
-.slot-btn.sel{border-color:#1a56db;background:#e8f0fe;color:#1a56db;font-weight:600}
-.swap-btn{background:none;border:none;cursor:pointer;color:#1a56db;font-size:22px;padding:0 4px;display:flex;align-items:center}
-.fare-box{background:#eff6ff;border-radius:10px;padding:10px 12px;margin-top:10px}
-.fare-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px;color:#444}
-.fare-total{font-weight:700;font-size:15px;color:#1a56db}
-.map-link{display:flex;align-items:center;gap:5px;font-size:13px;color:#1a56db;margin-top:10px;text-decoration:none;font-weight:500}
-.auto-badge{background:#fef3c7;color:#92400e;border-radius:8px;padding:3px 9px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:4px}
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:999;white-space:nowrap}
+
+/* HEADER */
+.hero-bar{background:linear-gradient(135deg,var(--maroon-dark) 0%,var(--maroon) 60%,var(--maroon-light) 100%);padding:20px 16px 16px;position:relative;overflow:hidden}
+.hero-bar::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:var(--gold);opacity:0.08;border-radius:50%}
+.hero-bar::after{content:'';position:absolute;bottom:-20px;left:20px;width:80px;height:80px;background:var(--gold);opacity:0.06;border-radius:50%}
+.hero-eyebrow{font-size:10px;color:var(--gold-light);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:4px}
+.hero-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--white);line-height:1.2}
+.hero-sub{font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px}
+
+/* NAV */
+nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--white);border-top:1px solid var(--border);z-index:100;box-shadow:0 -2px 12px rgba(123,18,38,0.08)}
+.nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#999;padding:8px 0;font-family:'Inter',sans-serif}
+.nav-btn.active{color:var(--maroon)}
+.nav-btn svg{width:20px;height:20px}
+.nav-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);margin:0 auto;display:none}
+.nav-btn.active .nav-dot{display:block}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:10px;padding:14px 16px 12px;background:var(--white);border-bottom:1px solid var(--border)}
+.topbar h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;flex:1;color:var(--maroon-dark)}
+.back-btn{background:none;border:none;cursor:pointer;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--gold-pale);color:var(--maroon)}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:16px;margin:0 12px 10px;box-shadow:0 1px 4px rgba(123,18,38,0.06)}
+.section-label{font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.08em;padding:12px 16px 4px}
+
+/* INPUTS */
+.input-group{margin-bottom:10px}
+.input-group:last-child{margin-bottom:0}
+.lbl{font-size:11px;font-weight:600;color:var(--text-sec);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em}
+select,input[type=text],input[type=tel],textarea{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);background:var(--white);outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;appearance:none}
+select:focus,input:focus,textarea:focus{border-color:var(--maroon);box-shadow:0 0 0 3px rgba(123,18,38,0.08)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237B1226' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+
+/* BUTTONS */
+.btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,var(--maroon-dark),var(--maroon));color:var(--white);border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.01em;box-shadow:0 4px 12px rgba(123,18,38,0.25)}
+.btn-primary:active{transform:scale(0.98);opacity:0.9}
+.btn-gold{width:100%;padding:13px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--maroon-dark);border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-outline{padding:9px 16px;border:1.5px solid var(--maroon);border-radius:10px;background:transparent;color:var(--maroon);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-sm{padding:9px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-call{padding:10px 0;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;text-decoration:none;flex:1;font-family:'Inter',sans-serif}
+.btn-wa{padding:10px 0;background:#25D366;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;text-decoration:none;flex:1;font-family:'Inter',sans-serif}
+.btn-danger{padding:9px;width:100%;background:var(--red-bg);color:var(--red);border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-top:8px}
+.btn-complete{padding:9px;width:100%;background:var(--gold-pale);color:var(--maroon-dark);border:1.5px solid var(--gold);border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-top:6px}
+
+/* RIDE CARD */
+.ride-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:14px;margin:0 12px 10px;box-shadow:0 1px 4px rgba(123,18,38,0.05)}
+.ride-card.completed{border-color:var(--gold);background:var(--gold-pale)}
+.badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:700;font-family:'Inter',sans-serif}
+.badge-open{background:#DCFCE7;color:#166534}
+.badge-full{background:#FEE2E2;color:#991B1B}
+.badge-done{background:var(--gold-pale);color:var(--maroon-dark);border:1px solid var(--gold)}
+.dot-maroon{width:8px;height:8px;border-radius:50%;background:var(--maroon);flex-shrink:0}
+.dot-gold{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.route-line{width:1px;height:12px;background:var(--border);margin-left:3.5px}
+.wa-join{margin-top:10px;width:100%;padding:10px;background:var(--green-bg);color:var(--green);border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;font-family:'Inter',sans-serif}
+.join-btn-dis{margin-top:10px;width:100%;padding:10px;background:#f5f5f5;color:#bbb;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:default;font-family:'Inter',sans-serif}
+
+/* FARE */
+.fare-box{background:var(--gold-pale);border-radius:10px;padding:10px 12px;margin-top:10px;border:1px solid rgba(201,168,76,0.3)}
+.fare-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px;color:var(--text-sec)}
+.fare-total{font-weight:700;font-size:15px;color:var(--maroon-dark)}
+
+/* UPI */
+.upi-block{background:var(--maroon-dark);border-radius:12px;padding:12px 14px;margin-top:10px;display:flex;align-items:center;gap:10px}
+.upi-block-label{font-size:10px;color:rgba(255,255,255,0.6);font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
+.upi-block-id{font-size:14px;color:var(--gold-light);font-weight:700;margin-top:1px}
+.upi-pay-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.upi-pay-btn{flex:1;min-width:80px;padding:8px 4px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:'Inter',sans-serif;text-align:center}
+.upi-gpay{background:#4285F4;color:#fff}
+.upi-paytm{background:#00BAF2;color:#fff}
+.upi-phonepe{background:#5F259F;color:#fff}
+
+/* SLOT PICKER */
+.slot-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.slot-btn{padding:10px 8px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);color:var(--text-sec);font-size:13px;font-weight:500;cursor:pointer;text-align:center;font-family:'Inter',sans-serif}
+.slot-btn.sel{border-color:var(--maroon);background:rgba(123,18,38,0.06);color:var(--maroon);font-weight:700}
+
+/* AVATAR */
+.avatar{width:46px;height:46px;border-radius:50%;background:var(--gold-pale);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--maroon-dark);flex-shrink:0}
+
+/* STARS */
+.star-input span{font-size:28px;color:#ddd;cursor:pointer;line-height:1}
+.star-input span.lit{color:var(--gold)}
+
+/* BUS */
+.bus-tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--white);border-bottom:1px solid var(--border)}
+.bus-tab{padding:12px;text-align:center;font-size:13px;font-weight:600;color:var(--text-sec);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;font-family:'Inter',sans-serif}
+.bus-tab.active{color:var(--maroon);border-bottom-color:var(--maroon)}
+.bus-panel{display:none;padding:10px 12px}
+.bus-panel.active{display:block}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;padding:10px 12px}
+.chip{padding:6px 12px;border:1.5px solid var(--border);border-radius:20px;font-size:12px;font-weight:600;background:var(--white);color:var(--text-sec);cursor:pointer;font-family:'Inter',sans-serif}
+.chip.active{background:var(--maroon);color:var(--white);border-color:var(--maroon)}
+.bus-card{background:var(--white);border-radius:12px;border:1px solid var(--border);margin-bottom:8px;overflow:hidden}
+.bus-row{display:flex;align-items:flex-start;padding:11px 12px;gap:10px;border-bottom:1px solid #F5EAEC}
+.bus-row:last-child{border-bottom:none}
+.bus-time{font-size:15px;font-weight:700;color:var(--maroon-dark);min-width:64px;flex-shrink:0}
+.bus-from{font-size:13px;font-weight:600;color:var(--text)}
+.bus-to{font-size:12px;color:var(--text-sec);margin-top:2px}
+.bus-ext{font-size:11px;color:var(--maroon);font-weight:600;margin-top:2px}
+.bus-row.b-prev{background:#FFF8E7;border-left:3px solid var(--gold)}
+.bus-row.b-next{background:#FDF0F2;border-left:3px solid var(--maroon)}
+.bus-row.b-after{background:#F0F4FF;border-left:3px solid var(--blue)}
+.b-tag{font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;margin-left:4px;vertical-align:middle}
+.b-tag-prev{background:var(--gold);color:var(--maroon-dark)}
+.b-tag-next{background:var(--maroon);color:#fff}
+.b-tag-after{background:var(--blue);color:#fff}
+.live-clock{text-align:center;font-size:12px;color:var(--text-sec);padding:8px;font-weight:600;background:var(--gold-pale);border-bottom:1px solid var(--border)}
+.mins-left{font-size:11px;font-weight:700;text-align:right;min-width:48px;margin-top:1px}
+
+/* TOAST */
+.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--maroon-dark);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:999;white-space:nowrap;border:1px solid var(--gold);font-family:'Inter',sans-serif}
 .toast.show{opacity:1}
-.loading{text-align:center;padding:2rem;color:#888;font-size:14px}
-.hero-bar{padding:16px 16px 12px;border-bottom:1px solid #eee}
-.hero-title{font-size:22px;font-weight:700;color:#111}
-.hero-sub{font-size:13px;color:#888;margin-top:2px}
-.section-tag{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.06em;padding:0 12px;margin:12px 0 6px}
-.empty{text-align:center;padding:2.5rem 1rem;color:#888}
-.empty-icon{font-size:42px;display:block;margin-bottom:10px}
-.chetta-actions{display:flex;gap:8px;margin-top:10px}
-.review-params{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}
-.review-param label{font-size:12px;color:#888;display:block;margin-bottom:3px}
-.spinner{display:inline-block;width:18px;height:18px;border:2px solid #ddd;border-top-color:#1a56db;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px}
+.loading{text-align:center;padding:2.5rem 1rem;color:var(--text-sec);font-size:14px}
+.empty{text-align:center;padding:3rem 1rem;color:var(--text-sec)}
+.empty-icon{font-size:44px;display:block;margin-bottom:12px}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--maroon);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
+.map-link{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--maroon);margin-top:10px;text-decoration:none;font-weight:600}
+.auto-badge{background:var(--gold-pale);color:var(--maroon-dark);border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;border:1px solid rgba(201,168,76,0.4)}
+.quoted-badge{background:var(--red-bg);color:var(--red);border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px}
+.divider{height:1px;background:var(--border);margin:10px 0}
+.home-quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 12px 10px}
+.quick-btn{padding:12px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;font-size:12px;font-weight:600;color:var(--text-sec);cursor:pointer;text-align:center;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:4px}
+.quick-btn span{font-size:22px}
+.quick-btn:active{background:var(--gold-pale)}
+.bus-quick{margin:0 12px 10px}
+.bus-quick-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--gold-pale),#FFF3CC);border:1.5px solid var(--gold);border-radius:12px;font-size:13px;font-weight:700;color:var(--maroon-dark);cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px}
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- HOME -->
+<!-- ══ HOME ══════════════════════════════════════════════════ -->
 <div id="s-home" class="screen active">
   <div class="hero-bar">
-    <div style="font-size:11px;color:#888;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2px">IIMK AutoPool</div>
-    <div class="hero-title">Where are you going?</div>
+    <div class="hero-eyebrow">IIM Kozhikode · AutoPool</div>
+    <div class="hero-title">Get there together.</div>
+    <div class="hero-sub">Share autos · Save money · Travel smart</div>
   </div>
+
   <div style="padding:12px 12px 0">
     <div class="card" style="margin:0 0 10px">
-      <div style="display:flex;align-items:center;gap:6px">
-        <div style="flex:1">
-          <label class="lbl" style="margin-top:0">From</label>
-          <select id="h-from" onchange="updateHomeFare()">
-            <option value="">Select pickup</option>
-            <option>Silver Spoon</option><option>D Landing</option>
-            <option>Phase V</option><option>C&amp;D Housing</option>
-            <option>Maingate</option><option>Calicut Beach</option>
-            <option>Monad</option><option>SM Street</option>
-            <option>Calicut Airport</option><option>Calicut Railway Station</option>
-          </select>
-        </div>
-        <button class="swap-btn" onclick="swapLocs()" style="margin-top:14px" aria-label="Swap">⇅</button>
-        <div style="flex:1">
-          <label class="lbl" style="margin-top:0">To</label>
-          <select id="h-to" onchange="updateHomeFare()">
-            <option value="">Select drop</option>
-            <option>Maingate</option><option>Silver Spoon</option>
-            <option>D Landing</option><option>Phase V</option>
-            <option>C&amp;D Housing</option><option>Calicut Beach</option>
-            <option>Monad</option><option>SM Street</option>
-            <option>Calicut Airport</option><option>Calicut Railway Station</option>
-          </select>
-        </div>
+      <div class="input-group">
+        <span class="lbl">From</span>
+        <select id="h-from" onchange="updateHomeFare()">
+          <option value="">Select pickup point</option>
+          <option>Silver Spoon</option><option>D Landing</option>
+          <option>Phase V</option><option>C&amp;D Housing</option>
+          <option>Maingate</option><option>Calicut Beach</option>
+          <option>Monad</option><option>SM Street</option>
+          <option>Calicut Airport</option><option>Calicut Railway Station</option>
+        </select>
       </div>
-      <label class="lbl">When?</label>
-      <div class="slot-grid">
-        <button class="slot-btn sel" onclick="selSlot(this,'Now')">Now</button>
-        <button class="slot-btn" onclick="selSlot(this,'7–8 AM')">7–8 AM</button>
-        <button class="slot-btn" onclick="selSlot(this,'8–9 AM')">8–9 AM</button>
-        <button class="slot-btn" onclick="selSlot(this,'12–1 PM')">12–1 PM</button>
-        <button class="slot-btn" onclick="selSlot(this,'5–6 PM')">5–6 PM</button>
-        <button class="slot-btn" onclick="selSlot(this,'6–7 PM')">6–7 PM</button>
-        <button class="slot-btn" onclick="selSlot(this,'8–9 PM')">8–9 PM</button>
-        <button class="slot-btn" onclick="selSlot(this,'10–11 PM')">10–11 PM</button>
-        <button class="slot-btn" onclick="selSlot(this,'Custom')">Custom ✏️</button>
+      <div style="display:flex;align-items:center;justify-content:center;margin:-2px 0">
+        <button onclick="swapLocs()" style="background:var(--gold-pale);border:1.5px solid var(--gold);border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;color:var(--maroon)" aria-label="Swap">⇅</button>
       </div>
-      <div id="custom-wrap" style="display:none;margin-top:8px">
-        <input type="text" id="custom-time" placeholder="e.g. 3:30 PM">
+      <div class="input-group" style="margin-top:4px">
+        <span class="lbl">To</span>
+        <select id="h-to" onchange="updateHomeFare()">
+          <option value="">Select destination</option>
+          <option>Maingate</option><option>Silver Spoon</option>
+          <option>D Landing</option><option>Phase V</option>
+          <option>C&amp;D Housing</option><option>Calicut Beach</option>
+          <option>Monad</option><option>SM Street</option>
+          <option>Calicut Airport</option><option>Calicut Railway Station</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <span class="lbl">When</span>
+        <div class="slot-row">
+          <button class="slot-btn sel" onclick="selSlot(this,'Now')">🕐 Now</button>
+          <button class="slot-btn" onclick="selSlot(this,'Later today')">📅 Later today</button>
+        </div>
+        <div id="later-wrap" style="display:none;margin-top:8px">
+          <select id="h-slot-later">
+            <option>7–8 AM</option><option>8–9 AM</option><option>12–1 PM</option>
+            <option>5–6 PM</option><option>6–7 PM</option><option>8–9 PM</option>
+            <option>10–11 PM</option><option>Custom time</option>
+          </select>
+          <div id="custom-time-wrap" style="display:none;margin-top:6px">
+            <input type="text" id="custom-time" placeholder="e.g. 3:30 PM">
+          </div>
+        </div>
       </div>
       <div id="home-fare"></div>
     </div>
-    <button class="btn-primary" style="margin:0 0 10px;width:100%" onclick="findRides()">🔍 Find rides</button>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-      <button class="btn-sm" onclick="goTo('s-post')">+ Post a ride</button>
-      <button class="btn-sm" onclick="goTo('s-chettas')">📞 Chetta directory</button>
-    </div>
+    <button class="btn-primary" style="margin-bottom:10px" onclick="findRides()">🔍 Find carpool rides</button>
+  </div>
+
+  <div class="home-quick">
+    <button class="quick-btn" onclick="goTo('s-post')"><span>🚗</span>Post a ride</button>
+    <button class="quick-btn" onclick="goTo('s-chettas')"><span>📞</span>Chetta directory</button>
+  </div>
+  <div class="bus-quick">
+    <button class="bus-quick-btn" onclick="goTo('s-bus');initBus()">🚌 Campus bus schedule — live timings</button>
   </div>
 </div>
 
-<!-- RIDES LIST -->
+<!-- ══ RIDES LIST ═════════════════════════════════════════════ -->
 <div id="s-rides" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('s-home')">←</button>
@@ -136,131 +239,177 @@ select:focus,input:focus,textarea:focus{border-color:#1a56db}
   <div id="rides-list"><div class="loading"><span class="spinner"></span>Loading rides…</div></div>
 </div>
 
-<!-- POST RIDE -->
+<!-- ══ POST RIDE ══════════════════════════════════════════════ -->
 <div id="s-post" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('s-home')">←</button>
     <h2>Post a ride</h2>
   </div>
-  <div style="padding:0 0 12px">
+  <div style="padding:10px 0 16px">
     <div class="card">
-      <label class="lbl" style="margin-top:0">From</label>
-      <select id="p-from" onchange="updatePostFare()">
-        <option value="">Select pickup</option>
-        <option>Silver Spoon</option><option>D Landing</option>
-        <option>Phase V</option><option>C&amp;D Housing</option>
-        <option>Maingate</option><option>Calicut Beach</option>
-        <option>Monad</option><option>SM Street</option>
-        <option>Calicut Airport</option><option>Calicut Railway Station</option>
-      </select>
-      <label class="lbl">To</label>
-      <select id="p-to" onchange="updatePostFare()">
-        <option value="">Select drop</option>
-        <option>Maingate</option><option>Silver Spoon</option>
-        <option>D Landing</option><option>Phase V</option>
-        <option>C&amp;D Housing</option><option>Calicut Beach</option>
-        <option>Monad</option><option>SM Street</option>
-        <option>Calicut Airport</option><option>Calicut Railway Station</option>
-      </select>
+      <div class="input-group">
+        <span class="lbl">From</span>
+        <select id="p-from" onchange="updatePostFare()">
+          <option value="">Select pickup</option>
+          <option>Silver Spoon</option><option>D Landing</option>
+          <option>Phase V</option><option>C&amp;D Housing</option>
+          <option>Maingate</option><option>Calicut Beach</option>
+          <option>Monad</option><option>SM Street</option>
+          <option>Calicut Airport</option><option>Calicut Railway Station</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <span class="lbl">To</span>
+        <select id="p-to" onchange="updatePostFare()">
+          <option value="">Select destination</option>
+          <option>Maingate</option><option>Silver Spoon</option>
+          <option>D Landing</option><option>Phase V</option>
+          <option>C&amp;D Housing</option><option>Calicut Beach</option>
+          <option>Monad</option><option>SM Street</option>
+          <option>Calicut Airport</option><option>Calicut Railway Station</option>
+        </select>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div>
-          <label class="lbl">Time slot</label>
+        <div class="input-group">
+          <span class="lbl">When</span>
           <select id="p-slot">
             <option>Now</option><option>7–8 AM</option><option>8–9 AM</option>
             <option>12–1 PM</option><option>5–6 PM</option><option>6–7 PM</option>
             <option>8–9 PM</option><option>10–11 PM</option><option>Custom</option>
           </select>
         </div>
-        <div>
-          <label class="lbl">Seats available</label>
+        <div class="input-group">
+          <span class="lbl">Seats</span>
           <select id="p-seats">
-            <option value="1">1 seat</option>
-            <option value="2">2 seats</option>
+            <option value="1">1 seat</option><option value="2">2 seats</option>
             <option value="3" selected>3 seats</option>
           </select>
         </div>
       </div>
-      <label class="lbl">Auto number (optional)</label>
-      <input type="text" id="p-auto" placeholder="e.g. KL 11 AB 1234">
-      <label class="lbl">Your name &amp; room</label>
-      <input type="text" id="p-name" placeholder="e.g. Rahul, A-204">
-      <label class="lbl">Your WhatsApp number</label>
-      <input type="tel" id="p-phone" placeholder="e.g. 9876543210">
+      <div class="input-group">
+        <span class="lbl">Auto number (optional)</span>
+        <input type="text" id="p-auto" placeholder="e.g. KL 11 AB 1234">
+      </div>
+      <div class="input-group">
+        <span class="lbl">Chetta quoted fare (₹)</span>
+        <input type="text" id="p-quoted" placeholder="e.g. 120 (what chetta said)">
+      </div>
+      <div class="input-group">
+        <span class="lbl">Your name &amp; room</span>
+        <input type="text" id="p-name" placeholder="e.g. Rahul, A-204">
+      </div>
+      <div class="input-group">
+        <span class="lbl">WhatsApp number</span>
+        <input type="tel" id="p-phone" placeholder="10-digit number">
+      </div>
+      <div class="input-group">
+        <span class="lbl">Your UPI ID (for payment after ride)</span>
+        <input type="text" id="p-upi" placeholder="e.g. rahul@upi or 9876543210@ybl">
+      </div>
       <div id="post-fare"></div>
       <a id="maps-link" href="#" class="map-link" style="display:none" target="_blank">🗺️ Open route in Google Maps</a>
     </div>
-    <button class="btn-primary" onclick="postRide()">Post ride</button>
+    <div style="padding:0 12px">
+      <button class="btn-primary" onclick="postRide()">Post ride</button>
+    </div>
   </div>
 </div>
 
-<!-- ALL RIDES FEED -->
+<!-- ══ ALL RIDES FEED ════════════════════════════════════════ -->
 <div id="s-feed" class="screen">
   <div class="topbar"><h2>All rides</h2></div>
   <div id="feed-list"><div class="loading"><span class="spinner"></span>Loading…</div></div>
 </div>
 
-<!-- MY RIDES -->
+<!-- ══ MY RIDES ══════════════════════════════════════════════ -->
 <div id="s-myrides" class="screen">
   <div class="topbar"><h2>My rides</h2></div>
   <div id="my-list"><div class="loading"><span class="spinner"></span>Loading…</div></div>
 </div>
 
-<!-- CHETTA DIRECTORY -->
+<!-- ══ CHETTA DIRECTORY ═══════════════════════════════════════ -->
 <div id="s-chettas" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('s-home')">←</button>
     <h2>Chetta directory</h2>
   </div>
-  <p style="padding:0 12px 10px;font-size:13px;color:#888">Tap the call button to dial directly. WhatsApp button sends a pre-filled message.</p>
+  <p style="padding:8px 16px 4px;font-size:13px;color:var(--text-sec)">Tap 📞 to dial directly. Opens your phone app instantly.</p>
   <div id="chetta-list"></div>
-  <div style="padding:0 12px 10px">
-    <button class="btn-sm" style="width:100%" onclick="goTo('s-review')">⭐ Leave a chetta review</button>
+  <div style="padding:0 12px 12px">
+    <button class="btn-gold" onclick="goTo('s-review')">⭐ Rate a chetta</button>
   </div>
 </div>
 
-<!-- REVIEW -->
+<!-- ══ REVIEW ════════════════════════════════════════════════ -->
 <div id="s-review" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('s-chettas')">←</button>
     <h2>Rate a chetta</h2>
   </div>
-  <div style="padding:0 0 12px">
+  <div style="padding:10px 0 16px">
     <div class="card">
-      <label class="lbl" style="margin-top:0">Select chetta</label>
-      <select id="r-chetta"></select>
-      <div class="review-params">
-        <div><label>Punctuality</label><div class="star-input" id="r-punct" data-val="0" onclick="rateStar(this,event)"><span data-i="1">★</span><span data-i="2">★</span><span data-i="3">★</span><span data-i="4">★</span><span data-i="5">★</span></div></div>
-        <div><label>Safety</label><div class="star-input" id="r-safety" data-val="0" onclick="rateStar(this,event)"><span data-i="1">★</span><span data-i="2">★</span><span data-i="3">★</span><span data-i="4">★</span><span data-i="5">★</span></div></div>
-        <div><label>Behaviour</label><div class="star-input" id="r-behav" data-val="0" onclick="rateStar(this,event)"><span data-i="1">★</span><span data-i="2">★</span><span data-i="3">★</span><span data-i="4">★</span><span data-i="5">★</span></div></div>
-        <div><label>Fair price</label><div class="star-input" id="r-price" data-val="0" onclick="rateStar(this,event)"><span data-i="1">★</span><span data-i="2">★</span><span data-i="3">★</span><span data-i="4">★</span><span data-i="5">★</span></div></div>
+      <div class="input-group">
+        <span class="lbl">Select chetta</span>
+        <select id="r-chetta"></select>
       </div>
-      <label class="lbl">Comment (optional)</label>
-      <textarea id="r-comment" rows="2" placeholder="Quick note about the ride…" style="resize:none"></textarea>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0">
+        <div><div class="lbl">Punctuality</div><div class="star-input" id="r-punct" data-val="0" onclick="rateStar(this,event)"><span data-i="1">★</span><span data-i="2">★</span><span data-i="3">★</span><span data-i="4">★</span><span data-i="5">★</span></div></div>
+        <div><div class="lbl">Safety</div><div class="star-input" id="r-safety" data-val="0" onclick="rateStar(this,event)"><span data-i="1">★</span><span data-i="2">★</span><span data-i="3">★</span><span data-i="4">★</span><span data-i="5">★</span></div></div>
+        <div><div class="lbl">Behaviour</div><div class="star-input" id="r-behav" data-val="0" onclick="rateStar(this,event)"><span data-i="1">★</span><span data-i="2">★</span><span data-i="3">★</span><span data-i="4">★</span><span data-i="5">★</span></div></div>
+        <div><div class="lbl">Fair price</div><div class="star-input" id="r-price" data-val="0" onclick="rateStar(this,event)"><span data-i="1">★</span><span data-i="2">★</span><span data-i="3">★</span><span data-i="4">★</span><span data-i="5">★</span></div></div>
+      </div>
+      <div class="input-group">
+        <span class="lbl">Comment (optional)</span>
+        <textarea id="r-comment" rows="2" placeholder="Quick note about the ride…" style="resize:none"></textarea>
+      </div>
     </div>
-    <button class="btn-primary" onclick="submitReview()">Submit review</button>
+    <div style="padding:0 12px"><button class="btn-primary" onclick="submitReview()">Submit review</button></div>
   </div>
 </div>
 
-</div><!-- end #app -->
+<!-- ══ BUS SCHEDULE ═══════════════════════════════════════════ -->
+<div id="s-bus" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('s-home')">←</button>
+    <h2>Campus buses</h2>
+  </div>
+  <div id="live-clock" class="live-clock"></div>
+  <div class="chip-row">
+    <button class="chip active" onclick="setBusFilter(this,'All')">All stops</button>
+    <button class="chip" onclick="setBusFilter(this,'C&D Housing')">C&amp;D Housing</button>
+    <button class="chip" onclick="setBusFilter(this,'PGP Auditorium')">PGP Auditorium</button>
+    <button class="chip" onclick="setBusFilter(this,'Maingate')">Maingate</button>
+  </div>
+  <div class="bus-tabs">
+    <button class="bus-tab active" onclick="switchBusTab(this,'bp-live')">⚡ Live / Next 3</button>
+    <button class="bus-tab" onclick="switchBusTab(this,'bp-full')">📋 Full schedule</button>
+  </div>
+  <div id="bp-live" class="bus-panel active"><div id="live-buses"></div></div>
+  <div id="bp-full" class="bus-panel"><div id="full-buses"></div></div>
+</div>
+
+</div><!-- #app -->
 
 <nav>
   <button class="nav-btn active" id="nav-home" onclick="goTo('s-home')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>Home
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>Home<div class="nav-dot"></div>
   </button>
   <button class="nav-btn" id="nav-feed" onclick="goTo('s-feed');loadFeed()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>All rides
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Rides<div class="nav-dot"></div>
   </button>
   <button class="nav-btn" id="nav-post" onclick="goTo('s-post')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Post
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Post<div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" id="nav-bus" onclick="goTo('s-bus');initBus()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M7 19v2M17 19v2"/></svg>Bus<div class="nav-dot"></div>
   </button>
   <button class="nav-btn" id="nav-myrides" onclick="goTo('s-myrides');loadMyRides()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>My rides
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Mine<div class="nav-dot"></div>
   </button>
 </nav>
 
 <div id="toast" class="toast"></div>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -278,17 +427,23 @@ const firebaseConfig = {
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 const auth = getAuth(fbApp);
-
 let currentUid = null;
 signInAnonymously(auth).then(r => { currentUid = r.user.uid; });
 
-// ─── CONSTANTS ───────────────────────────────────────────────
+// ── REAL CHETTAS ─────────────────────────────────────────────
 const CHETTAS = [
-  {name:'Rajan Chetta',  phone:'9447123456', area:'Silver Spoon / Maingate'},
-  {name:'Suresh Chetta', phone:'9447234567', area:'D Landing / Phase V'},
-  {name:'Balan Chetta',  phone:'8547345678', area:'C&D Housing / All routes'},
-  {name:'Krishnan Chetta',phone:'9947456789',area:'Maingate / City routes'},
-  {name:'Shaji Chetta',  phone:'9847567890', area:'Airport / Station routes'},
+  {name:'Aswanth',      phone:'7025364310', area:'All routes'},
+  {name:'Shikhil',      phone:'8075749508', area:'All routes'},
+  {name:'Shivaji',      phone:'9048096464', area:'All routes'},
+  {name:'Prassed',      phone:'9446156719', area:'All routes'},
+  {name:'Sidharth',     phone:'9995820318', area:'All routes'},
+  {name:'Subish',       phone:'9847021751', area:'All routes'},
+  {name:'Biju',         phone:'9846579340', area:'All routes'},
+  {name:'Santhosh',     phone:'9995317364', area:'All routes'},
+  {name:'Ranjith',      phone:'7591909802', area:'All routes'},
+  {name:'Jithesh',      phone:'9961441341', area:'All routes'},
+  {name:'Sabish',       phone:'9847798281', area:'All routes'},
+  {name:'Jamaludeen',   phone:'9539163173', area:'All routes'},
 ];
 
 const DIST = {
@@ -306,254 +461,341 @@ const DIST = {
   'SM Street_Maingate':12,'Calicut Airport_Maingate':28,'Calicut Railway Station_Maingate':16,
 };
 
-// ─── HELPERS ─────────────────────────────────────────────────
-window.selectedSlot = 'Now';
+const BUS=[
+  ['8:55 AM','C&D Housing','Phase V Campus → PGP Auditorium',''],
+  ['9:05 AM','PGP Auditorium','Phase V Campus → C&D Housing',''],
+  ['10:25 AM','C&D Housing','Phase V Campus → PGP Auditorium',''],
+  ['10:35 AM','PGP Auditorium','Phase V Campus → C&D Housing',''],
+  ['10:37 AM','C&D Housing','Phase V Campus → PGP Auditorium',''],
+  ['11:00 AM','PGP Auditorium','Phase V Campus → C&D Housing','Maingate'],
+  ['11:45 AM','Maingate','C&D Housing → Phase V (11:55 am) → PGP Auditorium',''],
+  ['12:05 PM','PGP Auditorium','Phase V Campus → C&D Housing',''],
+  ['12:07 PM','C&D Housing','Phase V Campus → PGP Auditorium',''],
+  ['1:35 PM','PGP Auditorium','Phase V Campus → C&D Housing',''],
+  ['1:38 PM','C&D Housing','Phase V Campus → PGP Auditorium',''],
+  ['1:45 PM','PGP Auditorium','Phase V Campus → C&D Housing','Maingate'],
+  ['2:05 PM','Maingate','C&D Housing → Phase V (2:10 pm) → PGP Auditorium',''],
+  ['2:15 PM','PGP Auditorium','Phase V Campus → C&D Housing',''],
+  ['2:17 PM','C&D Housing','Phase V Campus → PGP Auditorium',''],
+  ['3:00 PM','PGP Auditorium','Phase V Campus → C&D Housing','Maingate'],
+  ['3:30 PM','Maingate','C&D Housing → Phase V (3:40 pm) → PGP Auditorium',''],
+  ['3:50 PM','PGP Auditorium','Phase V Campus → C&D Housing',''],
+  ['3:52 PM','C&D Housing','Phase V Campus → PGP Auditorium',''],
+  ['4:15 PM','PGP Auditorium','Phase V Campus → C&D Housing','Maingate'],
+  ['5:00 PM','Maingate','C&D Housing → Phase V (5:10 pm) → PGP Auditorium',''],
+  ['5:20 PM','PGP Auditorium','Phase V Campus → C&D Housing',''],
+  ['5:22 PM','C&D Housing','Phase V Campus → PGP Auditorium',''],
+  ['6:00 PM','PGP Auditorium','Phase V Campus → C&D Housing','Maingate'],
+  ['6:20 PM','Maingate','C&D Housing → Phase V (6:30 pm) → PGP Auditorium',''],
+  ['6:50 PM','PGP Auditorium','Phase V Campus → C&D Housing',''],
+  ['6:52 PM','C&D Housing','Phase V Campus → PGP Auditorium',''],
+  ['7:00 PM','PGP Auditorium','Phase V Campus → C&D Housing','Maingate'],
+  ['8:00 PM','Maingate','C&D Housing (8:05 pm) → Phase V → PGP Auditorium',''],
+  ['8:10 PM','PGP Auditorium','Phase V Campus → C&D Housing',''],
+  ['8:15 PM','C&D Housing','Phase V (8:20 pm) → PGP Auditorium',''],
+  ['8:25 PM','PGP Auditorium','Phase V (8:30 pm) → C&D Housing','Maingate'],
+  ['9:00 PM','Maingate','C&D Housing → Phase V (9:10 pm) → PGP Auditorium',''],
+  ['9:30 PM','PGP Auditorium','Phase V → C&D Housing & Return to PGP',''],
+  ['9:50 PM','PGP Auditorium','Phase V (9:55 pm) → C&D Housing','Maingate'],
+  ['10:20 PM','Maingate','C&D Housing → Phase V (10:30 pm) → PGP Auditorium',''],
+  ['10:40 PM','PGP Auditorium','Phase V (10:45 pm) → C&D Housing','Maingate'],
+  ['11:00 PM','Maingate','C&D Housing → Phase V Campus',''],
+  ['11:20 PM','PGP Auditorium','Phase V → C&D Housing & Return to PGP',''],
+  ['11:40 PM','PGP Auditorium','Phase V Campus → C&D Housing','Maingate'],
+  ['12:00 AM','Maingate','C&D Housing → Phase V → PGP Auditorium',''],
+];
 
-window.goTo = function(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+function toMins(t){
+  const m=t.match(/(\d+):(\d+)\s*(AM|PM)/i);if(!m)return 0;
+  let h=parseInt(m[1]),mn=parseInt(m[2]),ap=m[3].toUpperCase();
+  if(ap==='PM'&&h!==12)h+=12;if(ap==='AM'&&h===12)h=0;
+  if(h===0&&t.startsWith('12:'))h=24;
+  return h*60+mn;
+}
+
+let busFilter='All',clockInterval=null;
+
+// ── BUS ──────────────────────────────────────────────────────
+window.setBusFilter=function(btn,val){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');busFilter=val;renderBus();
+}
+window.switchBusTab=function(btn,id){
+  document.querySelectorAll('.bus-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.bus-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');document.getElementById(id).classList.add('active');
+}
+window.initBus=function(){
+  renderBus();updateClock();
+  if(clockInterval)clearInterval(clockInterval);
+  clockInterval=setInterval(()=>{updateClock();renderBus();},30000);
+}
+function updateClock(){
+  const n=new Date(),h=n.getHours(),m=n.getMinutes();
+  const ap=h>=12?'PM':'AM',hh=h%12||12,mm=String(m).padStart(2,'0');
+  document.getElementById('live-clock').textContent=`🕐 Current time: ${hh}:${mm} ${ap}`;
+}
+function getNowMins(){const n=new Date();return n.getHours()*60+n.getMinutes();}
+function filteredBus(){return busFilter==='All'?BUS:BUS.filter(b=>b[1]===busFilter);}
+
+function renderBus(){
+  const nowM=getNowMins(),list=filteredBus();
+  const mins=list.map(b=>toMins(b[0]));
+  let nextIdx=mins.findIndex(m=>m>nowM);
+  if(nextIdx===-1)nextIdx=0;
+  const prevIdx=nextIdx>0?nextIdx-1:-1;
+  const afterIdx=nextIdx+1<list.length?nextIdx+1:-1;
+
+  // Live panel
+  const liveEl=document.getElementById('live-buses');
+  if(!list.length){liveEl.innerHTML='<div class="empty"><span class="empty-icon">🚌</span>No buses from this stop</div>';return;}
+
+  let h='<div class="bus-card">';
+  if(prevIdx>=0){const b=list[prevIdx];h+=`<div class="bus-row b-prev"><div><div class="bus-time">${b[0]}<span class="b-tag b-tag-prev">PREV</span></div></div><div><div class="bus-from">${b[1]}</div><div class="bus-to">${b[2]}</div>${b[3]?`<div class="bus-ext">↳ Extended to ${b[3]}</div>`:''}</div></div>`;}
+  const nb=list[nextIdx],ml=mins[nextIdx]-nowM;
+  const ms=ml<=0?'Departing now':ml===1?'1 min':ml+' mins';
+  h+=`<div class="bus-row b-next"><div><div class="bus-time">${nb[0]}<span class="b-tag b-tag-next">NEXT</span></div><div class="mins-left" style="color:#7B1226">${ms}</div></div><div><div class="bus-from">${nb[1]}</div><div class="bus-to">${nb[2]}</div>${nb[3]?`<div class="bus-ext">↳ ${nb[3]}</div>`:''}</div></div>`;
+  if(afterIdx>=0){const ab=list[afterIdx],am=mins[afterIdx]-nowM;h+=`<div class="bus-row b-after"><div><div class="bus-time">${ab[0]}<span class="b-tag b-tag-after">AFTER</span></div>${am>0?`<div class="mins-left" style="color:#1E40AF">in ${am}m</div>`:''}</div><div><div class="bus-from">${ab[1]}</div><div class="bus-to">${ab[2]}</div>${ab[3]?`<div class="bus-ext">↳ ${ab[3]}</div>`:''}</div></div>`;}
+  h+='</div>';
+  liveEl.innerHTML=h;
+
+  // Full panel
+  const fullEl=document.getElementById('full-buses');
+  fullEl.innerHTML='<div class="bus-card">'+list.map((b,i)=>{
+    let cls='';
+    if(i===nextIdx)cls='b-next';else if(i===prevIdx)cls='b-prev';else if(i===afterIdx)cls='b-after';
+    return`<div class="bus-row ${cls}"><div class="bus-time">${b[0]}</div><div><div class="bus-from">${b[1]}</div><div class="bus-to">${b[2]}</div>${b[3]?`<div class="bus-ext">↳ ${b[3]}</div>`:''}</div></div>`;
+  }).join('')+'</div>';
+}
+
+// ── HELPERS ──────────────────────────────────────────────────
+window.selectedSlot='Now';
+window.goTo=function(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  const map = {'s-home':'nav-home','s-feed':'nav-feed','s-post':'nav-post','s-myrides':'nav-myrides'};
-  if(map[id]) document.getElementById(map[id]).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const map={'s-home':'nav-home','s-feed':'nav-feed','s-post':'nav-post','s-myrides':'nav-myrides','s-bus':'nav-bus'};
+  if(map[id])document.getElementById(map[id]).classList.add('active');
   window.scrollTo(0,0);
+  if(id!=='s-bus'&&clockInterval){clearInterval(clockInterval);clockInterval=null;}
 }
-
-window.selSlot = function(btn, val) {
-  document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('sel'));
-  btn.classList.add('sel');
-  window.selectedSlot = val;
-  document.getElementById('custom-wrap').style.display = val==='Custom'?'block':'none';
+window.selSlot=function(btn,val){
+  document.querySelectorAll('.slot-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');window.selectedSlot=val;
+  document.getElementById('later-wrap').style.display=val==='Later today'?'block':'none';
 }
-
-window.swapLocs = function() {
-  const f = document.getElementById('h-from'), t = document.getElementById('h-to');
-  const tmp = f.value; f.value = t.value; t.value = tmp;
-  updateHomeFare();
+document.getElementById('h-slot-later').addEventListener('change',function(){
+  document.getElementById('custom-time-wrap').style.display=this.value==='Custom time'?'block':'none';
+});
+window.swapLocs=function(){
+  const f=document.getElementById('h-from'),t=document.getElementById('h-to');
+  const tmp=f.value;f.value=t.value;t.value=tmp;updateHomeFare();
 }
-
-function getFare(from, to, seats) {
-  const k = from+'_'+to, rk = to+'_'+from;
-  const dist = DIST[k]||DIST[rk]||null;
-  if(!dist) return null;
-  const total = dist<=2 ? 70 : Math.round(70+(dist-2)*30);
-  return {total, perPerson: seats>1 ? Math.round(total/seats) : total, dist};
+function getFare(from,to,seats){
+  const k=from+'_'+to,rk=to+'_'+from,dist=DIST[k]||DIST[rk]||null;
+  if(!dist)return null;
+  const total=dist<=2?70:Math.round(70+(dist-2)*30);
+  return{total,perPerson:seats>1?Math.round(total/seats):total,dist};
 }
-
-window.updateHomeFare = function() {
-  const from = document.getElementById('h-from').value;
-  const to = document.getElementById('h-to').value;
-  const el = document.getElementById('home-fare');
+window.updateHomeFare=function(){
+  const from=document.getElementById('h-from').value,to=document.getElementById('h-to').value;
+  const el=document.getElementById('home-fare');
   if(!from||!to){el.innerHTML='';return;}
-  const f = getFare(from,to,3);
-  if(!f){el.innerHTML='';return;}
-  el.innerHTML=`<div class="fare-box" style="margin-top:10px">
-    <div class="fare-row"><span>Est. total fare</span><span>₹${f.total}</span></div>
-    <div class="fare-row"><span>Per person (3 sharing)</span><span class="fare-total">₹${f.perPerson}</span></div>
-    <div class="fare-row"><span style="font-size:12px;color:#aaa">Base ₹70 + ₹30/km beyond 2 km · ~${f.dist} km</span></div>
-  </div>`;
+  const f=getFare(from,to,3);if(!f){el.innerHTML='';return;}
+  el.innerHTML=`<div class="fare-box"><div class="fare-row"><span>Est. total fare</span><span>₹${f.total}</span></div><div class="fare-row"><span>Per person (3 sharing)</span><span class="fare-total">₹${f.perPerson}</span></div><div class="fare-row"><span style="font-size:11px;color:#aaa">Base ₹70 + ₹30/km beyond 2 km · ~${f.dist} km</span></div></div>`;
 }
-
-window.updatePostFare = function() {
-  const from = document.getElementById('p-from').value;
-  const to = document.getElementById('p-to').value;
-  const el = document.getElementById('post-fare');
-  const ml = document.getElementById('maps-link');
+window.updatePostFare=function(){
+  const from=document.getElementById('p-from').value,to=document.getElementById('p-to').value;
+  const el=document.getElementById('post-fare'),ml=document.getElementById('maps-link');
   if(!from||!to){el.innerHTML='';ml.style.display='none';return;}
-  const f = getFare(from,to,3);
-  if(f){
-    el.innerHTML=`<div class="fare-box" style="margin-top:10px">
-      <div class="fare-row"><span>Est. total fare</span><span>₹${f.total}</span></div>
-      <div class="fare-row"><span>Per person (3 sharing)</span><span class="fare-total">₹${f.perPerson}</span></div>
-    </div>`;
-  } else {el.innerHTML='';}
+  const f=getFare(from,to,3);
+  el.innerHTML=f?`<div class="fare-box"><div class="fare-row"><span>Est. total fare</span><span>₹${f.total}</span></div><div class="fare-row"><span>Per person (3 sharing)</span><span class="fare-total">₹${f.perPerson}</span></div></div>`:'';
   ml.href=`https://www.google.com/maps/dir/${encodeURIComponent(from+' Kozhikode')}/${encodeURIComponent(to+' Kozhikode')}`;
   ml.style.display='flex';
 }
-
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2600);
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);
+}
+function starsHtml(avg,count){
+  if(!count)return '<span style="font-size:12px;color:#bbb">No reviews yet</span>';
+  let s='';for(let i=1;i<=5;i++)s+=`<span style="color:${i<=Math.round(avg)?'#C9A84C':'#ddd'}">★</span>`;
+  return`<span style="font-size:14px">${s}</span> <span style="font-size:12px;color:var(--text-sec)">${avg.toFixed(1)} (${count})</span>`;
 }
 
-function starsHtml(avg, count) {
-  if(!count) return '<span style="font-size:12px;color:#aaa">No reviews yet</span>';
-  let s='';
-  for(let i=1;i<=5;i++) s+=`<span style="color:${i<=Math.round(avg)?'#f59e0b':'#ddd'}">★</span>`;
-  return `<span style="font-size:14px">${s}</span> <span style="font-size:12px;color:#888">${avg.toFixed(1)} (${count})</span>`;
-}
-
-function rideCardHtml(r, showDelete=false) {
-  const open = r.joined < r.seats;
-  const left = r.seats - r.joined;
-  const fare = getFare(r.from, r.to, r.seats);
-  const perPerson = fare ? `₹${fare.perPerson}/person` : '';
-  const autoStr = r.autoNum ? `<span class="auto-badge">🚗 ${r.autoNum}</span>` : '';
-  const waUrl = `https://wa.me/91${r.phone}?text=${encodeURIComponent('Hi! I want to join your auto from '+r.from+' to '+r.to+' at '+r.slot+'. IIMK AutoPool')}`;
-  const delBtn = showDelete ? `<button onclick="deleteRide('${r.id}')" style="margin-top:8px;width:100%;padding:8px;background:#fce8e6;color:#c5221f;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">🗑 Remove my ride</button>` : '';
-  return `<div class="ride-card">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-      <div>
-        <div style="font-size:14px;font-weight:600;color:#111">${r.name}</div>
-        <div style="font-size:12px;color:#888;margin-top:1px">${r.slot}</div>
-      </div>
-      <span class="badge ${open?'badge-open':'badge-full'}">${open?left+' seat'+(left>1?'s':'')+' left':'Full'}</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><div class="dot-blue"></div><div style="font-size:13px">${r.from}</div></div>
-    <div style="margin-left:4px;margin-bottom:4px"><div class="vline"></div></div>
-    <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><div class="dot-red"></div><div style="font-size:13px">${r.to}</div></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-      ${autoStr}
-      ${perPerson?`<span style="font-size:12px;color:#555">💰 ${perPerson}</span>`:''}
-      <span style="font-size:12px;color:#555">👥 ${r.joined}/${r.seats}</span>
-    </div>
-    ${open ? `<a class="wa-join" href="${waUrl}" target="_blank">💬 WhatsApp to join</a>` : `<button class="join-btn" disabled>Ride full</button>`}
-    ${delBtn}
+function upiBlock(upi,amount){
+  if(!upi)return'';
+  const amt=amount||70;
+  const note=encodeURIComponent('IIMK AutoPool share');
+  const gpay=`gpay://upi/pay?pa=${encodeURIComponent(upi)}&am=${amt}&tn=${note}`;
+  const paytm=`paytmmp://pay?pa=${encodeURIComponent(upi)}&am=${amt}&tn=${note}`;
+  const phonepe=`phonepe://pay?pa=${encodeURIComponent(upi)}&am=${amt}&tn=${note}`;
+  return`<div class="upi-block">
+    <div style="flex:1"><div class="upi-block-label">UPI — pay your share</div><div class="upi-block-id">📲 ${upi}</div>
+    <div class="upi-pay-btns">
+      <a href="${gpay}" class="upi-pay-btn upi-gpay">GPay</a>
+      <a href="${paytm}" class="upi-pay-btn upi-paytm">Paytm</a>
+      <a href="${phonepe}" class="upi-pay-btn upi-phonepe">PhonePe</a>
+    </div></div>
   </div>`;
 }
 
-// ─── RIDES ───────────────────────────────────────────────────
-window.findRides = function() {
-  const from = document.getElementById('h-from').value;
-  const to = document.getElementById('h-to').value;
+function rideCardHtml(r,showOwner=false){
+  const open=r.joined<r.seats,left=r.seats-r.joined;
+  const fare=getFare(r.from,r.to,r.seats);
+  const perPerson=fare?`₹${fare.perPerson}/person`:'';
+  const autoStr=r.autoNum?`<span class="auto-badge">🚗 ${r.autoNum}</span> `:'';
+  const quotedStr=r.quotedFare?`<span class="quoted-badge">💬 Chetta quoted ₹${r.quotedFare}</span> `:'';
+  const waUrl=`https://wa.me/91${r.phone}?text=${encodeURIComponent('Hi! I want to join your auto from '+r.from+' to '+r.to+' at '+r.slot+'. — IIMK AutoPool')}`;
+  const isCompleted=r.status==='completed';
+  const badgeHtml=isCompleted?`<span class="badge badge-done">✓ Completed</span>`:open?`<span class="badge badge-open">${left} seat${left>1?'s':''} left</span>`:`<span class="badge badge-full">Full</span>`;
+
+  let actionHtml='';
+  if(isCompleted){
+    actionHtml=upiBlock(r.upi,r.quotedFare?Math.round(parseInt(r.quotedFare)/r.seats):fare?fare.perPerson:70);
+  } else if(open){
+    actionHtml=`<a class="wa-join" href="${waUrl}" target="_blank">💬 WhatsApp to join</a>`;
+  } else {
+    actionHtml=`<button class="join-btn-dis" disabled>Ride is full</button>`;
+  }
+
+  let ownerHtml='';
+  if(showOwner&&!isCompleted){
+    ownerHtml=`<button class="btn-complete" onclick="markComplete('${r.id}')">✓ Mark ride as complete (show UPI)</button>
+    <button class="btn-danger" onclick="cancelRide('${r.id}')">✕ Cancel this ride</button>`;
+  } else if(showOwner&&isCompleted){
+    ownerHtml=`<button class="btn-danger" onclick="cancelRide('${r.id}')">🗑 Remove ride</button>`;
+  }
+
+  return`<div class="ride-card${isCompleted?' completed':''}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <div><div style="font-size:14px;font-weight:700;color:var(--text)">${r.name}</div><div style="font-size:12px;color:var(--text-sec);margin-top:1px">⏰ ${r.slot}</div></div>
+      ${badgeHtml}
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="dot-maroon"></div><div style="font-size:13px;font-weight:500">${r.from}</div></div>
+    <div style="margin-left:3.5px;margin-bottom:4px"><div class="route-line"></div></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="dot-gold"></div><div style="font-size:13px;font-weight:500">${r.to}</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:4px">${autoStr}${quotedStr}${perPerson?`<span style="font-size:12px;color:var(--text-sec)">💰 ${perPerson} est.</span>`:''} <span style="font-size:12px;color:var(--text-sec)">👥 ${r.joined||0}/${r.seats}</span></div>
+    ${actionHtml}${ownerHtml}
+  </div>`;
+}
+
+// ── RIDES ────────────────────────────────────────────────────
+window.findRides=function(){
+  const from=document.getElementById('h-from').value,to=document.getElementById('h-to').value;
   if(!from||!to){toast('Please select pickup and drop');return;}
   goTo('s-rides');
-  document.getElementById('rides-title').textContent = from+' → '+to;
-  const el = document.getElementById('rides-list');
-  el.innerHTML = '<div class="loading"><span class="spinner"></span>Loading rides…</div>';
-  getDocs(collection(db,'rides')).then(snap => {
-    const all = snap.docs.map(d=>({id:d.id,...d.data()}));
-    const filtered = all.filter(r=>r.from===from&&r.to===to);
-    if(!filtered.length){
-      el.innerHTML=`<div class="empty"><span class="empty-icon">🚗</span>No rides for this route yet.<br><br><button class="btn-sm" onclick="goTo('s-post')">Post the first ride</button></div>`;
-      return;
-    }
-    el.innerHTML = filtered.map(r=>rideCardHtml(r,false)).join('');
+  document.getElementById('rides-title').textContent=from+' → '+to;
+  const el=document.getElementById('rides-list');
+  el.innerHTML='<div class="loading"><span class="spinner"></span>Loading rides…</div>';
+  getDocs(collection(db,'rides')).then(snap=>{
+    const filtered=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.from===from&&r.to===to);
+    if(!filtered.length){el.innerHTML=`<div class="empty"><span class="empty-icon">🚗</span>No rides for this route yet.<br><br><button class="btn-outline" onclick="goTo('s-post')">Post the first ride</button></div>`;return;}
+    el.innerHTML=filtered.map(r=>rideCardHtml(r,r.uid===currentUid)).join('');
   });
 }
-
-window.loadFeed = function() {
-  const el = document.getElementById('feed-list');
-  el.innerHTML = '<div class="loading"><span class="spinner"></span>Loading…</div>';
-  const q = query(collection(db,'rides'), orderBy('createdAt','desc'));
-  onSnapshot(q, snap => {
-    const all = snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!all.length){
-      el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>No rides posted yet.</div>';
-      return;
-    }
-    el.innerHTML = all.map(r=>rideCardHtml(r,false)).join('');
+window.loadFeed=function(){
+  const el=document.getElementById('feed-list');
+  el.innerHTML='<div class="loading"><span class="spinner"></span>Loading…</div>';
+  const q=query(collection(db,'rides'),orderBy('createdAt','desc'));
+  onSnapshot(q,snap=>{
+    const all=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!all.length){el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>No rides posted yet.</div>';return;}
+    el.innerHTML=all.map(r=>rideCardHtml(r,r.uid===currentUid)).join('');
   });
 }
-
-window.postRide = function() {
-  const from = document.getElementById('p-from').value;
-  const to = document.getElementById('p-to').value;
-  const slot = document.getElementById('p-slot').value;
-  const seats = parseInt(document.getElementById('p-seats').value);
-  const autoNum = document.getElementById('p-auto').value.trim();
-  const name = document.getElementById('p-name').value.trim();
-  const phone = document.getElementById('p-phone').value.trim();
+window.postRide=function(){
+  const from=document.getElementById('p-from').value,to=document.getElementById('p-to').value;
+  const slot=document.getElementById('p-slot').value,seats=parseInt(document.getElementById('p-seats').value);
+  const autoNum=document.getElementById('p-auto').value.trim();
+  const quotedFare=document.getElementById('p-quoted').value.trim();
+  const name=document.getElementById('p-name').value.trim();
+  const phone=document.getElementById('p-phone').value.trim();
+  const upi=document.getElementById('p-upi').value.trim();
   if(!from||!to||!name||!phone){toast('Please fill all required fields');return;}
   if(from===to){toast('Pickup and drop cannot be the same');return;}
-  if(!/^\d{10}$/.test(phone)){toast('Enter a valid 10-digit WhatsApp number');return;}
-  const btn = document.querySelector('#s-post .btn-primary');
-  btn.textContent='Posting…'; btn.disabled=true;
-  addDoc(collection(db,'rides'),{from,to,slot,seats,joined:0,name,phone,autoNum,uid:currentUid,createdAt:serverTimestamp()})
+  if(!/^\d{10}$/.test(phone)){toast('Enter a valid 10-digit number');return;}
+  const btn=document.querySelector('#s-post .btn-primary');
+  btn.textContent='Posting…';btn.disabled=true;
+  addDoc(collection(db,'rides'),{from,to,slot,seats,joined:0,name,phone,autoNum,quotedFare,upi,uid:currentUid,status:'active',createdAt:serverTimestamp()})
     .then(()=>{
-      toast('Ride posted! Others can now join. 🎉');
-      document.getElementById('p-from').value='';
-      document.getElementById('p-to').value='';
-      document.getElementById('p-auto').value='';
-      document.getElementById('p-name').value='';
-      document.getElementById('p-phone').value='';
+      toast('Ride posted! 🎉');
+      ['p-from','p-to','p-auto','p-quoted','p-name','p-phone','p-upi'].forEach(id=>document.getElementById(id).value='');
       document.getElementById('post-fare').innerHTML='';
       document.getElementById('maps-link').style.display='none';
-      btn.textContent='Post ride'; btn.disabled=false;
+      btn.textContent='Post ride';btn.disabled=false;
       setTimeout(()=>{goTo('s-feed');loadFeed();},1000);
     }).catch(e=>{toast('Error: '+e.message);btn.textContent='Post ride';btn.disabled=false;});
 }
-
-window.deleteRide = function(id) {
-  if(!confirm('Remove this ride?')) return;
-  deleteDoc(doc(db,'rides',id)).then(()=>{ toast('Ride removed'); loadMyRides(); });
+window.cancelRide=function(id){
+  if(!confirm('Cancel this ride? It will be removed.'))return;
+  deleteDoc(doc(db,'rides',id)).then(()=>{toast('Ride cancelled');loadMyRides();});
 }
-
-window.loadMyRides = function() {
-  const el = document.getElementById('my-list');
-  el.innerHTML = '<div class="loading"><span class="spinner"></span>Loading…</div>';
+window.markComplete=function(id){
+  if(!confirm('Mark this ride as complete? Riders will see your UPI to pay their share.'))return;
+  updateDoc(doc(db,'rides',id),{status:'completed'}).then(()=>{toast('Ride marked complete ✓ UPI is now visible');loadMyRides();});
+}
+window.loadMyRides=function(){
+  const el=document.getElementById('my-list');
+  el.innerHTML='<div class="loading"><span class="spinner"></span>Loading…</div>';
   getDocs(collection(db,'rides')).then(snap=>{
-    const mine = snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.uid===currentUid);
-    if(!mine.length){
-      el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>You haven\'t posted any rides yet.</div>';
-      return;
-    }
-    el.innerHTML = mine.map(r=>rideCardHtml(r,true)).join('');
+    const mine=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.uid===currentUid);
+    if(!mine.length){el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>You haven\'t posted any rides yet.</div>';return;}
+    el.innerHTML=mine.map(r=>rideCardHtml(r,true)).join('');
   });
 }
 
-// ─── CHETTAS ─────────────────────────────────────────────────
-function loadChettas() {
-  const sel = document.getElementById('r-chetta');
-  sel.innerHTML = CHETTAS.map(c=>`<option>${c.name}</option>`).join('');
+// ── CHETTAS ──────────────────────────────────────────────────
+function loadChettas(){
+  document.getElementById('r-chetta').innerHTML=CHETTAS.map(c=>`<option>${c.name}</option>`).join('');
   getDocs(collection(db,'reviews')).then(snap=>{
-    const reviews = snap.docs.map(d=>d.data());
-    const el = document.getElementById('chetta-list');
-    el.innerHTML = CHETTAS.map(c=>{
-      const cr = reviews.filter(r=>r.chetta===c.name);
-      const avg = cr.length ? cr.reduce((s,r)=>s+r.overall,0)/cr.length : 0;
-      const last = cr.length ? cr[cr.length-1] : null;
-      const commentHtml = last&&last.comment ? `<div style="font-size:12px;color:#666;font-style:italic;margin-top:6px">"${last.comment}"</div>` : '';
-      return `<div class="ride-card">
+    const reviews=snap.docs.map(d=>d.data());
+    document.getElementById('chetta-list').innerHTML=CHETTAS.map(c=>{
+      const cr=reviews.filter(r=>r.chetta===c.name);
+      const avg=cr.length?cr.reduce((s,r)=>s+r.overall,0)/cr.length:0;
+      const last=cr.length?cr[cr.length-1]:null;
+      const commentHtml=last&&last.comment?`<div style="font-size:12px;color:var(--text-sec);font-style:italic;margin-top:6px;padding:8px;background:var(--gold-pale);border-radius:8px">"${last.comment}"</div>`:'';
+      return`<div class="ride-card">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-          <div class="avatar">${c.name[0]}${c.name.split(' ')[1]?c.name.split(' ')[1][0]:''}</div>
+          <div class="avatar">${c.name[0]}</div>
           <div style="flex:1">
-            <div style="font-size:14px;font-weight:600;color:#111">${c.name}</div>
-            <div style="font-size:12px;color:#888">${c.area}</div>
-            <div style="margin-top:3px">${starsHtml(avg,cr.length)}</div>
+            <div style="font-size:15px;font-weight:700;color:var(--text)">${c.name}</div>
+            <div style="font-size:12px;color:var(--text-sec)">${c.area}</div>
+            <div style="margin-top:4px">${starsHtml(avg,cr.length)}</div>
           </div>
-        </div>
-        ${commentHtml}
-        <div class="chetta-actions">
+        </div>${commentHtml}
+        <div style="display:flex;gap:8px;margin-top:10px">
           <a href="tel:${c.phone}" class="btn-call">📞 ${c.phone}</a>
-          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent('Hi Chetta, I need an auto. IIMK AutoPool.')}" target="_blank" class="btn-wa">💬 WhatsApp</a>
+          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent('Hi, I need an auto. — IIMK AutoPool')}" target="_blank" class="btn-wa">💬 WhatsApp</a>
         </div>
       </div>`;
     }).join('');
   });
 }
-
-// ─── REVIEWS ─────────────────────────────────────────────────
-window.rateStar = function(container, e) {
-  const span = e.target.closest('span[data-i]');
-  if(!span) return;
-  const val = parseInt(span.dataset.i);
-  container.dataset.val = val;
-  container.querySelectorAll('span').forEach(s=>{
-    s.classList.toggle('lit', parseInt(s.dataset.i)<=val);
-  });
+window.rateStar=function(container,e){
+  const span=e.target.closest('span[data-i]');if(!span)return;
+  const val=parseInt(span.dataset.i);container.dataset.val=val;
+  container.querySelectorAll('span').forEach(s=>s.classList.toggle('lit',parseInt(s.dataset.i)<=val));
 }
-
-window.submitReview = function() {
-  const chetta = document.getElementById('r-chetta').value;
-  const punct = parseInt(document.getElementById('r-punct').dataset.val)||0;
-  const safety = parseInt(document.getElementById('r-safety').dataset.val)||0;
-  const behav = parseInt(document.getElementById('r-behav').dataset.val)||0;
-  const price = parseInt(document.getElementById('r-price').dataset.val)||0;
-  const comment = document.getElementById('r-comment').value.trim();
-  const vals = [punct,safety,behav,price].filter(v=>v>0);
+window.submitReview=function(){
+  const chetta=document.getElementById('r-chetta').value;
+  const punct=parseInt(document.getElementById('r-punct').dataset.val)||0;
+  const safety=parseInt(document.getElementById('r-safety').dataset.val)||0;
+  const behav=parseInt(document.getElementById('r-behav').dataset.val)||0;
+  const price=parseInt(document.getElementById('r-price').dataset.val)||0;
+  const comment=document.getElementById('r-comment').value.trim();
+  const vals=[punct,safety,behav,price].filter(v=>v>0);
   if(!vals.length){toast('Please rate at least one category');return;}
-  const overall = Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+  const overall=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
   addDoc(collection(db,'reviews'),{chetta,punct,safety,behav,price,overall,comment,uid:currentUid,createdAt:serverTimestamp()})
     .then(()=>{
-      toast('Review submitted! Thank you ⭐');
+      toast('Review submitted! ⭐');
       document.querySelectorAll('.star-input').forEach(si=>{si.dataset.val=0;si.querySelectorAll('span').forEach(s=>s.classList.remove('lit'));});
       document.getElementById('r-comment').value='';
       setTimeout(()=>{goTo('s-chettas');loadChettas();},900);
     });
 }
 
-// ─── INIT ────────────────────────────────────────────────────
 loadChettas();
 </script>
 </body>

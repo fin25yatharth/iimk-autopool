@@ -1104,7 +1104,41 @@ function rideCardHtml(r,showOwner=false){
   const quotedStr=r.quotedFare?`<span class="quoted-badge">💬 Chetta quoted ₹${r.quotedFare}</span> `:'';
   const waUrl=`https://wa.me/91${r.phone}?text=${encodeURIComponent('Hi! I want to join your auto from '+r.from+' to '+r.to+' at '+r.slot+'. IIMK AutoPool')}`;
   const isCompleted=r.status==='completed';
-  const badgeHtml=isCompleted?`<span class="badge badge-done">✓ Completed</span>`:open?`<span class="badge badge-open">${left} seat${left>1?'s':''} left</span>`:`<span class="badge badge-full">Full</span>`;
+
+  // ── Time display ─────────────────────────────────────────
+  // rideTime = the slot the student wants to travel (e.g. "8:00 AM" or "Now")
+  // postedAt = when they posted (from Firestore serverTimestamp)
+  let rideTimeStr='';
+  let postedStr='';
+  let expiredWarning='';
+
+  if(r.createdAt){
+    const postedMs = r.createdAt.toMillis ? r.createdAt.toMillis() : (r.createdAt.seconds*1000);
+    const now = Date.now();
+    const diffMins = Math.round((now - postedMs)/60000);
+    const diffHrs = Math.floor(diffMins/60);
+    const diffDays = Math.floor(diffHrs/24);
+    let agoStr='';
+    if(diffMins < 1) agoStr='Just now';
+    else if(diffMins < 60) agoStr=`${diffMins} min${diffMins>1?'s':''} ago`;
+    else if(diffHrs < 24) agoStr=`${diffHrs} hr${diffHrs>1?'s':''} ago`;
+    else agoStr=`${diffDays} day${diffDays>1?'s':''} ago`;
+    postedStr=`<span style="font-size:11px;color:var(--text-sec)">Posted ${agoStr}</span>`;
+
+    // Flag stale rides older than 6 hours
+    if(diffHrs >= 6 && !isCompleted){
+      expiredWarning=`<div style="padding:6px 10px;background:#FEF3C7;border-radius:8px;font-size:11px;font-weight:600;color:#92400E;margin-bottom:6px">⚠️ This ride was posted ${agoStr} — confirm with poster before joining</div>`;
+    }
+  }
+
+  // Ride departure time
+  if(r.slot && r.slot !== 'Now'){
+    rideTimeStr=`<span style="font-size:12px;font-weight:700;color:var(--maroon-dark);background:rgba(123,18,38,0.07);padding:2px 8px;border-radius:6px;margin-right:4px">🕐 ${r.slot}</span>`;
+  } else {
+    rideTimeStr=`<span style="font-size:12px;font-weight:600;color:var(--text-sec)">🕐 Immediate</span>`;
+  }
+
+  const badgeHtml=isCompleted?`<span class="badge badge-done">✓ Done</span>`:open?`<span class="badge badge-open">${left} seat${left>1?'s':''} left</span>`:`<span class="badge badge-full">Full</span>`;
 
   let actionHtml='';
   if(isCompleted){
@@ -1124,10 +1158,17 @@ function rideCardHtml(r,showOwner=false){
   }
 
   return`<div class="ride-card${isCompleted?' completed':''}">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-      <div><div style="font-size:14px;font-weight:700;color:var(--text)">${r.name}</div><div style="font-size:12px;color:var(--text-sec);margin-top:1px">⏰ ${r.slot}</div></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--text)">${r.name}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">
+          ${rideTimeStr}
+          ${postedStr}
+        </div>
+      </div>
       ${badgeHtml}
     </div>
+    ${expiredWarning}
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="dot-maroon"></div><div style="font-size:13px;font-weight:500">${r.from}</div></div>
     <div style="margin-left:3.5px;margin-bottom:4px"><div class="route-line"></div></div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="dot-gold"></div><div style="font-size:13px;font-weight:500">${r.to}</div></div>
@@ -1162,7 +1203,7 @@ window.loadFeed=function(){
 }
 window.postRide=function(){
   const from=document.getElementById('p-from').value,to=document.getElementById('p-to').value;
-  const slot=document.getElementById('p-slot').value,seats=parseInt(document.getElementById('p-seats').value);
+  const slot=window.selectedSlot||'Now',seats=parseInt(document.getElementById('p-seats').value);
   const autoNum=document.getElementById('p-auto').value.trim();
   const quotedFare=document.getElementById('p-quoted').value.trim();
   const name=document.getElementById('p-name').value.trim();

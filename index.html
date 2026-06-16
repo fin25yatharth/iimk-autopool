@@ -242,6 +242,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
   <div class="bus-quick">
     <button class="bus-quick-btn" onclick="goTo('s-bus');initBus()">🚌 Campus bus schedule - live timings</button>
+    <button class="bus-quick-btn" style="margin-top:8px;background:linear-gradient(135deg,#e8f0fe,#dbeafe);border-color:#bfdbfe;color:#1e40af" onclick="goTo('s-campus');initCampus()">🗺️ Campus map - hostels and walking trail</button>
   </div>
 </div>
 
@@ -436,9 +437,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <!-- Info popup -->
     <div id="map-popup" style="display:none;margin:10px 12px;padding:10px 14px;background:var(--white);border:1.5px solid var(--gold);border-radius:12px;box-shadow:0 2px 8px rgba(123,18,38,0.1)">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
+        <div style="flex:1">
           <div id="popup-title" style="font-size:15px;font-weight:700;color:var(--maroon-dark);font-family:'Playfair Display',serif"></div>
-          <div id="popup-desc" style="font-size:12px;color:var(--text-sec);margin-top:3px;line-height:1.5"></div>
+          <div id="popup-desc" style="font-size:12px;color:var(--text-sec);margin-top:3px;line-height:1.5;margin-bottom:8px"></div>
+          <a id="popup-maps-btn" href="#" target="_blank" style="display:none;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#1a56db;text-decoration:none;padding:5px 10px;background:#eff6ff;border-radius:8px;border:1px solid #bfdbfe">🗺️ Open in Google Maps</a>
         </div>
         <button onclick="document.getElementById('map-popup').style.display='none'" style="background:none;border:none;font-size:18px;color:var(--text-sec);cursor:pointer;flex-shrink:0;padding:0 0 0 8px">✕</button>
       </div>
@@ -1035,10 +1037,12 @@ document.getElementById('h-from').addEventListener('change',function(){
 
 window.goTo=function(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const screen=document.getElementById(id);
+  if(screen) screen.classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const map={'s-home':'nav-home','s-feed':'nav-feed','s-post':'nav-post','s-myrides':'nav-myrides','s-bus':'nav-bus'};
-  if(map[id])document.getElementById(map[id]).classList.add('active');
+  const navMap={'s-home':'nav-home','s-feed':'nav-feed','s-post':'nav-post','s-myrides':'nav-myrides','s-bus':'nav-bus','s-campus':'nav-campus','s-chettas':null,'s-rides':null,'s-review':null};
+  const navId=navMap[id];
+  if(navId){const nb=document.getElementById(navId);if(nb)nb.classList.add('active');}
   window.scrollTo(0,0);
   if(id!=='s-bus'&&clockInterval){clearInterval(clockInterval);clockInterval=null;}
 }
@@ -1305,14 +1309,14 @@ const TRAIL_STOPS = {
   5:  {title:"Peral Tree + Children's Park 1", desc:"T Junction. Peral (Ficus benghalensis) tree. Beautiful downhill view of IIMK pond, playground and Kunnamangalam town."},
   6:  {title:"Gooseberry Trees - H Junction", desc:"Gooseberry tree grove. Another excellent downhill viewpoint. Can see the IIMK pond and playground."},
   7:  {title:"Children's Park 2", desc:"Second children's park along the trail."},
-  8:  {title:'Acacia Grove', desc:'Acacia auriculiformis groove. Opposite to children's park 2 and Apartment block II.'},
+  8:  {title:'Acacia Grove', desc:"Acacia auriculiformis groove. Opposite to children's park 2 and Apartment block II."},
   9:  {title:'Hill Top', desc:'BEST SPOT. Serene atmosphere with sunrise and sunset views. Cashew and Gooseberry garden. Sandal wood trees. Bird watching point. View of Kunnamangalam town and Academic Hill.'},
   10: {title:'Guest House 1', desc:'Guava, Custard apple, Irrumbanpuli, Jackfruit trees on the way. Great bird watching spot early morning. Jamia Markazu Ssaquafathi Ssunniya visible from here.'},
-  11: {title:'Acacia Grove (after Guest House 2)', desc:'Acacia groove after Guest House 2 and Director's Bungalow.'},
+  11: {title:'Acacia Grove (after Guest House 2)', desc:"Acacia groove after Guest House 2 and Director's Bungalow."},
   12: {title:'Thick Forest + Bird Watch', desc:'Dense forest vegetation and excellent bird watching area. Opposite to quarter no. A6A.'},
   13: {title:'Acacia Grove', desc:'Adjacent to quarter no. C5B.'},
   14: {title:'Thick Forest Vegetation', desc:'Curve leading to second gate. End of short trail.'},
-  15: {title:'Banyan + Malayan Apple', desc:'Ficus religiosa and Malayan apple trees. Curve after children's park 1.'},
+  15: {title:'Banyan + Malayan Apple', desc:"Ficus religiosa and Malayan apple trees. Curve after children's park 1."},
   16: {title:'Apartment Block 1 - Tree Lane', desc:'Fig, Almond, Peral, Mango, Mantharam, Manimaruthu and Asoka trees in front of Apartment block I.'},
   17: {title:'Rain Water Catchment', desc:'Rainwater catchment area for pond with thick forest vegetation. Left of road after Apartment block I.'},
   18: {title:'Manimaruthu Lane + Jamun Trees', desc:'Beautiful lane of Manimaruthu trees. Also Naaval and Jamun trees lining the path.'},
@@ -1328,17 +1332,46 @@ const TRAIL_STOPS = {
 };
 
 const MAP_INFO = {
-  'Maingate': {title:'Maingate', desc:'Main entrance of IIMK campus. Auto pickup point. Bus stop for city routes. Security cabin here.'},
-  'D Landing': {title:'D Landing', desc:'Key auto pickup checkpoint. Central campus location connecting hostel blocks to maingate area.'},
-  'Silver Spoon': {title:'Silver Spoon', desc:'Auto pickup checkpoint near J Canteen area. Popular spot before and after classes.'},
-  'Phase V': {title:'Phase V', desc:'Auto pickup checkpoint near lower campus road. Common morning pickup point.'},
-  'C&D Housing': {title:'C and D Housing', desc:'Major auto pickup checkpoint. Near A, B, C hostel blocks. Busy in evenings.'},
-};
+  'Maingate':    {title:'Maingate',       desc:'Main entrance of IIMK campus. Auto pickup point. Bus stop for city routes.', maps:'https://maps.google.com/?q=IIM+Kozhikode+Main+Gate,+Kunnamangalam,+Kozhikode'},
+  'D Landing':   {title:'D Landing',      desc:'Key auto pickup checkpoint. Central campus connecting hostels to maingate.', maps:'https://maps.google.com/?q=11.3175,75.9370'},
+  'Silver Spoon':{title:'Silver Spoon',   desc:'Auto pickup checkpoint near J Canteen. Popular spot before and after classes.', maps:'https://maps.google.com/?q=11.3189,75.9368'},
+  'Phase V':     {title:'Phase V',        desc:'Auto pickup checkpoint near lower campus road. Common morning pickup.', maps:'https://maps.google.com/?q=11.3160,75.9375'},
+  'C&D Housing': {title:'C and D Housing',desc:'Major auto pickup checkpoint near A, B, C hostel blocks. Busy evenings.', maps:'https://maps.google.com/?q=11.3195,75.9360'},
+  'Hostel A':    {title:'Hostel A',       desc:'PGP student hostel block. Lower residential area.', maps:'https://maps.google.com/?q=IIM+Kozhikode+Hostel'},
+  'Hostel B':    {title:'Hostel B',       desc:'PGP student hostel block. Near A block.', maps:''},
+  'Hostel C':    {title:'Hostel C',       desc:'PGP student hostel block. Rightmost lower cluster block.', maps:''},
+  'Hostel D':    {title:'Hostel D',       desc:'PGP student hostel block. Central mid-campus.', maps:''},
+  'Hostel E':    {title:'Hostel E',       desc:'PGP student hostel block. Near Guruprasad Canteen.', maps:''},
+  'Hostel F':    {title:'Hostel F',       desc:'PGP student hostel block. Upper mid-campus.', maps:''},
+  'Hostel G':    {title:'Hostel G',       desc:'PGP student hostel block. Upper area near H block.', maps:''},
+  'Hostel H':    {title:'Hostel H',       desc:'PGP student hostel block. Topmost block near H Canteen.', maps:''},
+  'Hostel J':    {title:'Hostel J',       desc:'Large hostel block near J Canteen and Health Club.', maps:''},
+  'Hostel K1':   {title:'Hostel K1',      desc:'Hostel block below J. Near J Canteen.', maps:''},
+  'Hostel K2':   {title:'Hostel K2',      desc:'Hostel block below K1. Southern end of campus.', maps:''},
+  'Hostel L1':   {title:'Hostel L1',      desc:'Hostel block on western side near badminton court.', maps:''},
+  'Hostel L2':   {title:'Hostel L2',      desc:'Westernmost hostel block. Near main road entry.', maps:''},
+  'H Canteen + Staff Canteen':{title:'H Canteen + Staff Canteen',desc:'Located at the top near H block. Popular for late-night snacks and meals.',maps:'https://maps.google.com/?q=IIM+Kozhikode+H+Canteen'},
+  'J Canteen':   {title:'J Canteen',      desc:'The main student canteen. Most popular food spot on campus. Open late.', maps:'https://maps.google.com/?q=IIM+Kozhikode+J+Canteen'},
+  'Guruprasad Canteen':{title:'Guruprasad Canteen',desc:'Popular canteen near E block and C&D Housing. Good for quick bites.',maps:'https://maps.google.com/?q=IIM+Kozhikode+Guruprasad+Canteen'},
+  'Health Club': {title:'Health Club',    desc:'Campus gym and fitness centre near J block.', maps:''},
+  'Parking':     {title:'Parking',        desc:'Main campus parking area near H block and upper road.', maps:''},
+  'Power House': {title:'Power House',    desc:'Campus power supply building. Do not enter.', maps:''},
+  'Laundry':     {title:'Laundry',        desc:'Campus laundry facility. Located centrally between hostel blocks.', maps:''},
+  'Common Room': {title:'Common Room',    desc:'Student common room for recreation and socialising.', maps:''},
+  'FPM Married Accommodation':{title:'FPM Married Accommodation',desc:'Housing for FPM married scholars.',maps:''},
+}
 
 window.showMapInfo = function(key, fallbackDesc) {
   const info = MAP_INFO[key] || {title: key, desc: fallbackDesc || ''};
   document.getElementById('popup-title').textContent = info.title;
   document.getElementById('popup-desc').textContent = info.desc;
+  const mapsBtn = document.getElementById('popup-maps-btn');
+  if(info.maps){
+    mapsBtn.href = info.maps;
+    mapsBtn.style.display = 'inline-flex';
+  } else {
+    mapsBtn.style.display = 'none';
+  }
   document.getElementById('map-popup').style.display = 'block';
   document.getElementById('map-popup').scrollIntoView({behavior:'smooth', block:'nearest'});
 };
@@ -1393,16 +1426,7 @@ window.initCampus = function() {
   }).join('');
 };
 
-// Add campus to goTo map
-const _origGoTo = window.goTo;
-window.goTo = function(id) {
-  _origGoTo(id);
-  const map = {'s-campus':'nav-campus'};
-  if (map[id]) {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(map[id]).classList.add('active');
-  }
-};
+// goTo handles all nav including campus
 
 </script>
 </body>

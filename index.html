@@ -796,10 +796,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
 <div id="toast" class="toast"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+<script>
+// ── Firebase loaded dynamically so UI never breaks if CDN is slow/blocked ──
+let db=null, auth=null, currentUid=null, fbReady=false;
+let collection,addDoc,getDocs,doc,deleteDoc,updateDoc,onSnapshot,query,orderBy,serverTimestamp;
 
 const firebaseConfig = {
   apiKey: "AIzaSyAiFs5wxchLLJdyjWwVuTbVDcznfJDI7_c",
@@ -810,11 +810,26 @@ const firebaseConfig = {
   appId: "1:406197881915:web:dc47d45a03598ce4a4601e"
 };
 
-const fbApp = initializeApp(firebaseConfig);
-const db = getFirestore(fbApp);
-const auth = getAuth(fbApp);
-let currentUid = null;
-signInAnonymously(auth).then(r => { currentUid = r.user.uid; });
+async function initFirebase(){
+  try{
+    const appMod = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const fsMod  = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const authMod= await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+    ({collection,addDoc,getDocs,doc,deleteDoc,updateDoc,onSnapshot,query,orderBy,serverTimestamp}=fsMod);
+    const fbApp = appMod.initializeApp(firebaseConfig);
+    db = fsMod.getFirestore(fbApp);
+    auth = authMod.getAuth(fbApp);
+    const r = await authMod.signInAnonymously(auth);
+    currentUid = r.user.uid;
+    fbReady = true;
+    loadChettas();
+  }catch(e){
+    console.error('Firebase failed to load:', e);
+    const t=document.getElementById('toast');
+    if(t){t.textContent='Offline mode - rides need internet';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+  }
+}
+initFirebase();
 
 // ── REAL CHETTAS ─────────────────────────────────────────────
 const CHETTAS = [
@@ -1185,6 +1200,7 @@ function rideCardHtml(r,showOwner=false){
 window.findRides=function(){
   const from=document.getElementById('h-from').value,to=document.getElementById('h-to').value;
   if(!from||!to){toast('Please select pickup and drop');return;}
+  if(!fbReady){toast('Connecting... try again in a moment');return;}
   goTo('s-rides');
   document.getElementById('rides-title').textContent=from+' → '+to;
   const el=document.getElementById('rides-list');
@@ -1196,6 +1212,7 @@ window.findRides=function(){
   });
 }
 window.loadFeed=function(){
+  if(!fbReady){document.getElementById('feed-list').innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting to server...<br>Make sure you have internet.</div>';return;}
   const el=document.getElementById('feed-list');
   el.innerHTML='<div class="loading"><span class="spinner"></span>Loading…</div>';
   const q=query(collection(db,'rides'),orderBy('createdAt','desc'));
@@ -1206,6 +1223,7 @@ window.loadFeed=function(){
   });
 }
 window.postRide=function(){
+  if(!fbReady){toast('Connecting... try again in a moment');return;}
   const from=document.getElementById('p-from').value,to=document.getElementById('p-to').value;
   const slot=window.selectedSlot||'Now',seats=parseInt(document.getElementById('p-seats').value);
   const autoNum=document.getElementById('p-auto').value.trim();
@@ -1229,14 +1247,17 @@ window.postRide=function(){
     }).catch(e=>{toast('Error: '+e.message);btn.textContent='Post ride';btn.disabled=false;});
 }
 window.cancelRide=function(id){
+  if(!fbReady){toast('Connecting...');return;}
   if(!confirm('Cancel this ride? It will be removed.'))return;
   deleteDoc(doc(db,'rides',id)).then(()=>{toast('Ride cancelled');loadMyRides();});
 }
 window.markComplete=function(id){
+  if(!fbReady){toast('Connecting...');return;}
   if(!confirm('Mark this ride as complete? Riders will see your UPI to pay their share.'))return;
   updateDoc(doc(db,'rides',id),{status:'completed'}).then(()=>{toast('Ride marked complete ✓ UPI is now visible');loadMyRides();});
 }
 window.loadMyRides=function(){
+  if(!fbReady){document.getElementById('my-list').innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting to server...</div>';return;}
   const el=document.getElementById('my-list');
   el.innerHTML='<div class="loading"><span class="spinner"></span>Loading…</div>';
   getDocs(collection(db,'rides')).then(snap=>{
@@ -1248,6 +1269,7 @@ window.loadMyRides=function(){
 
 // ── CHETTAS ──────────────────────────────────────────────────
 function loadChettas(){
+  if(!fbReady)return;
   document.getElementById('r-chetta').innerHTML=CHETTAS.map(c=>`<option>${c.name}</option>`).join('');
   getDocs(collection(db,'reviews')).then(snap=>{
     const reviews=snap.docs.map(d=>d.data());
@@ -1279,6 +1301,7 @@ window.rateStar=function(container,e){
   container.querySelectorAll('span').forEach(s=>s.classList.toggle('lit',parseInt(s.dataset.i)<=val));
 }
 window.submitReview=function(){
+  if(!fbReady){toast('Connecting... try again in a moment');return;}
   const chetta=document.getElementById('r-chetta').value;
   const punct=parseInt(document.getElementById('r-punct').dataset.val)||0;
   const safety=parseInt(document.getElementById('r-safety').dataset.val)||0;
@@ -1297,7 +1320,7 @@ window.submitReview=function(){
     });
 }
 
-loadChettas();
+// Chettas load after Firebase is ready
 
 // ── CAMPUS MAP ───────────────────────────────────────────────
 const TRAIL_STOPS = {

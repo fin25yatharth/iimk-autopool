@@ -413,9 +413,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 
   <!-- Tab switcher -->
-  <div class="bus-tabs">
+  <div class="bus-tabs" style="grid-template-columns:1fr 1fr 1fr">
     <button class="bus-tab active" onclick="switchCampusTab(this,'ct-hostel')">🏠 Hostel map</button>
     <button class="bus-tab" onclick="switchCampusTab(this,'ct-trail')">🥾 Walking trail</button>
+    <button class="bus-tab" onclick="switchCampusTab(this,'ct-gmaps')">🗺️ Full map</button>
   </div>
 
   <!-- HOSTEL MAP -->
@@ -550,12 +551,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <text x="137" y="270" text-anchor="middle" font-size="5.5" fill="white" font-weight="bold" pointer-events="none">J-CAN</text>
           <text x="137" y="279" text-anchor="middle" font-size="5.5" fill="white" font-weight="bold" pointer-events="none">TEEN</text>
         </g>
-        <!-- Guruprasad Canteen -->
-        <g onclick="showMapInfo('Guruprasad Canteen','Popular canteen near E block and C&amp;D Housing. Good for quick bites.')" style="cursor:pointer">
-          <rect x="352" y="268" width="64" height="36" rx="4" fill="#FB923C" stroke="#EA580C" stroke-width="1.5"/>
-          <text x="384" y="282" text-anchor="middle" font-size="6.5" fill="white" font-weight="bold" pointer-events="none">GURUPRASAD</text>
-          <text x="384" y="292" text-anchor="middle" font-size="6.5" fill="white" font-weight="bold" pointer-events="none">CANTEEN</text>
-        </g>
+        <!-- Guruprasad Canteen removed - does not exist -->
 
         <!-- Power House (red) -->
         <g onclick="showMapInfo('Power House','Campus power supply building. Do not enter.')" style="cursor:pointer">
@@ -771,6 +767,39 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 </div>
 
+
+  </div>
+
+  <!-- FULL GOOGLE MY MAPS PANEL -->
+  <div id="ct-gmaps" class="bus-panel" style="padding:16px 12px">
+
+    <!-- Primary action -->
+    <a href="https://www.google.com/maps/d/viewer?mid=162TUbIZvnnvMes4q2c2zSY-U9EI&hl=en" target="_blank"
+      style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:var(--maroon);color:#fff;border-radius:14px;text-decoration:none;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;box-shadow:0 4px 12px rgba(123,18,38,0.25);margin-bottom:14px">
+      🗺️ Open full IIMK campus map
+    </a>
+
+    <!-- What you'll see card -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:700;color:var(--maroon-dark);margin-bottom:10px">What this map shows</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">📍 All hostel blocks A through L</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🎓 Academic buildings and lecture halls</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🍽️ Canteens, H Canteen, J Canteen</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🚗 Auto pickup points and parking</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🏋️ Health club, laundry, sports facilities</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🌳 Walking trails and nature spots</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🛣️ Campus roads and entry gates</div>
+      </div>
+    </div>
+
+    <!-- Tip -->
+    <div style="background:var(--gold-pale);border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:12px 14px">
+      <div style="font-size:12px;font-weight:700;color:var(--maroon-dark);margin-bottom:4px">💡 Tip for new students</div>
+      <div style="font-size:12px;color:var(--text-sec);line-height:1.6">Save this map to your Google Maps by tapping the star icon after opening. You can then navigate to any building on campus using Google Maps turn-by-turn.</div>
+    </div>
+  </div>
+</div>
 
 <!-- IN-APP RIDE CHAT -->
 <div id="s-chat" class="screen" style="display:flex;flex-direction:column;height:calc(100vh - 74px)">
@@ -1505,7 +1534,7 @@ const MAP_INFO = {
   'Hostel L2':   {title:'Hostel L2',      desc:'Westernmost hostel block. Near main road entry.', maps:''},
   'H Canteen + Staff Canteen':{title:'H Canteen + Staff Canteen',desc:'Located at the top near H block. Popular for late-night snacks and meals.',maps:'https://maps.google.com/?q=IIM+Kozhikode+H+Canteen'},
   'J Canteen':   {title:'J Canteen',      desc:'The main student canteen. Most popular food spot on campus. Open late.', maps:'https://maps.google.com/?q=IIM+Kozhikode+J+Canteen'},
-  'Guruprasad Canteen':{title:'Guruprasad Canteen',desc:'Popular canteen near E block and C&D Housing. Good for quick bites.',maps:'https://maps.google.com/?q=IIM+Kozhikode+Guruprasad+Canteen'},
+
   'Health Club': {title:'Health Club',    desc:'Campus gym and fitness centre near J block.', maps:''},
   'Parking':     {title:'Parking',        desc:'Main campus parking area near H block and upper road.', maps:''},
   'Power House': {title:'Power House',    desc:'Campus power supply building. Do not enter.', maps:''},

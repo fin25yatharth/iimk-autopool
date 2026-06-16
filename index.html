@@ -158,6 +158,13 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .quick-btn span{font-size:22px}
 .quick-btn:active{background:var(--gold-pale)}
 .bus-quick{margin:0 12px 10px}
+
+/* TIME WHEEL */
+.wheel-item{height:44px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:var(--text-sec);scroll-snap-align:start;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0}
+#wheel-hour::-webkit-scrollbar,#wheel-min::-webkit-scrollbar,#wheel-ampm::-webkit-scrollbar{display:none}
+.preset-chip{padding:6px 14px;border:1.5px solid var(--border);border-radius:20px;font-size:13px;font-weight:600;background:var(--white);color:var(--text-sec);cursor:pointer;font-family:'Inter',sans-serif}
+.preset-chip:active{background:var(--gold-pale);border-color:var(--gold)}
+
 .bus-quick-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--gold-pale),#FFF3CC);border:1.5px solid var(--gold);border-radius:12px;font-size:13px;font-weight:700;color:var(--maroon-dark);cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px}
 </style>
 </head>
@@ -201,21 +208,69 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       </div>
       <div class="input-group">
         <span class="lbl">When</span>
-        <div style="background:var(--gold-pale);border:1.5px solid rgba(201,168,76,0.35);border-radius:12px;padding:12px 14px;margin-top:4px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-            <div id="time-display" style="font-size:22px;font-weight:700;color:var(--maroon-dark);font-family:'Playfair Display',serif;letter-spacing:0.01em">Now</div>
-            <div style="display:flex;gap:6px">
-              <button id="ampm-am" onclick="setAmPm('AM')" style="padding:5px 12px;border-radius:8px;border:1.5px solid var(--maroon);background:var(--maroon);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">AM</button>
-              <button id="ampm-pm" onclick="setAmPm('PM')" style="padding:5px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);color:var(--text-sec);font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">PM</button>
+        <!-- iOS scroll-wheel time picker -->
+        <div style="margin-top:6px">
+          <div id="time-picker-display" style="background:var(--gold-pale);border:1.5px solid rgba(201,168,76,0.4);border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="toggleTimePicker()">
+            <span style="font-size:16px;font-weight:700;color:var(--maroon-dark)" id="time-picker-label">Now</span>
+            <span style="font-size:12px;color:var(--text-sec)">Tap to change</span>
+          </div>
+          <!-- Picker panel -->
+          <div id="time-picker-panel" style="display:none;background:var(--white);border:1.5px solid var(--border);border-radius:14px;margin-top:6px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.1)">
+            <!-- Preset chips -->
+            <div style="padding:10px 12px 6px;border-bottom:1px solid var(--border)">
+              <div style="font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">Presets</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="preset-chip" onclick="setTimePreset('Now')">Now</button>
+                <button class="preset-chip" onclick="setTimePreset('9:00 AM')">9 am</button>
+                <button class="preset-chip" onclick="setTimePreset('12:00 PM')">12 pm</button>
+                <button class="preset-chip" onclick="setTimePreset('4:00 PM')">4 pm</button>
+                <button class="preset-chip" onclick="setTimePreset('6:00 PM')">6 pm</button>
+                <button class="preset-chip" onclick="setTimePreset('9:00 PM')">9 pm</button>
+              </div>
+            </div>
+            <!-- Scroll wheels -->
+            <div style="display:flex;align-items:center;justify-content:center;gap:0;padding:0 12px;position:relative;height:180px;overflow:hidden">
+              <!-- Selection highlight -->
+              <div style="position:absolute;left:12px;right:12px;top:50%;transform:translateY(-50%);height:44px;background:rgba(123,18,38,0.06);border-radius:10px;pointer-events:none;border:1.5px solid rgba(123,18,38,0.12)"></div>
+              <!-- Hour wheel -->
+              <div style="flex:1;height:180px;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none" id="wheel-hour" onscroll="onWheelScroll()">
+                <div style="height:68px"></div>
+                <div data-h="12" class="wheel-item">12</div>
+                <div data-h="1" class="wheel-item">1</div>
+                <div data-h="2" class="wheel-item">2</div>
+                <div data-h="3" class="wheel-item">3</div>
+                <div data-h="4" class="wheel-item">4</div>
+                <div data-h="5" class="wheel-item">5</div>
+                <div data-h="6" class="wheel-item">6</div>
+                <div data-h="7" class="wheel-item">7</div>
+                <div data-h="8" class="wheel-item">8</div>
+                <div data-h="9" class="wheel-item">9</div>
+                <div data-h="10" class="wheel-item">10</div>
+                <div data-h="11" class="wheel-item">11</div>
+                <div style="height:68px"></div>
+              </div>
+              <div style="font-size:22px;font-weight:700;color:var(--maroon-dark);padding:0 4px;flex-shrink:0;margin-top:-4px">:</div>
+              <!-- Minute wheel -->
+              <div style="flex:1;height:180px;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none" id="wheel-min" onscroll="onWheelScroll()">
+                <div style="height:68px"></div>
+                <div data-m="0" class="wheel-item">00</div>
+                <div data-m="30" class="wheel-item">30</div>
+                <div style="height:68px"></div>
+              </div>
+              <!-- AM/PM wheel -->
+              <div style="flex:1;height:180px;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none" id="wheel-ampm" onscroll="onWheelScroll()">
+                <div style="height:68px"></div>
+                <div data-ap="AM" class="wheel-item">am</div>
+                <div data-ap="PM" class="wheel-item">pm</div>
+                <div style="height:68px"></div>
+              </div>
+            </div>
+            <!-- Done button -->
+            <div style="padding:10px 12px">
+              <button onclick="confirmTime()" style="width:100%;padding:12px;background:var(--maroon);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Done</button>
             </div>
           </div>
-          <input type="range" id="time-slider" min="0" max="287" value="0" step="1"
-            oninput="onTimeSlider(this.value)"
-            style="width:100%;accent-color:var(--maroon);height:4px;cursor:pointer">
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-sec);font-weight:600;margin-top:5px">
-            <span>12:00</span><span>3:00</span><span>6:00</span><span>9:00</span><span>11:45</span>
-          </div>
-          <div id="bus-match-hint" style="display:none;margin-top:8px;padding:7px 10px;background:rgba(123,18,38,0.07);border-radius:8px;border-left:3px solid var(--maroon);font-size:12px;color:var(--maroon-dark);font-weight:600"></div>
+          <div id="bus-match-hint" style="display:none;margin-top:8px;padding:8px 10px;background:rgba(123,18,38,0.07);border-radius:8px;border-left:3px solid var(--maroon);font-size:12px;color:var(--maroon-dark);font-weight:600;line-height:1.5"></div>
         </div>
       </div>
       <div id="home-fare"></div>
@@ -228,7 +283,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <button class="quick-btn" onclick="goTo('s-chettas')"><span>📞</span>Chetta directory</button>
   </div>
   <div class="bus-quick">
-    <button class="bus-quick-btn" onclick="goTo('s-bus');initBus()">🚌 Campus bus schedule — live timings</button>
+    <button class="bus-quick-btn" onclick="goTo('s-bus');initBus()">🚌 Campus bus schedule - live timings</button>
   </div>
 </div>
 
@@ -275,9 +330,9 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         <div class="input-group">
           <span class="lbl">When</span>
           <select id="p-slot">
-            <option>Now</option><option>7–8 AM</option><option>8–9 AM</option>
-            <option>12–1 PM</option><option>5–6 PM</option><option>6–7 PM</option>
-            <option>8–9 PM</option><option>10–11 PM</option><option>Custom</option>
+            <option>Now</option><option>7-8 AM</option><option>8-9 AM</option>
+            <option>12-1 PM</option><option>5-6 PM</option><option>6-7 PM</option>
+            <option>8-9 PM</option><option>10-11 PM</option><option>Custom</option>
           </select>
         </div>
         <div class="input-group">
@@ -290,7 +345,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       </div>
       <div class="input-group">
         <span class="lbl">Auto number (optional)</span>
-        <input type="text" id="p-auto" placeholder="e.g. KL 11 AB 1234">
+        <input type="text" id="p-auto" placeholder="e.g. KL 11 AB 4769">
       </div>
       <div class="input-group">
         <span class="lbl">Chetta quoted fare (₹)</span>
@@ -298,7 +353,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       </div>
       <div class="input-group">
         <span class="lbl">Your name &amp; room</span>
-        <input type="text" id="p-name" placeholder="e.g. Rahul, A-204">
+        <input type="text" id="p-name" placeholder="e.g. Mike Ross, F 27">
       </div>
       <div class="input-group">
         <span class="lbl">WhatsApp number</span>
@@ -572,85 +627,119 @@ function renderBus(){
 
 // ── HELPERS ──────────────────────────────────────────────────
 window.selectedSlot='Now';
-window.sliderAmPm='AM';
 
-// Slider: 0..287 = 5-min steps across 12 hours (0..143 = AM half, then resets)
-// We store full 24h minutes internally; display as 12h + AM/PM
-function sliderValToMins(v){
-  // v=0..287, each step = 5 mins across 0..1435 (00:00..23:55)
-  return v*5; // 0..1435
+// TIME WHEEL PICKER
+function timeStrToMins(t){
+  if(!t||t==='Now')return -1;
+  const m=t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if(!m)return -1;
+  let h=parseInt(m[1]),mn=parseInt(m[2]),ap=m[3].toUpperCase();
+  if(ap==='PM'&&h!==12)h+=12;if(ap==='AM'&&h===12)h=0;
+  return h*60+mn;
 }
-function minsToDisplay(totalMins){
-  let h=Math.floor(totalMins/60)%24,m=totalMins%60;
-  const ap=h>=12?'PM':'AM';
-  const hh=h%12||12;
-  const mm=String(m).padStart(2,'0');
-  return{h:hh,m:mm,ap,label:`${hh}:${mm} ${ap}`};
+function getWheelVal(wheelId){
+  const el=document.getElementById(wheelId);
+  const scrollTop=el.scrollTop;
+  const idx=Math.round(scrollTop/44);
+  const items=el.querySelectorAll('.wheel-item');
+  if(idx>=0&&idx<items.length){
+    const item=items[idx];
+    if(item.dataset.h!==undefined)return parseInt(item.dataset.h);
+    if(item.dataset.m!==undefined)return parseInt(item.dataset.m);
+    if(item.dataset.ap!==undefined)return item.dataset.ap;
+  }
+  return null;
 }
-
-window.setAmPm=function(ap){
-  window.sliderAmPm=ap;
-  document.getElementById('ampm-am').style.background=ap==='AM'?'var(--maroon)':'var(--white)';
-  document.getElementById('ampm-am').style.color=ap==='AM'?'#fff':'var(--text-sec)';
-  document.getElementById('ampm-am').style.borderColor=ap==='AM'?'var(--maroon)':'var(--border)';
-  document.getElementById('ampm-pm').style.background=ap==='PM'?'var(--maroon)':'var(--white)';
-  document.getElementById('ampm-pm').style.color=ap==='PM'?'#fff':'var(--text-sec)';
-  document.getElementById('ampm-pm').style.borderColor=ap==='PM'?'var(--maroon)':'var(--border)';
-  // Recalculate display based on current slider + new AM/PM
-  onTimeSlider(document.getElementById('time-slider').value);
+function scrollWheelTo(wheelId,index){
+  const el=document.getElementById(wheelId);
+  el.scrollTo({top:index*44,behavior:'instant'});
 }
-
-window.onTimeSlider=function(v){
-  v=parseInt(v);
-  // 0 = "Now"
-  if(v===0){
-    document.getElementById('time-display').textContent='Now';
+let wheelScrollTimer=null;
+window.onWheelScroll=function(){
+  clearTimeout(wheelScrollTimer);
+  wheelScrollTimer=setTimeout(snapWheels,120);
+}
+function snapWheels(){
+  ['wheel-hour','wheel-min','wheel-ampm'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    const idx=Math.round(el.scrollTop/44);
+    el.scrollTo({top:idx*44,behavior:'smooth'});
+  });
+}
+function getPickerTime(){
+  const h=getWheelVal('wheel-hour');
+  const m=getWheelVal('wheel-min');
+  const ap=getWheelVal('wheel-ampm');
+  if(h===null||m===null||ap===null)return 'Now';
+  const mm=m===0?'00':'30';
+  return `${h}:${mm} ${ap}`;
+}
+window.toggleTimePicker=function(){
+  const panel=document.getElementById('time-picker-panel');
+  panel.style.display=panel.style.display==='none'?'block':'none';
+}
+window.setTimePreset=function(val){
+  if(val==='Now'){
     window.selectedSlot='Now';
+    document.getElementById('time-picker-label').textContent='Now';
+    document.getElementById('time-picker-panel').style.display='none';
     document.getElementById('bus-match-hint').style.display='none';
     return;
   }
-  // Map slider 1..143 to 12:05..12:00 in chosen AM/PM half
-  // Each step = 5 mins, starting from 0:05 in the chosen half
-  const halfMins=v*5; // 5 to 715 mins within 12h block
-  const baseHour=window.sliderAmPm==='AM'?0:12;
-  const totalMins=baseHour*60+halfMins;
-  const d=minsToDisplay(totalMins);
-  // Keep AM/PM buttons in sync if slider crosses noon
-  const ap=totalMins>=720?'PM':'AM';
-  document.getElementById('time-display').textContent=d.label;
-  window.selectedSlot=d.label;
-  checkBusMatch(totalMins, window.pickupFilter||'');
+  // Parse and set wheels
+  const m=val.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if(!m)return;
+  const h=parseInt(m[1]),mn=parseInt(m[2]),ap=m[3].toUpperCase();
+  // Hour wheel: items are 12,1,2..11 = indices 0..11
+  const hourItems=[12,1,2,3,4,5,6,7,8,9,10,11];
+  const hIdx=hourItems.indexOf(h);
+  if(hIdx>=0)scrollWheelTo('wheel-hour',hIdx);
+  // Min wheel: 00=index 0, 30=index 1
+  scrollWheelTo('wheel-min',mn===0?0:1);
+  // AMPM: AM=index 0, PM=index 1
+  scrollWheelTo('wheel-ampm',ap==='AM'?0:1);
+  setTimeout(()=>confirmTime(),200);
+}
+window.confirmTime=function(){
+  const t=getPickerTime();
+  window.selectedSlot=t;
+  document.getElementById('time-picker-label').textContent=t;
+  document.getElementById('time-picker-panel').style.display='none';
+  checkBusMatch(t);
 }
 
-function checkBusMatch(sliderMins, from){
+function checkBusMatch(timeVal){
   const hint=document.getElementById('bus-match-hint');
-  const pickup=document.getElementById('h-from').value||from;
-  if(!pickup){hint.style.display='none';return;}
-  // Find bus departures from same checkpoint within +/- 15 mins
-  const CHECKPOINTS={'C&D Housing':'C&D Housing','PGP Auditorium':'PGP Auditorium','Maingate':'Maingate'};
-  const campusFrom=CHECKPOINTS[pickup]||null;
-  if(!campusFrom){hint.style.display='none';return;}
+  if(!hint)return;
+  const pickup=document.getElementById('h-from').value;
+  if(!pickup||timeVal==='Now'){hint.style.display='none';return;}
+  const BUSSTOPS={'C&D Housing':true,'PGP Auditorium':true,'Maingate':true};
+  if(!BUSSTOPS[pickup]){hint.style.display='none';return;}
+  const selMins=timeStrToMins(timeVal);
+  if(selMins<0){hint.style.display='none';return;}
   const nearby=BUS.filter(b=>{
-    if(b[1]!==campusFrom)return false;
-    const bm=toMins(b[0]);
-    return Math.abs(bm-sliderMins)<=15;
+    if(b[1]!==pickup)return false;
+    return Math.abs(toMins(b[0])-selMins)<=15;
   });
   if(!nearby.length){hint.style.display='none';return;}
-  const b=nearby[0],bm=toMins(b[0]),diff=bm-sliderMins;
-  const diffStr=diff===0?'at the same time':diff>0?`in ${diff} min${diff>1?'s':''}`:`${Math.abs(diff)} min${Math.abs(diff)>1?'s':''} ago`;
+  const b=nearby[0],diff=toMins(b[0])-selMins;
+  const diffStr=diff===0?'same time':diff>0?`${diff} min${diff>1?'s':''} after`:`${Math.abs(diff)} min${Math.abs(diff)>1?'s':''} before`;
   hint.style.display='block';
-  hint.innerHTML=`🚌 Campus bus also leaves from ${campusFrom} at <strong>${b[0]}</strong> (${diffStr}) — going ${b[2]}`;
+  hint.innerHTML=`🚌 <strong>Campus bus alert:</strong> Bus from ${pickup} at <strong>${b[0]}</strong> (${diffStr} your auto) going ${b[2]}. Free option!`;
 }
 
-// Also trigger bus check when pickup changes
 document.getElementById('h-from').addEventListener('change',function(){
   updateHomeFare();
-  const v=parseInt(document.getElementById('time-slider').value);
-  if(v>0){
-    const baseHour=window.sliderAmPm==='AM'?0:12;
-    checkBusMatch(baseHour*60+v*5,'');
-  }
+  checkBusMatch(window.selectedSlot||'Now');
 });
+
+// Init wheels to default position (scroll to top = 12:00 AM)
+setTimeout(()=>{
+  scrollWheelTo('wheel-hour',8); // default 9
+  scrollWheelTo('wheel-min',0);  // default :00
+  scrollWheelTo('wheel-ampm',0); // default AM
+},100);
 
 window.goTo=function(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -706,7 +795,7 @@ function upiBlock(upi,amount){
   const paytm=`paytmmp://pay?pa=${encodeURIComponent(upi)}&am=${amt}&tn=${note}`;
   const phonepe=`phonepe://pay?pa=${encodeURIComponent(upi)}&am=${amt}&tn=${note}`;
   return`<div class="upi-block">
-    <div style="flex:1"><div class="upi-block-label">UPI — pay your share</div><div class="upi-block-id">📲 ${upi}</div>
+    <div style="flex:1"><div class="upi-block-label">UPI - pay your share</div><div class="upi-block-id">📲 ${upi}</div>
     <div class="upi-pay-btns">
       <a href="${gpay}" class="upi-pay-btn upi-gpay">GPay</a>
       <a href="${paytm}" class="upi-pay-btn upi-paytm">Paytm</a>
@@ -721,7 +810,7 @@ function rideCardHtml(r,showOwner=false){
   const perPerson=fare?`₹${fare.perPerson}/person`:'';
   const autoStr=r.autoNum?`<span class="auto-badge">🚗 ${r.autoNum}</span> `:'';
   const quotedStr=r.quotedFare?`<span class="quoted-badge">💬 Chetta quoted ₹${r.quotedFare}</span> `:'';
-  const waUrl=`https://wa.me/91${r.phone}?text=${encodeURIComponent('Hi! I want to join your auto from '+r.from+' to '+r.to+' at '+r.slot+'. — IIMK AutoPool')}`;
+  const waUrl=`https://wa.me/91${r.phone}?text=${encodeURIComponent('Hi! I want to join your auto from '+r.from+' to '+r.to+' at '+r.slot+'. IIMK AutoPool')}`;
   const isCompleted=r.status==='completed';
   const badgeHtml=isCompleted?`<span class="badge badge-done">✓ Completed</span>`:open?`<span class="badge badge-open">${left} seat${left>1?'s':''} left</span>`:`<span class="badge badge-full">Full</span>`;
 
@@ -841,7 +930,7 @@ function loadChettas(){
         </div>${commentHtml}
         <div style="display:flex;gap:8px;margin-top:10px">
           <a href="tel:${c.phone}" class="btn-call">📞 ${c.phone}</a>
-          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent('Hi, I need an auto. — IIMK AutoPool')}" target="_blank" class="btn-wa">💬 WhatsApp</a>
+          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent('Hi, I need an auto. IIMK AutoPool')}" target="_blank" class="btn-wa">💬 WhatsApp</a>
         </div>
       </div>`;
     }).join('');

@@ -298,7 +298,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <span class="lbl">Seats</span>
           <select id="p-seats">
             <option value="1">1 seat</option><option value="2">2 seats</option>
-            <option value="3" selected>3 seats</option>
+            <option value="3" selected>3 seats</option><option value="4">4 seats</option>
           </select>
         </div>
       </div>
@@ -771,6 +771,27 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 </div>
 
+
+<!-- IN-APP RIDE CHAT -->
+<div id="s-chat" class="screen" style="display:flex;flex-direction:column;height:calc(100vh - 74px)">
+  <div class="topbar" style="flex-shrink:0">
+    <button class="back-btn" onclick="goTo('s-feed');loadFeed()">←</button>
+    <div style="flex:1">
+      <div style="font-size:15px;font-weight:700;color:var(--maroon-dark);font-family:'Playfair Display',serif">Ride chat</div>
+      <div id="chat-ride-label" style="font-size:11px;color:var(--text-sec);margin-top:1px"></div>
+    </div>
+  </div>
+  <div id="chat-messages" style="flex:1;overflow-y:auto;padding:12px;background:var(--cream)"></div>
+  <div style="padding:10px 12px;background:var(--white);border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0">
+    <input type="text" id="chat-input" placeholder="Type a message..." style="flex:1;padding:10px 14px;border-radius:24px;border:1.5px solid var(--border);font-size:14px;outline:none"
+      onkeydown="if(event.key==='Enter')sendChatMessage()"
+      onfocus="this.style.borderColor='var(--maroon)'" onblur="this.style.borderColor='var(--border)'">
+    <button onclick="sendChatMessage()" style="width:42px;height:42px;border-radius:50%;background:var(--maroon);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
 </div><!-- #app -->
 
 <nav style="grid-template-columns:repeat(6,1fr)">
@@ -1064,7 +1085,7 @@ window.goTo=function(id){
   const screen=document.getElementById(id);
   if(screen) screen.classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const navMap={'s-home':'nav-home','s-feed':'nav-feed','s-post':'nav-post','s-myrides':'nav-myrides','s-bus':'nav-bus','s-campus':'nav-campus','s-chettas':null,'s-rides':null,'s-review':null};
+  const navMap={'s-home':'nav-home','s-feed':'nav-feed','s-post':'nav-post','s-myrides':'nav-myrides','s-bus':'nav-bus','s-campus':'nav-campus','s-chettas':null,'s-rides':null,'s-review':null,'s-chat':'nav-feed'};
   const navId=navMap[id];
   if(navId){const nb=document.getElementById(navId);if(nb)nb.classList.add('active');}
   window.scrollTo(0,0);
@@ -1125,82 +1146,124 @@ function upiBlock(upi,amount){
 }
 
 function rideCardHtml(r,showOwner=false){
-  const open=r.joined<r.seats,left=r.seats-r.joined;
+  const open=r.joined<r.seats, left=r.seats-r.joined;
   const fare=getFare(r.from,r.to,r.seats);
   const perPerson=fare?`₹${fare.perPerson}/person`:'';
   const autoStr=r.autoNum?`<span class="auto-badge">🚗 ${r.autoNum}</span> `:'';
   const quotedStr=r.quotedFare?`<span class="quoted-badge">💬 Chetta quoted ₹${r.quotedFare}</span> `:'';
-  const waUrl=`https://wa.me/91${r.phone}?text=${encodeURIComponent('Hi! I want to join your auto from '+r.from+' to '+r.to+' at '+r.slot+'. IIMK AutoPool')}`;
   const isCompleted=r.status==='completed';
 
-  // ── Time display ─────────────────────────────────────────
-  // rideTime = the slot the student wants to travel (e.g. "8:00 AM" or "Now")
-  // postedAt = when they posted (from Firestore serverTimestamp)
-  let rideTimeStr='';
-  let postedStr='';
-  let expiredWarning='';
+  // ── FIX 1: Only show first name ──────────────────────────
+  const displayName = r.name ? r.name.split(',')[0].split(' ')[0] : 'Rider';
 
-  if(r.createdAt){
-    const postedMs = r.createdAt.toMillis ? r.createdAt.toMillis() : (r.createdAt.seconds*1000);
-    const now = Date.now();
-    const diffMins = Math.round((now - postedMs)/60000);
-    const diffHrs = Math.floor(diffMins/60);
-    const diffDays = Math.floor(diffHrs/24);
-    let agoStr='';
-    if(diffMins < 1) agoStr='Just now';
-    else if(diffMins < 60) agoStr=`${diffMins} min${diffMins>1?'s':''} ago`;
-    else if(diffHrs < 24) agoStr=`${diffHrs} hr${diffHrs>1?'s':''} ago`;
-    else agoStr=`${diffDays} day${diffDays>1?'s':''} ago`;
-    postedStr=`<span style="font-size:11px;color:var(--text-sec)">Posted ${agoStr}</span>`;
+  // ── FIX 2: ETA calculation ───────────────────────────────
+  // Ride duration lookup (Google Maps auto estimates, minutes)
+  const RIDE_MINS = {
+    'Silver Spoon_Maingate':8,'D Landing_Maingate':7,'Phase V_Maingate':10,'C&D Housing_Maingate':9,
+    'Maingate_Silver Spoon':8,'Maingate_D Landing':7,'Maingate_Phase V':10,'Maingate_C&D Housing':9,
+    'Silver Spoon_Calicut Beach':25,'D Landing_Calicut Beach':25,'Phase V_Calicut Beach':28,'C&D Housing_Calicut Beach':27,'Maingate_Calicut Beach':22,
+    'Silver Spoon_Monad':18,'D Landing_Monad':18,'Phase V_Monad':20,'C&D Housing_Monad':19,'Maingate_Monad':15,
+    'Silver Spoon_SM Street':28,'D Landing_SM Street':28,'Phase V_SM Street':30,'C&D Housing_SM Street':29,'Maingate_SM Street':25,
+    'Silver Spoon_Calicut Airport':55,'D Landing_Calicut Airport':55,'Phase V_Calicut Airport':58,'C&D Housing_Calicut Airport':57,'Maingate_Calicut Airport':50,
+    'Silver Spoon_Calicut Railway Station':32,'D Landing_Calicut Railway Station':32,'Phase V_Calicut Railway Station':35,'C&D Housing_Calicut Railway Station':34,'Maingate_Calicut Railway Station':28,
+  };
+  const rideKey=`${r.from}_${r.to}`;
+  const rideMins=RIDE_MINS[rideKey]||RIDE_MINS[`${r.to}_${r.from}`]||null;
 
-    // Flag stale rides older than 6 hours
-    if(diffHrs >= 6 && !isCompleted){
-      expiredWarning=`<div style="padding:6px 10px;background:#FEF3C7;border-radius:8px;font-size:11px;font-weight:600;color:#92400E;margin-bottom:6px">⚠️ This ride was posted ${agoStr} — confirm with poster before joining</div>`;
+  let etaHtml='';
+  if(rideMins && r.slot && r.slot!=='Now'){
+    const m=r.slot.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if(m){
+      let h=parseInt(m[1]),mn=parseInt(m[2]),ap=m[3].toUpperCase();
+      if(ap==='PM'&&h!==12)h+=12; if(ap==='AM'&&h===12)h=0;
+      const depTotal=h*60+mn;
+      const arrTotal=depTotal+rideMins;
+      const arrH=Math.floor(arrTotal/60)%24, arrM=arrTotal%60;
+      const arrAP=arrH>=12?'PM':'AM';
+      const arrH12=arrH%12||12;
+      const arrStr=`${arrH12}:${String(arrM).padStart(2,'0')} ${arrAP}`;
+      etaHtml=`<div style="display:flex;gap:12px;align-items:center;padding:7px 10px;background:var(--gold-pale);border-radius:8px;margin-bottom:8px;flex-wrap:wrap">
+        <span style="font-size:12px;color:var(--text-sec)">Departs <strong style="color:var(--maroon-dark)">${r.slot}</strong></span>
+        <span style="font-size:11px;color:var(--text-sec)">•</span>
+        <span style="font-size:12px;color:var(--text-sec)">Arrives ~<strong style="color:var(--maroon-dark)">${arrStr}</strong></span>
+        <span style="font-size:11px;color:var(--text-sec)">•</span>
+        <span style="font-size:11px;color:var(--text-sec)">${rideMins} min ride</span>
+      </div>`;
     }
+  } else if(r.slot && r.slot!=='Now'){
+    etaHtml=`<div style="font-size:12px;color:var(--text-sec);margin-bottom:6px">Departs <strong>${r.slot}</strong>${rideMins?` · ${rideMins} min ride`:''}</div>`;
   }
 
-  // Ride departure time
-  if(r.slot && r.slot !== 'Now'){
-    rideTimeStr=`<span style="font-size:12px;font-weight:700;color:var(--maroon-dark);background:rgba(123,18,38,0.07);padding:2px 8px;border-radius:6px;margin-right:4px">🕐 ${r.slot}</span>`;
-  } else {
-    rideTimeStr=`<span style="font-size:12px;font-weight:600;color:var(--text-sec)">🕐 Immediate</span>`;
+  // ── FIX 4: Passenger count system ───────────────────────
+  const joined=r.joined||0;
+  const paxBubbles=[];
+  for(let i=0;i<r.seats;i++){
+    paxBubbles.push(`<span style="width:22px;height:22px;border-radius:50%;border:2px solid ${i<joined?'var(--maroon)':'var(--border)'};background:${i<joined?'rgba(123,18,38,0.1)':'transparent'};display:inline-flex;align-items:center;justify-content:center;font-size:11px">${i<joined?'👤':''}</span>`);
+  }
+  const paxHtml=`<div style="display:flex;align-items:center;gap:5px;margin-bottom:8px">
+    <span style="font-size:11px;font-weight:600;color:var(--text-sec);margin-right:2px">${joined}/${r.seats} ready</span>
+    ${paxBubbles.join('')}
+    ${showOwner&&!isCompleted?`<button onclick="updateJoined('${r.id}',${joined},${r.seats})" style="margin-left:6px;padding:3px 10px;border-radius:8px;border:1.5px solid var(--maroon);background:transparent;color:var(--maroon);font-size:11px;font-weight:700;cursor:pointer">+1 joined</button>`:''}
+    ${showOwner&&joined>0?`<button onclick="updateJoined('${r.id}',${joined-1},${r.seats},'dec')" style="margin-left:2px;padding:3px 8px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text-sec);font-size:11px;font-weight:600;cursor:pointer">-1</button>`:''}
+  </div>`;
+
+  // ── Time display ─────────────────────────────────────────
+  let postedStr='';
+  if(r.createdAt){
+    const ms=r.createdAt.toMillis?r.createdAt.toMillis():(r.createdAt.seconds*1000);
+    const diffMins=Math.round((Date.now()-ms)/60000);
+    const diffHrs=Math.floor(diffMins/60), diffDays=Math.floor(diffHrs/24);
+    if(diffMins<1) postedStr='Just now';
+    else if(diffMins<60) postedStr=`${diffMins}m ago`;
+    else if(diffHrs<24) postedStr=`${diffHrs}h ago`;
+    else postedStr=`${diffDays}d ago`;
   }
 
-  const badgeHtml=isCompleted?`<span class="badge badge-done">✓ Done</span>`:open?`<span class="badge badge-open">${left} seat${left>1?'s':''} left</span>`:`<span class="badge badge-full">Full</span>`;
+  let expiredWarning='';
+  if(r.createdAt&&!isCompleted){
+    const ms=r.createdAt.toMillis?r.createdAt.toMillis():(r.createdAt.seconds*1000);
+    if((Date.now()-ms)/3600000>=6) expiredWarning=`<div style="padding:6px 10px;background:#FEF3C7;border-radius:8px;font-size:11px;font-weight:600;color:#92400E;margin-bottom:6px">Confirm with poster - this ride was posted ${postedStr}</div>`;
+  }
 
+  const badgeHtml=isCompleted?`<span class="badge badge-done">Done</span>`:open?`<span class="badge badge-open">${left} seat${left>1?'s':''} left</span>`:`<span class="badge badge-full">Full</span>`;
+
+  // ── FIX 6: In-app chat button ─────────────────────────────
+  const waUrl=`https://wa.me/91${r.phone}?text=${encodeURIComponent('Hi! I want to join your auto from '+r.from+' to '+r.to+' at '+r.slot+'. IIMK AutoPool')}`;
   let actionHtml='';
   if(isCompleted){
     actionHtml=upiBlock(r.upi,r.quotedFare?Math.round(parseInt(r.quotedFare)/r.seats):fare?fare.perPerson:70);
   } else if(open){
-    actionHtml=`<a class="wa-join" href="${waUrl}" target="_blank">💬 WhatsApp to join</a>`;
+    actionHtml=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+      <button onclick="openRideChat('${r.id}','${r.from}','${r.to}','${r.slot||'Now'}','${displayName}')" style="padding:9px 6px;background:var(--gold-pale);border:1.5px solid var(--gold);border-radius:10px;font-size:12px;font-weight:700;color:var(--maroon-dark);cursor:pointer">💬 Chat</button>
+      <a href="${waUrl}" target="_blank" style="padding:9px 6px;background:#e7f8ef;border:1.5px solid #86efac;border-radius:10px;font-size:12px;font-weight:700;color:#166534;text-decoration:none;text-align:center">📱 WhatsApp</a>
+    </div>`;
   } else {
     actionHtml=`<button class="join-btn-dis" disabled>Ride is full</button>`;
   }
 
   let ownerHtml='';
   if(showOwner&&!isCompleted){
-    ownerHtml=`<button class="btn-complete" onclick="markComplete('${r.id}')">✓ Mark ride as complete (show UPI)</button>
-    <button class="btn-danger" onclick="cancelRide('${r.id}')">✕ Cancel this ride</button>`;
+    ownerHtml=`<button class="btn-complete" onclick="markComplete('${r.id}')">Mark ride complete - show UPI</button>
+    <button class="btn-danger" onclick="cancelRide('${r.id}')">Cancel this ride</button>`;
   } else if(showOwner&&isCompleted){
-    ownerHtml=`<button class="btn-danger" onclick="cancelRide('${r.id}')">🗑 Remove ride</button>`;
+    ownerHtml=`<button class="btn-danger" onclick="cancelRide('${r.id}')">Remove ride</button>`;
   }
 
-  return`<div class="ride-card${isCompleted?' completed':''}">
+  return`<div class="ride-card${isCompleted?' completed':''}" id="ridecard-${r.id}">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
       <div>
-        <div style="font-size:14px;font-weight:700;color:var(--text)">${r.name}</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">
-          ${rideTimeStr}
-          ${postedStr}
-        </div>
+        <div style="font-size:15px;font-weight:700;color:var(--text)">${displayName}</div>
+        ${postedStr?`<div style="font-size:11px;color:var(--text-sec);margin-top:1px">Posted ${postedStr}</div>`:''}
       </div>
       ${badgeHtml}
     </div>
     ${expiredWarning}
+    ${etaHtml}
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="dot-maroon"></div><div style="font-size:13px;font-weight:500">${r.from}</div></div>
     <div style="margin-left:3.5px;margin-bottom:4px"><div class="route-line"></div></div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="dot-gold"></div><div style="font-size:13px;font-weight:500">${r.to}</div></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:4px">${autoStr}${quotedStr}${perPerson?`<span style="font-size:12px;color:var(--text-sec)">💰 ${perPerson} est.</span>`:''} <span style="font-size:12px;color:var(--text-sec)">👥 ${r.joined||0}/${r.seats}</span></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div class="dot-gold"></div><div style="font-size:13px;font-weight:500">${r.to}</div></div>
+    ${paxHtml}
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:4px">${autoStr}${quotedStr}${perPerson?`<span style="font-size:12px;color:var(--text-sec)">Est. ${perPerson}</span>`:''}</div>
     ${actionHtml}${ownerHtml}
   </div>`;
 }
@@ -1260,6 +1323,64 @@ window.cancelRide=function(id){
   if(!confirm('Cancel this ride? It will be removed.'))return;
   deleteDoc(doc(db,'rides',id)).then(()=>{toast('Ride cancelled');loadMyRides();});
 }
+// ── FIX 4: Update joined count ──────────────────────────────
+window.updateJoined=function(id, current, seats, dir){
+  if(!fbReady){toast('Connecting...');return;}
+  const newVal = dir==='dec' ? Math.max(0,current) : Math.min(seats, current+1);
+  updateDoc(doc(db,'rides',id),{joined:newVal})
+    .then(()=>{
+      toast(dir==='dec'?'Passenger removed':'Passenger added');
+      loadMyRides();
+    })
+    .catch(e=>toast('Error: '+e.message));
+}
+
+// ── FIX 6: In-app ride chat ──────────────────────────────────
+let activeChatRideId=null;
+window.openRideChat=function(rideId, from, to, slot, poster){
+  activeChatRideId=rideId;
+  document.getElementById('chat-ride-label').textContent=`${from} to ${to} at ${slot} (${poster}'s ride)`;
+  document.getElementById('chat-input').value='';
+  loadChatMessages(rideId);
+  goTo('s-chat');
+}
+
+function loadChatMessages(rideId){
+  const el=document.getElementById('chat-messages');
+  el.innerHTML='<div style="text-align:center;padding:1rem;color:var(--text-sec);font-size:13px">Loading messages...</div>';
+  if(!fbReady){el.innerHTML='<div style="text-align:center;padding:1rem;color:var(--text-sec);font-size:13px">Connecting...</div>';return;}
+  const q=query(collection(db,'chats_'+rideId),orderBy('t','asc'));
+  onSnapshot(q,snap=>{
+    if(!snap.docs.length){
+      el.innerHTML='<div style="text-align:center;padding:1rem;color:var(--text-sec);font-size:13px">No messages yet. Say hi!</div>';
+      return;
+    }
+    el.innerHTML=snap.docs.map(d=>{
+      const m=d.data();
+      const isMe=m.uid===currentUid;
+      const time=m.t?new Date(m.t.seconds*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
+      return`<div style="display:flex;flex-direction:column;align-items:${isMe?'flex-end':'flex-start'};margin-bottom:10px">
+        <div style="font-size:10px;color:var(--text-sec);margin-bottom:2px">${m.name||'Rider'} ${time}</div>
+        <div style="max-width:75%;padding:8px 12px;border-radius:${isMe?'14px 14px 4px 14px':'14px 14px 14px 4px'};background:${isMe?'var(--maroon)':'var(--white)'};color:${isMe?'#fff':'var(--text)'};font-size:13px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border:${isMe?'none':'1px solid var(--border)'}">
+          ${m.text}
+        </div>
+      </div>`;
+    }).join('');
+    el.scrollTop=el.scrollHeight;
+  });
+}
+
+window.sendChatMessage=function(){
+  const inp=document.getElementById('chat-input');
+  const text=inp.value.trim();
+  if(!text||!activeChatRideId){return;}
+  if(!fbReady){toast('Connecting...');return;}
+  const name=document.getElementById('p-name')?.value?.split(',')[0]?.split(' ')[0]||'Rider';
+  addDoc(collection(db,'chats_'+activeChatRideId),{text,uid:currentUid,name,t:serverTimestamp()})
+    .then(()=>{inp.value='';})
+    .catch(e=>toast('Error: '+e.message));
+}
+
 window.markComplete=function(id){
   if(!fbReady){toast('Connecting...');return;}
   if(!confirm('Mark this ride as complete? Riders will see your UPI to pay their share.'))return;
@@ -1298,7 +1419,7 @@ function loadChettas(){
         </div>${commentHtml}
         <div style="display:flex;gap:8px;margin-top:10px">
           <a href="tel:${c.phone}" class="btn-call">📞 ${c.phone}</a>
-          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent('Hi, I need an auto. IIMK AutoPool')}" target="_blank" class="btn-wa">💬 WhatsApp</a>
+          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent('Hi Chetta, I want to book an auto. Start: ' + c.area + '. Please let me know the estimated price. Thank you!')}" target="_blank" class="btn-wa">💬 WhatsApp</a>
         </div>
       </div>`;
     }).join('');

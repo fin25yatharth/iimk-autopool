@@ -379,14 +379,41 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <button class="back-btn" onclick="goTo('s-home')">←</button>
     <h2>Chetta directory</h2>
   </div>
-  <p style="padding:8px 16px 4px;font-size:13px;color:var(--text-sec)">Tap 📞 to dial directly. Opens your phone app instantly.</p>
-  <div id="chetta-list"></div>
-  <div style="padding:0 12px 12px">
-    <button class="btn-gold" onclick="goTo('s-review')">⭐ Rate a chetta</button>
+
+  <div class="bus-tabs" style="grid-template-columns:1fr 1fr">
+    <button class="bus-tab active" onclick="switchChettatab(this,'ct-dir')">📞 Directory</button>
+    <button class="bus-tab" onclick="switchChettatab(this,'ct-fare')">💰 Fare rates</button>
+  </div>
+
+  <div id="ct-dir" class="bus-panel active" style="padding:8px 0 0">
+    <p style="padding:0 16px 8px;font-size:13px;color:var(--text-sec)">Tap call to dial directly. WhatsApp sends a pre-filled message.</p>
+    <div id="chetta-list"></div>
+    <div style="padding:0 12px 12px">
+      <button class="btn-gold" onclick="goTo('s-review')">⭐ Rate a chetta</button>
+    </div>
+  </div>
+
+  <div id="ct-fare" class="bus-panel" style="padding:12px">
+    <div style="background:linear-gradient(135deg,#c0392b,#e74c3c);border-radius:14px;padding:14px 16px;margin-bottom:12px;text-align:center">
+      <div style="font-size:18px;font-weight:900;color:#FFE600;letter-spacing:0.05em;font-family:'Inter',sans-serif">TEAM NAMO</div>
+      <div style="font-size:12px;color:#fff;font-weight:600;margin-top:2px">Call Taxi Service - IIMK Main Gate</div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.75);margin-top:4px">Max 2 hrs waiting included · Extra hours Rs.100/hr</div>
+    </div>
+    <input type="text" id="fare-search" placeholder="Search destination..." oninput="filterFares(this.value)"
+      style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;margin-bottom:10px;outline:none;font-family:'Inter',sans-serif">
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:1fr 72px 72px;background:var(--maroon-dark);padding:10px 14px">
+        <div style="font-size:11px;font-weight:700;color:var(--gold-light);text-transform:uppercase;letter-spacing:0.05em">Destination</div>
+        <div style="font-size:11px;font-weight:700;color:var(--gold-light);text-align:center;text-transform:uppercase">Drop</div>
+        <div style="font-size:11px;font-weight:700;color:var(--gold-light);text-align:center;text-transform:uppercase">Return</div>
+      </div>
+      <div id="fare-rows"></div>
+    </div>
+    <div style="margin-top:10px;padding:10px 12px;background:var(--gold-pale);border-radius:10px;border:1px solid rgba(201,168,76,0.3)">
+      <div style="font-size:11px;color:var(--text-sec);line-height:1.6">Reference rates from Team Namo taxi at IIMK Main Gate. Auto fares may differ. Use as a benchmark when negotiating.</div>
+    </div>
   </div>
 </div>
-
-<!-- ══ REVIEW ════════════════════════════════════════════════ -->
 <div id="s-review" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('s-chettas')">←</button>
@@ -795,51 +822,78 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <div id="trail-stop-list"></div>
     </div>
   </div>
-</div>
-
-
-  </div>
 
   <!-- FULL GOOGLE MY MAPS PANEL -->
   <div id="ct-gmaps" class="bus-panel" style="padding:14px 12px">
 
-    <!-- Open in Maps button -->
+    <!-- Hero open button -->
     <a href="https://www.google.com/maps/d/viewer?mid=162TUbIZvnnvMes4q2c2zSY-U9EI&hl=en" target="_blank"
-      style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:var(--maroon);color:#fff;border-radius:14px;text-decoration:none;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;box-shadow:0 4px 12px rgba(123,18,38,0.25);margin-bottom:12px">
-      🗺️ Open full IIMK campus map
+      style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:16px 18px;background:linear-gradient(135deg,var(--maroon-dark),var(--maroon-light));color:#fff;border-radius:16px;text-decoration:none;box-shadow:0 4px 16px rgba(123,18,38,0.3);margin-bottom:14px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700">IIMK Campus Map</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:3px">Tap to open in Google Maps</div>
+      </div>
+      <div style="width:44px;height:44px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🗺️</div>
     </a>
 
-    <!-- Static map thumbnail using OpenStreetMap which allows embedding -->
-    <div style="border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-bottom:12px;position:relative">
-      <img
-        src="https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=400&center=lonlat:75.9352,11.3185&zoom=16&apiKey=a4035a1ad1ee4b7c8b89cd3793f1da41"
-        onerror="this.onerror=null;this.src='https://staticmap.openstreetmap.de/staticmap.php?center=11.3185,75.9352&zoom=16&size=600x400&markers=11.3185,75.9352,red'"
-        style="width:100%;display:block"
-        alt="IIMK campus area map"
-        loading="lazy">
-      <div style="position:absolute;bottom:8px;right:8px">
-        <a href="https://www.openstreetmap.org/?mlat=11.3185&mlon=75.9352&zoom=16" target="_blank"
-          style="font-size:10px;color:#333;background:rgba(255,255,255,0.9);padding:3px 7px;border-radius:6px;text-decoration:none">© OpenStreetMap</a>
-      </div>
+    <!-- Quick directions grid -->
+    <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">Quick directions from IIMK</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Calicut+Beach" target="_blank" style="display:flex;align-items:center;gap:8px;padding:11px 12px;background:var(--white);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">🏖️</span><div><div style="font-size:12px;font-weight:700">Calicut Beach</div><div style="font-size:10px;color:var(--text-sec)">~22 km</div></div>
+      </a>
+      <a href="https://www.google.com/maps/dir/IIM+Kozhikode/SM+Street+Kozhikode" target="_blank" style="display:flex;align-items:center;gap:8px;padding:11px 12px;background:var(--white);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">🛍️</span><div><div style="font-size:12px;font-weight:700">SM Street</div><div style="font-size:10px;color:var(--text-sec)">~12 km</div></div>
+      </a>
+      <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Calicut+Railway+Station" target="_blank" style="display:flex;align-items:center;gap:8px;padding:11px 12px;background:var(--white);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">🚂</span><div><div style="font-size:12px;font-weight:700">Railway Station</div><div style="font-size:10px;color:var(--text-sec)">~16 km</div></div>
+      </a>
+      <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Calicut+Airport" target="_blank" style="display:flex;align-items:center;gap:8px;padding:11px 12px;background:var(--white);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">✈️</span><div><div style="font-size:12px;font-weight:700">Airport</div><div style="font-size:10px;color:var(--text-sec)">~28 km</div></div>
+      </a>
+      <a href="https://www.google.com/maps/dir/IIM+Kozhikode/HiLITE+Mall+Kozhikode" target="_blank" style="display:flex;align-items:center;gap:8px;padding:11px 12px;background:var(--white);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">🛒</span><div><div style="font-size:12px;font-weight:700">Hilite Mall</div><div style="font-size:10px;color:var(--text-sec)">~8 km</div></div>
+      </a>
+      <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Baby+Memorial+Hospital+Kozhikode" target="_blank" style="display:flex;align-items:center;gap:8px;padding:11px 12px;background:var(--white);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">🏥</span><div><div style="font-size:12px;font-weight:700">Baby Memorial</div><div style="font-size:10px;color:var(--text-sec)">~9 km</div></div>
+      </a>
+      <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Kappad+Beach+Kozhikode" target="_blank" style="display:flex;align-items:center;gap:8px;padding:11px 12px;background:var(--white);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">🌊</span><div><div style="font-size:12px;font-weight:700">Kappad Beach</div><div style="font-size:10px;color:var(--text-sec)">~22 km</div></div>
+      </a>
+      <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Beypore+Beach+Kozhikode" target="_blank" style="display:flex;align-items:center;gap:8px;padding:11px 12px;background:var(--white);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">⛵</span><div><div style="font-size:12px;font-weight:700">Beypore Beach</div><div style="font-size:10px;color:var(--text-sec)">~18 km</div></div>
+      </a>
     </div>
 
-    <!-- Key locations quick links -->
-    <div style="background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:12px">
-      <div style="font-size:12px;font-weight:700;color:var(--maroon-dark);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">Quick directions from campus</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Calicut+Beach" target="_blank" class="map-quick-link">🏖️ Calicut Beach</a>
-        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/SM+Street+Kozhikode" target="_blank" class="map-quick-link">🛍️ SM Street</a>
-        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Calicut+Railway+Station" target="_blank" class="map-quick-link">🚂 Railway Station</a>
-        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Calicut+Airport" target="_blank" class="map-quick-link">✈️ Airport</a>
-        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/HiLITE+Mall+Kozhikode" target="_blank" class="map-quick-link">🛒 Hilite Mall</a>
-        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Baby+Memorial+Hospital+Kozhikode" target="_blank" class="map-quick-link">🏥 Baby Memorial</a>
-      </div>
+    <!-- Auto pickup points -->
+    <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">Auto pickup points on campus</div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px">
+      <a href="https://maps.google.com/?q=IIM+Kozhikode+Main+Gate" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);text-decoration:none">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">Maingate</span></div>
+        <span style="font-size:12px;color:var(--maroon);font-weight:600">Open maps →</span>
+      </a>
+      <a href="https://maps.google.com/?q=11.3189,75.9368" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);text-decoration:none">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">Silver Spoon</span></div>
+        <span style="font-size:12px;color:var(--maroon);font-weight:600">Open maps →</span>
+      </a>
+      <a href="https://maps.google.com/?q=11.3175,75.9370" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);text-decoration:none">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">D Landing</span></div>
+        <span style="font-size:12px;color:var(--maroon);font-weight:600">Open maps →</span>
+      </a>
+      <a href="https://maps.google.com/?q=11.3160,75.9375" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);text-decoration:none">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">Phase V</span></div>
+        <span style="font-size:12px;color:var(--maroon);font-weight:600">Open maps →</span>
+      </a>
+      <a href="https://maps.google.com/?q=11.3195,75.9360" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;text-decoration:none">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">C and D Housing</span></div>
+        <span style="font-size:12px;color:var(--maroon);font-weight:600">Open maps →</span>
+      </a>
     </div>
 
-    <!-- Tip -->
-    <div style="background:var(--gold-pale);border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:12px 14px">
-      <div style="font-size:12px;font-weight:700;color:var(--maroon-dark);margin-bottom:4px">💡 Save the IIMK map</div>
-      <div style="font-size:12px;color:var(--text-sec);line-height:1.6">Open the campus map above, tap the star to save it. Then Google Maps will show turn-by-turn directions to any hostel block or building.</div>
+    <!-- Save tip -->
+    <div style="background:var(--gold-pale);border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start">
+      <span style="font-size:20px;flex-shrink:0">💡</span>
+      <div style="font-size:12px;color:var(--text-sec);line-height:1.6">Open the campus map and tap the <strong>star icon</strong> in Google Maps to save it. You can then navigate to any hostel block or building with turn-by-turn directions.</div>
     </div>
   </div>
 </div>
@@ -1403,6 +1457,68 @@ window.cancelRide=function(id){
   deleteDoc(doc(db,'rides',id)).then(()=>{toast('Ride cancelled');loadMyRides();});
 }
 // ── FIX 4: Update joined count ──────────────────────────────
+window.switchChettatab=function(btn, panelId){
+  document.querySelectorAll('#s-chettas .bus-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#s-chettas .bus-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+  if(panelId==='ct-fare') renderFares('');
+};
+
+// Fare data from Team Namo rate card
+const FARE_CARD = [
+  // Image 2 — standard routes
+  {place:'Gate to Hostel',          drop:70,   ret:null},
+  {place:'KGM to Hostel',           drop:80,   ret:null},
+  {place:'Monad / Springway Bar',   drop:100,  ret:null},
+  {place:'Hostel to Kozhikode City',drop:400,  ret:800},
+  {place:'Railway Station / Beach / Seaqueen / Taj', drop:450, ret:800},
+  {place:'Medical College',         drop:270,  ret:null},
+  {place:'CBI - Moozhikkal',        drop:220,  ret:null},
+  {place:'Passport Seva Kendra West Hill', drop:450, ret:null},
+  {place:'Dr. Cafe / E Max / NIT / Nirmala', drop:250, ret:500},
+  {place:'KMCT',                    drop:370,  ret:null},
+  {place:'Mukkam Movie',            drop:450,  ret:null},
+  {place:'Foreign Office',          drop:550,  ret:null},
+  {place:'Kadav Resort',            drop:550,  ret:900},
+  {place:'Kappad Beach',            drop:900,  ret:1200},
+  {place:'Beypore Beach',           drop:750,  ret:1100},
+  {place:'Thusharagiri',            drop:950,  ret:1400},
+  {place:'Hilite Mall',             drop:350,  ret:700},
+  {place:'Decathlon',               drop:400,  ret:800},
+  // Image 1 — more destinations
+  {place:'Silver Spoon / Harahara Temple', drop:140, ret:null},
+  {place:'VR Residency / Lissy Hotel', drop:120, ret:null},
+  {place:'Miracle',                 drop:100,  ret:null},
+  {place:'Gulmohar / Choco Lick',   drop:350,  ret:700},
+  {place:'Regal Movie',             drop:400,  ret:800},
+  {place:'Lady Loafella',           drop:500,  ret:900},
+  {place:'Katsu / Le Arabia / Gokulam Mall', drop:400, ret:800},
+  {place:'Copper Kitchen / Eatmosphere', drop:500, ret:850},
+  {place:'Natural Ice Cream',       drop:350,  ret:700},
+  {place:'Chandrettante Chayakkada',drop:150,  ret:null},
+  {place:'Milma',                   drop:150,  ret:null},
+  {place:'Wakka Wakka',             drop:120,  ret:null},
+  {place:'Airport Drop and Pickup', drop:900,  ret:null},
+  {place:'Airport Waiting and Coming Back', drop:1200, ret:null},
+];
+
+function renderFares(filter){
+  const el=document.getElementById('fare-rows');
+  if(!el)return;
+  const f=filter.toLowerCase().trim();
+  const rows=FARE_CARD.filter(r=>!f||r.place.toLowerCase().includes(f));
+  if(!rows.length){el.innerHTML='<div style="padding:14px;text-align:center;font-size:13px;color:var(--text-sec)">No results found</div>';return;}
+  el.innerHTML=rows.map((r,i)=>`
+    <div style="display:grid;grid-template-columns:1fr 72px 72px;padding:10px 14px;border-bottom:1px solid #F5EAEC;background:${i%2===0?'#fff':' var(--cream)'}">
+      <div style="font-size:13px;font-weight:500;color:var(--text);line-height:1.4">${r.place}</div>
+      <div style="font-size:13px;font-weight:700;color:var(--maroon-dark);text-align:center">₹${r.drop}</div>
+      <div style="font-size:13px;font-weight:500;color:var(--text-sec);text-align:center">${r.ret?'₹'+r.ret:'-'}</div>
+    </div>`).join('');
+}
+
+window.filterFares=function(val){ renderFares(val); };
+
 window.updateJoined=function(id, current, seats, dir){
   if(!fbReady){toast('Connecting...');return;}
   const newVal = dir==='dec' ? Math.max(0,current) : Math.min(seats, current+1);

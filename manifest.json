@@ -1,0 +1,18 @@
+{
+  "name": "IIMK AutoPool",
+  "short_name": "AutoPool",
+  "description": "Campus carpooling for IIM Kozhikode students",
+  "start_url": "/iimk-autopool/",
+  "display": "standalone",
+  "background_color": "#5A0D1A",
+  "theme_color": "#7B1226",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

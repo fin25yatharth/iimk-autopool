@@ -164,6 +164,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .preset-chip:active{background:var(--gold-pale);border-color:var(--gold)}
 .sel-chip{background:var(--maroon)!important;color:#fff!important;border-color:var(--maroon)!important}
 
+.map-quick-link{display:flex;align-items:center;gap:5px;padding:8px 10px;background:var(--cream);border:1px solid var(--border);border-radius:10px;font-size:12px;font-weight:600;color:var(--text);text-decoration:none;}
+.map-quick-link:active{background:var(--gold-pale);}
 .bus-quick-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--gold-pale),#FFF3CC);border:1.5px solid var(--gold);border-radius:12px;font-size:13px;font-weight:700;color:var(--maroon-dark);cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px}
 </style>
 </head>
@@ -189,6 +191,13 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <option>Maingate</option><option>Calicut Beach</option>
           <option>Monad</option><option>SM Street</option>
           <option>Calicut Airport</option><option>Calicut Railway Station</option>
+          <option>Hilite Mall</option>
+          <option>Gokulum Mall</option>
+          <option>Springway</option>
+          <option>Kappad Beach</option>
+          <option>Baby Memorial Hospital</option>
+          <option>Nirmala Hospital</option>
+          <option>Dr. Cafe</option>
         </select>
       </div>
       <div style="display:flex;align-items:center;justify-content:center;margin:-2px 0">
@@ -203,6 +212,13 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <option>C&amp;D Housing</option><option>Calicut Beach</option>
           <option>Monad</option><option>SM Street</option>
           <option>Calicut Airport</option><option>Calicut Railway Station</option>
+          <option>Hilite Mall</option>
+          <option>Gokulum Mall</option>
+          <option>Springway</option>
+          <option>Kappad Beach</option>
+          <option>Baby Memorial Hospital</option>
+          <option>Nirmala Hospital</option>
+          <option>Dr. Cafe</option>
         </select>
       </div>
       <div class="input-group">
@@ -272,6 +288,13 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <option>Maingate</option><option>Calicut Beach</option>
           <option>Monad</option><option>SM Street</option>
           <option>Calicut Airport</option><option>Calicut Railway Station</option>
+          <option>Hilite Mall</option>
+          <option>Gokulum Mall</option>
+          <option>Springway</option>
+          <option>Kappad Beach</option>
+          <option>Baby Memorial Hospital</option>
+          <option>Nirmala Hospital</option>
+          <option>Dr. Cafe</option>
         </select>
       </div>
       <div class="input-group">
@@ -283,6 +306,13 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <option>C&amp;D Housing</option><option>Calicut Beach</option>
           <option>Monad</option><option>SM Street</option>
           <option>Calicut Airport</option><option>Calicut Railway Station</option>
+          <option>Hilite Mall</option>
+          <option>Gokulum Mall</option>
+          <option>Springway</option>
+          <option>Kappad Beach</option>
+          <option>Baby Memorial Hospital</option>
+          <option>Nirmala Hospital</option>
+          <option>Dr. Cafe</option>
         </select>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -771,32 +801,45 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 
   <!-- FULL GOOGLE MY MAPS PANEL -->
-  <div id="ct-gmaps" class="bus-panel" style="padding:16px 12px">
+  <div id="ct-gmaps" class="bus-panel" style="padding:14px 12px">
 
-    <!-- Primary action -->
+    <!-- Open in Maps button -->
     <a href="https://www.google.com/maps/d/viewer?mid=162TUbIZvnnvMes4q2c2zSY-U9EI&hl=en" target="_blank"
-      style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:var(--maroon);color:#fff;border-radius:14px;text-decoration:none;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;box-shadow:0 4px 12px rgba(123,18,38,0.25);margin-bottom:14px">
+      style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:var(--maroon);color:#fff;border-radius:14px;text-decoration:none;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;box-shadow:0 4px 12px rgba(123,18,38,0.25);margin-bottom:12px">
       🗺️ Open full IIMK campus map
     </a>
 
-    <!-- What you'll see card -->
-    <div style="background:var(--white);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px">
-      <div style="font-size:13px;font-weight:700;color:var(--maroon-dark);margin-bottom:10px">What this map shows</div>
-      <div style="display:flex;flex-direction:column;gap:7px">
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">📍 All hostel blocks A through L</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🎓 Academic buildings and lecture halls</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🍽️ Canteens, H Canteen, J Canteen</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🚗 Auto pickup points and parking</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🏋️ Health club, laundry, sports facilities</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🌳 Walking trails and nature spots</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)">🛣️ Campus roads and entry gates</div>
+    <!-- Static map thumbnail using OpenStreetMap which allows embedding -->
+    <div style="border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-bottom:12px;position:relative">
+      <img
+        src="https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=400&center=lonlat:75.9352,11.3185&zoom=16&apiKey=a4035a1ad1ee4b7c8b89cd3793f1da41"
+        onerror="this.onerror=null;this.src='https://staticmap.openstreetmap.de/staticmap.php?center=11.3185,75.9352&zoom=16&size=600x400&markers=11.3185,75.9352,red'"
+        style="width:100%;display:block"
+        alt="IIMK campus area map"
+        loading="lazy">
+      <div style="position:absolute;bottom:8px;right:8px">
+        <a href="https://www.openstreetmap.org/?mlat=11.3185&mlon=75.9352&zoom=16" target="_blank"
+          style="font-size:10px;color:#333;background:rgba(255,255,255,0.9);padding:3px 7px;border-radius:6px;text-decoration:none">© OpenStreetMap</a>
+      </div>
+    </div>
+
+    <!-- Key locations quick links -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:12px">
+      <div style="font-size:12px;font-weight:700;color:var(--maroon-dark);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">Quick directions from campus</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Calicut+Beach" target="_blank" class="map-quick-link">🏖️ Calicut Beach</a>
+        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/SM+Street+Kozhikode" target="_blank" class="map-quick-link">🛍️ SM Street</a>
+        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Calicut+Railway+Station" target="_blank" class="map-quick-link">🚂 Railway Station</a>
+        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Calicut+Airport" target="_blank" class="map-quick-link">✈️ Airport</a>
+        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/HiLITE+Mall+Kozhikode" target="_blank" class="map-quick-link">🛒 Hilite Mall</a>
+        <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Baby+Memorial+Hospital+Kozhikode" target="_blank" class="map-quick-link">🏥 Baby Memorial</a>
       </div>
     </div>
 
     <!-- Tip -->
     <div style="background:var(--gold-pale);border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:12px 14px">
-      <div style="font-size:12px;font-weight:700;color:var(--maroon-dark);margin-bottom:4px">💡 Tip for new students</div>
-      <div style="font-size:12px;color:var(--text-sec);line-height:1.6">Save this map to your Google Maps by tapping the star icon after opening. You can then navigate to any building on campus using Google Maps turn-by-turn.</div>
+      <div style="font-size:12px;font-weight:700;color:var(--maroon-dark);margin-bottom:4px">💡 Save the IIMK map</div>
+      <div style="font-size:12px;color:var(--text-sec);line-height:1.6">Open the campus map above, tap the star to save it. Then Google Maps will show turn-by-turn directions to any hostel block or building.</div>
     </div>
   </div>
 </div>
@@ -918,6 +961,13 @@ const DIST = {
   'Silver Spoon_Calicut Railway Station':18,'D Landing_Calicut Railway Station':18,
   'Phase V_Calicut Railway Station':19,'C&D Housing_Calicut Railway Station':18.5,
   'Maingate_Calicut Railway Station':16,'Calicut Beach_Maingate':10,'Monad_Maingate':6,
+  'Maingate_Hilite Mall':8,'Silver Spoon_Hilite Mall':10,'D Landing_Hilite Mall':10,'Phase V_Hilite Mall':11,'C&D Housing_Hilite Mall':10,
+  'Maingate_Gokulum Mall':12,'Silver Spoon_Gokulum Mall':14,'D Landing_Gokulum Mall':14,'Phase V_Gokulum Mall':15,'C&D Housing_Gokulum Mall':14,
+  'Maingate_Springway':6,'Silver Spoon_Springway':8,'D Landing_Springway':8,'Phase V_Springway':9,'C&D Housing_Springway':8,
+  'Maingate_Kappad Beach':22,'Silver Spoon_Kappad Beach':24,'D Landing_Kappad Beach':24,'Phase V_Kappad Beach':25,'C&D Housing_Kappad Beach':24,
+  'Maingate_Baby Memorial Hospital':9,'Silver Spoon_Baby Memorial Hospital':11,'D Landing_Baby Memorial Hospital':11,'Phase V_Baby Memorial Hospital':12,'C&D Housing_Baby Memorial Hospital':11,
+  'Maingate_Nirmala Hospital':7,'Silver Spoon_Nirmala Hospital':9,'D Landing_Nirmala Hospital':9,'Phase V_Nirmala Hospital':10,'C&D Housing_Nirmala Hospital':9,
+  'Maingate_Dr. Cafe':5,'Silver Spoon_Dr. Cafe':7,'D Landing_Dr. Cafe':7,'Phase V_Dr. Cafe':8,'C&D Housing_Dr. Cafe':7,
   'SM Street_Maingate':12,'Calicut Airport_Maingate':28,'Calicut Railway Station_Maingate':16,
 };
 

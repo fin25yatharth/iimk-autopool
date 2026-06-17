@@ -178,6 +178,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div class="hero-eyebrow">IIM Kozhikode · AutoPool</div>
     <div class="hero-title">Get there together.</div>
     <div class="hero-sub">Share autos · Save money · Travel smart</div>
+    <button onclick="showFareCard()" style="margin-top:10px;padding:6px 14px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.4);border-radius:20px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">💰 Team Namo rate card</button>
   </div>
 
   <div style="padding:12px 12px 0">
@@ -918,6 +919,61 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 </div>
 
+
+<!-- FARE CARD MODAL -->
+<div id="fare-modal-overlay" onclick="hideFareCard()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:flex-end;justify-content:center">
+  <div onclick="event.stopPropagation()" style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;padding:0 0 24px">
+    <!-- Handle -->
+    <div style="display:flex;justify-content:center;padding:12px 0 0"><div style="width:40px;height:4px;border-radius:2px;background:var(--border)"></div></div>
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#c0392b,#e74c3c);margin:10px 12px;border-radius:14px;padding:14px 16px;text-align:center">
+      <div style="font-size:18px;font-weight:900;color:#FFE600;letter-spacing:0.05em;font-family:'Inter',sans-serif">TEAM NAMO</div>
+      <div style="font-size:12px;color:#fff;font-weight:600;margin-top:2px">Reference Rate Card - IIMK Main Gate</div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.75);margin-top:3px">Max 2 hrs waiting · Extra hours Rs.100/hr</div>
+    </div>
+    <!-- Search -->
+    <div style="padding:0 12px 8px">
+      <input type="text" id="modal-fare-search" placeholder="Search destination..." oninput="filterModalFares(this.value)"
+        style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;outline:none;font-family:'Inter',sans-serif">
+    </div>
+    <!-- Table -->
+    <div style="margin:0 12px;background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:1fr 68px 68px;background:var(--maroon-dark);padding:9px 14px">
+        <div style="font-size:11px;font-weight:700;color:var(--gold-light);text-transform:uppercase;letter-spacing:0.05em">Destination</div>
+        <div style="font-size:11px;font-weight:700;color:var(--gold-light);text-align:center;text-transform:uppercase">Drop</div>
+        <div style="font-size:11px;font-weight:700;color:var(--gold-light);text-align:center;text-transform:uppercase">Return</div>
+      </div>
+      <div id="modal-fare-rows"></div>
+    </div>
+    <!-- Close -->
+    <div style="padding:14px 12px 0">
+      <button onclick="hideFareCard()" style="width:100%;padding:12px;background:var(--maroon);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- JOIN REQUEST MODAL -->
+<div id="req-modal-overlay" onclick="closeReqModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:flex-end;justify-content:center">
+  <div onclick="event.stopPropagation()" style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:0 16px 28px">
+    <div style="display:flex;justify-content:center;padding:12px 0 0"><div style="width:40px;height:4px;border-radius:2px;background:var(--border)"></div></div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--maroon-dark);margin:12px 0 4px">Request to join</div>
+    <div id="req-modal-route" style="font-size:13px;color:var(--text-sec);margin-bottom:16px"></div>
+    <div class="input-group">
+      <span class="lbl">Your name</span>
+      <input type="text" id="req-name" placeholder="e.g. Priya, A-204">
+    </div>
+    <div class="input-group" style="margin-top:10px">
+      <span class="lbl">Your WhatsApp number</span>
+      <input type="tel" id="req-phone" placeholder="10-digit number">
+    </div>
+    <div class="input-group" style="margin-top:10px">
+      <span class="lbl">Message to poster (optional)</span>
+      <input type="text" id="req-msg" placeholder="e.g. Can we leave by 5:15?">
+    </div>
+    <button onclick="submitJoinRequest()" style="width:100%;margin-top:14px;padding:13px;background:var(--maroon);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 12px rgba(123,18,38,0.25)">Send request</button>
+    <button onclick="closeReqModal()" style="width:100%;margin-top:8px;padding:11px;background:transparent;color:var(--text-sec);border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancel</button>
+  </div>
+</div>
 </div><!-- #app -->
 
 <nav style="grid-template-columns:repeat(6,1fr)">
@@ -1240,14 +1296,18 @@ window.updateHomeFare=function(){
   const el=document.getElementById('home-fare');
   if(!from||!to){el.innerHTML='';return;}
   const f=getFare(from,to,3);if(!f){el.innerHTML='';return;}
-  el.innerHTML=`<div class="fare-box"><div class="fare-row"><span>Est. total fare</span><span>₹${f.total}</span></div><div class="fare-row"><span>Per person (3 sharing)</span><span class="fare-total">₹${f.perPerson}</span></div><div class="fare-row"><span style="font-size:11px;color:#aaa">Base ₹70 + ₹30/km beyond 2 km · ~${f.dist} km</span></div></div>`;
+  el.innerHTML=`<div class="fare-box">
+    <div class="fare-row"><span>Estimated total fare</span><span style="font-weight:700">₹${f.total}</span></div>
+    <div class="fare-row"><span>Per person (3 sharing)</span><span class="fare-total">₹${f.perPerson}</span></div>
+    <div class="fare-row"><span style="font-size:11px;color:var(--text-sec)">Avg auto rates only. <button onclick="showFareCard()" style="background:none;border:none;color:var(--maroon);font-size:11px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline">See Team Namo rate card</button></span></div>
+  </div>`;
 }
 window.updatePostFare=function(){
   const from=document.getElementById('p-from').value,to=document.getElementById('p-to').value;
   const el=document.getElementById('post-fare'),ml=document.getElementById('maps-link');
   if(!from||!to){el.innerHTML='';ml.style.display='none';return;}
   const f=getFare(from,to,3);
-  el.innerHTML=f?`<div class="fare-box"><div class="fare-row"><span>Est. total fare</span><span>₹${f.total}</span></div><div class="fare-row"><span>Per person (3 sharing)</span><span class="fare-total">₹${f.perPerson}</span></div></div>`:'';
+  el.innerHTML=f?`<div class="fare-box"><div class="fare-row"><span>Estimated total fare</span><span style="font-weight:700">₹${f.total}</span></div><div class="fare-row"><span>Per person (${seats} sharing)</span><span class="fare-total">₹${f.perPerson}</span></div><div class="fare-row"><span style="font-size:11px;color:var(--text-sec)">Based on avg auto rates. <button onclick="showFareCard()" style="background:none;border:none;color:var(--maroon);font-size:11px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline">See rate card</button></span></div></div>`:'';
   ml.href=`https://www.google.com/maps/dir/${encodeURIComponent(from+' Kozhikode')}/${encodeURIComponent(to+' Kozhikode')}`;
   ml.style.display='flex';
 }
@@ -1366,14 +1426,13 @@ function rideCardHtml(r,showOwner=false){
   if(isCompleted){
     actionHtml=upiBlock(r.upi,r.quotedFare?Math.round(parseInt(r.quotedFare)/r.seats):fare?fare.perPerson:70);
   } else if(open){
-    // Notify poster via WhatsApp when someone taps Join
-    const notifyUrl=`https://wa.me/91${r.phone}?text=${encodeURIComponent('Hi '+displayName+'! I wants to join your auto from '+r.from+' to '+r.to+' at '+(r.slot||'Now')+'. Check the IIMK AutoPool app.')}`;
     actionHtml=`<div style="margin-top:8px">
-      <a href="${notifyUrl}" target="_blank" onclick="void(0)" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;background:var(--maroon);color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;margin-bottom:8px">
-        🚗 Request to join — notify poster
-      </a>
+      <button onclick="requestSeat('${r.id}','${r.from}','${r.to}','${r.slot||'Now'}','${displayName}','${r.phone}')"
+        style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:var(--maroon);color:#fff;border-radius:10px;font-size:14px;font-weight:700;border:none;cursor:pointer;margin-bottom:8px;box-shadow:0 3px 10px rgba(123,18,38,0.25);font-family:'Inter',sans-serif">
+        🚗 Request to join this ride
+      </button>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <button onclick="openRideChat('${r.id}','${r.from}','${r.to}','${r.slot||'Now'}','${displayName}')" style="padding:9px 6px;background:var(--gold-pale);border:1.5px solid var(--gold);border-radius:10px;font-size:12px;font-weight:700;color:var(--maroon-dark);cursor:pointer">💬 Chat</button>
+        <button onclick="openRideChat('${r.id}','${r.from}','${r.to}','${r.slot||'Now'}','${displayName}')" style="padding:9px 6px;background:var(--gold-pale);border:1.5px solid var(--gold);border-radius:10px;font-size:12px;font-weight:700;color:var(--maroon-dark);cursor:pointer;font-family:'Inter',sans-serif">💬 Chat</button>
         <a href="${waUrl}" target="_blank" style="padding:9px 6px;background:#e7f8ef;border:1.5px solid #86efac;border-radius:10px;font-size:12px;font-weight:700;color:#166534;text-decoration:none;text-align:center">📱 WhatsApp</a>
       </div>
     </div>`;
@@ -1383,7 +1442,8 @@ function rideCardHtml(r,showOwner=false){
 
   let ownerHtml='';
   if(showOwner&&!isCompleted){
-    ownerHtml=`<button class="btn-complete" onclick="markComplete('${r.id}')">Mark ride complete - show UPI</button>
+    ownerHtml=`<div id="reqs-${r.id}"></div>
+    <button class="btn-complete" onclick="markComplete('${r.id}')">Mark ride complete - show UPI</button>
     <button class="btn-danger" onclick="cancelRide('${r.id}')">Cancel this ride</button>`;
   } else if(showOwner&&isCompleted){
     ownerHtml=`<button class="btn-danger" onclick="cancelRide('${r.id}')">Remove ride</button>`;
@@ -1464,6 +1524,133 @@ window.cancelRide=function(id){
   deleteDoc(doc(db,'rides',id)).then(()=>{toast('Ride cancelled');loadMyRides();});
 }
 // ── FIX 4: Update joined count ──────────────────────────────
+window.showFareCard=function(){
+  const overlay=document.getElementById('fare-modal-overlay');
+  overlay.style.display='flex';
+  document.getElementById('modal-fare-search').value='';
+  renderModalFares('');
+  document.body.style.overflow='hidden';
+};
+window.hideFareCard=function(){
+  document.getElementById('fare-modal-overlay').style.display='none';
+  document.body.style.overflow='';
+};
+function renderModalFares(filter){
+  const el=document.getElementById('modal-fare-rows');
+  if(!el)return;
+  const f=filter.toLowerCase().trim();
+  const rows=FARE_CARD.filter(r=>!f||r.place.toLowerCase().includes(f));
+  if(!rows.length){el.innerHTML='<div style="padding:14px;text-align:center;font-size:13px;color:var(--text-sec)">No results</div>';return;}
+  el.innerHTML=rows.map((r,i)=>`
+    <div style="display:grid;grid-template-columns:1fr 68px 68px;padding:10px 14px;border-bottom:1px solid #F5EAEC;background:${i%2===0?'#fff':'var(--cream)'}">
+      <div style="font-size:13px;font-weight:500;color:var(--text);line-height:1.4">${r.place}</div>
+      <div style="font-size:13px;font-weight:700;color:var(--maroon-dark);text-align:center">₹${r.drop}</div>
+      <div style="font-size:13px;color:var(--text-sec);text-align:center">${r.ret?'₹'+r.ret:'-'}</div>
+    </div>`).join('');
+}
+window.filterModalFares=function(val){ renderModalFares(val); };
+
+
+// ── JOIN REQUEST SYSTEM ──────────────────────────────────────
+let _reqRideId=null, _reqFrom='', _reqTo='', _reqSlot='', _reqPosterName='', _reqPosterPhone='';
+
+window.requestSeat=function(rideId, from, to, slot, posterName, posterPhone){
+  _reqRideId=rideId; _reqFrom=from; _reqTo=to; _reqSlot=slot;
+  _reqPosterName=posterName; _reqPosterPhone=posterPhone;
+  document.getElementById('req-modal-route').textContent=from+' to '+to+(slot&&slot!=='Now'?' at '+slot:'');
+  document.getElementById('req-name').value='';
+  document.getElementById('req-phone').value='';
+  document.getElementById('req-msg').value='';
+  document.getElementById('req-modal-overlay').style.display='flex';
+  document.body.style.overflow='hidden';
+};
+
+window.closeReqModal=function(){
+  document.getElementById('req-modal-overlay').style.display='none';
+  document.body.style.overflow='';
+};
+
+window.submitJoinRequest=function(){
+  const name=document.getElementById('req-name').value.trim();
+  const phone=document.getElementById('req-phone').value.trim();
+  const msg=document.getElementById('req-msg').value.trim();
+  if(!name){toast('Please enter your name');return;}
+  if(!/^\d{10}$/.test(phone)){toast('Enter a valid 10-digit number');return;}
+  if(!fbReady){toast('Connecting... try again');return;}
+  if(!_reqRideId){toast('Error: ride not found');return;}
+  addDoc(collection(db,'requests'),{
+    rideId:_reqRideId, from:_reqFrom, to:_reqTo, slot:_reqSlot,
+    requesterName:name, requesterPhone:phone, message:msg,
+    posterPhone:_reqPosterPhone, status:'pending',
+    createdAt:serverTimestamp()
+  }).then(()=>{
+    closeReqModal();
+    toast('Request sent! Poster will accept or decline.');
+  }).catch(e=>toast('Error: '+e.message));
+};
+
+window.acceptRequest=function(reqId, rideId, rPhone, rName, seats, joined){
+  if(!fbReady){toast('Connecting...');return;}
+  if(joined>=seats){toast('Ride is already full');return;}
+  updateDoc(doc(db,'requests',reqId),{status:'accepted'})
+    .then(()=>updateDoc(doc(db,'rides',rideId),{joined:joined+1}))
+    .then(()=>{
+      toast('Accepted! Notifying '+rName+' via WhatsApp...');
+      const waUrl='https://wa.me/91'+rPhone+'?text='+encodeURIComponent('Hi '+rName+'! Your seat request has been accepted. See you at the auto! - IIMK AutoPool');
+      setTimeout(()=>window.open(waUrl,'_blank'),600);
+      loadMyRides();
+    }).catch(e=>toast('Error: '+e.message));
+};
+
+window.declineRequest=function(reqId, rPhone, rName){
+  if(!fbReady){toast('Connecting...');return;}
+  updateDoc(doc(db,'requests',reqId),{status:'declined'})
+    .then(()=>{
+      toast('Declined. Notifying '+rName+'...');
+      const waUrl='https://wa.me/91'+rPhone+'?text='+encodeURIComponent('Hi '+rName+'! Sorry, your seat request could not be accommodated this time. - IIMK AutoPool');
+      setTimeout(()=>window.open(waUrl,'_blank'),600);
+      loadMyRides();
+    }).catch(e=>toast('Error: '+e.message));
+};
+
+// Load pending requests for a ride (called in My Rides for poster)
+function loadRideRequests(rideId, seats, joined, containerEl){
+  if(!fbReady||!containerEl)return;
+  const q=query(collection(db,'requests'),orderBy('createdAt','asc'));
+  getDocs(q).then(snap=>{
+    const pending=snap.docs
+      .map(d=>({id:d.id,...d.data()}))
+      .filter(r=>r.rideId===rideId&&r.status==='pending');
+    if(!pending.length){containerEl.innerHTML='';return;}
+    containerEl.innerHTML=`
+      <div style="margin-top:10px;background:#FFF8E1;border:1.5px solid var(--gold);border-radius:12px;overflow:hidden">
+        <div style="padding:8px 12px;background:var(--gold);display:flex;align-items:center;gap:6px">
+          <span style="font-size:13px;font-weight:700;color:var(--maroon-dark)">🔔 ${pending.length} pending request${pending.length>1?'s':''}</span>
+        </div>
+        ${pending.map(req=>`
+          <div style="padding:10px 12px;border-bottom:1px solid rgba(201,168,76,0.25)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--text)">${req.requesterName}</div>
+                <div style="font-size:12px;color:var(--text-sec)">📱 ${req.requesterPhone}</div>
+                ${req.message?`<div style="font-size:12px;color:var(--text-sec);margin-top:2px;font-style:italic">"${req.message}"</div>`:''}
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <button onclick="acceptRequest('${req.id}','${rideId}','${req.requesterPhone}','${req.requesterName.split(',')[0]}',${seats},${joined})"
+                style="padding:9px;background:#DCFCE7;color:#166534;border:1.5px solid #86efac;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">
+                Accept
+              </button>
+              <button onclick="declineRequest('${req.id}','${req.requesterPhone}','${req.requesterName.split(',')[0]}')"
+                style="padding:9px;background:#FEE2E2;color:#991B1B;border:1.5px solid #FCA5A5;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">
+                Decline
+              </button>
+            </div>
+          </div>`).join('')}
+      </div>`;
+  });
+}
+
 window.switchChettatab=function(btn, panelId){
   document.querySelectorAll('#s-chettas .bus-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('#s-chettas .bus-panel').forEach(p=>p.classList.remove('active'));
@@ -1596,6 +1783,13 @@ window.loadMyRides=function(){
     const mine=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.uid===currentUid);
     if(!mine.length){el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>You haven\'t posted any rides yet.</div>';return;}
     el.innerHTML=mine.map(r=>rideCardHtml(r,true)).join('');
+    // Load pending requests for each ride
+    setTimeout(()=>{
+      mine.forEach(r=>{
+        const container=document.getElementById('reqs-'+r.id);
+        if(container) loadRideRequests(r.id, r.seats, r.joined||0, container);
+      });
+    },100);
   });
 }
 

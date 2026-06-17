@@ -185,7 +185,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div class="card" style="margin:0 0 10px">
       <div class="input-group">
         <span class="lbl">From</span>
-        <select id="h-from" onchange="updateHomeFare()">
+        <select id="h-from" onchange="handleCustomLoc('h-from','h-custom-from-wrap');updateHomeFare()">
           <option value="">Select pickup point</option>
           <option>Silver Spoon</option><option>D Landing</option>
           <option>Phase V</option><option>C&amp;D Housing</option>
@@ -199,6 +199,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <option>Baby Memorial Hospital</option>
           <option>Nirmala Hospital</option>
           <option>Dr. Cafe</option>
+            <option value="custom">✏️ Other - type below</option>
         </select>
       </div>
       <div style="display:flex;align-items:center;justify-content:center;margin:-2px 0">
@@ -206,7 +207,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       </div>
       <div class="input-group" style="margin-top:4px">
         <span class="lbl">To</span>
-        <select id="h-to" onchange="updateHomeFare()">
+        <select id="h-to" onchange="handleCustomLoc('h-to','h-custom-to-wrap');updateHomeFare()">
           <option value="">Select destination</option>
           <option>Maingate</option><option>Silver Spoon</option>
           <option>D Landing</option><option>Phase V</option>
@@ -220,7 +221,16 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <option>Baby Memorial Hospital</option>
           <option>Nirmala Hospital</option>
           <option>Dr. Cafe</option>
+            <option value="custom">✏️ Other - type below</option>
         </select>
+      </div>
+      <div id="p-custom-from-wrap" style="display:none">
+        <span class="lbl" style="margin-top:6px">Custom pickup location</span>
+        <input type="text" id="p-custom-from" placeholder="Type pickup location">
+      </div>
+      <div id="p-custom-to-wrap" style="display:none">
+        <span class="lbl" style="margin-top:6px">Custom destination</span>
+        <input type="text" id="p-custom-to" placeholder="Type destination">
       </div>
       <div class="input-group">
         <span class="lbl">When</span>
@@ -247,6 +257,12 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           </div>
           <div id="bus-match-hint" style="display:none;margin-top:8px;padding:8px 10px;background:rgba(123,18,38,0.07);border-radius:8px;border-left:3px solid var(--maroon);font-size:12px;color:var(--maroon-dark);font-weight:600;line-height:1.5"></div>
         </div>
+      </div>
+      <div id="h-custom-from-wrap" style="display:none;margin-top:6px">
+        <input type="text" id="h-custom-from" placeholder="Type pickup location" oninput="updateHomeFare()">
+      </div>
+      <div id="h-custom-to-wrap" style="display:none;margin-top:6px">
+        <input type="text" id="h-custom-to" placeholder="Type destination" oninput="updateHomeFare()">
       </div>
       <div id="home-fare"></div>
     </div>
@@ -282,7 +298,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div class="card">
       <div class="input-group">
         <span class="lbl">From</span>
-        <select id="p-from" onchange="updatePostFare()">
+        <select id="p-from" onchange="handleCustomLoc('p-from','p-custom-from-wrap');updatePostFare()">
           <option value="">Select pickup</option>
           <option>Silver Spoon</option><option>D Landing</option>
           <option>Phase V</option><option>C&amp;D Housing</option>
@@ -296,11 +312,12 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <option>Baby Memorial Hospital</option>
           <option>Nirmala Hospital</option>
           <option>Dr. Cafe</option>
+            <option value="custom">✏️ Other - type below</option>
         </select>
       </div>
       <div class="input-group">
         <span class="lbl">To</span>
-        <select id="p-to" onchange="updatePostFare()">
+        <select id="p-to" onchange="handleCustomLoc('p-to','p-custom-to-wrap');updatePostFare()">
           <option value="">Select destination</option>
           <option>Maingate</option><option>Silver Spoon</option>
           <option>D Landing</option><option>Phase V</option>
@@ -314,6 +331,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <option>Baby Memorial Hospital</option>
           <option>Nirmala Hospital</option>
           <option>Dr. Cafe</option>
+            <option value="custom">✏️ Other - type below</option>
         </select>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -1283,31 +1301,54 @@ window.goTo=function(id){
 
 window.swapLocs=function(){
   const f=document.getElementById('h-from'),t=document.getElementById('h-to');
-  const tmp=f.value;f.value=t.value;t.value=tmp;updateHomeFare();
+  const tmp=f.value;f.value=t.value;t.value=tmp;
+  handleCustomLoc('h-from','h-custom-from-wrap');
+  handleCustomLoc('h-to','h-custom-to-wrap');
+  updateHomeFare();
 }
+// Reference fare lookup from Team Namo rate card + common campus routes
+const ROUTE_FARES = {
+  // Campus checkpoint to Maingate
+  'Silver Spoon_Maingate':70,'D Landing_Maingate':70,'Phase V_Maingate':70,'C&D Housing_Maingate':70,
+  'Maingate_Silver Spoon':70,'Maingate_D Landing':70,'Maingate_Phase V':70,'Maingate_C&D Housing':70,
+  // Campus to city (Team Namo card - hostel to destination rates)
+  'Silver Spoon_Calicut Beach':450,'D Landing_Calicut Beach':450,'Phase V_Calicut Beach':450,'C&D Housing_Calicut Beach':450,'Maingate_Calicut Beach':400,
+  'Silver Spoon_SM Street':450,'D Landing_SM Street':450,'Phase V_SM Street':450,'C&D Housing_SM Street':450,'Maingate_SM Street':400,
+  'Silver Spoon_Monad':100,'D Landing_Monad':100,'Phase V_Monad':100,'C&D Housing_Monad':100,'Maingate_Monad':80,
+  'Silver Spoon_Calicut Airport':900,'D Landing_Calicut Airport':900,'Phase V_Calicut Airport':900,'C&D Housing_Calicut Airport':900,'Maingate_Calicut Airport':900,
+  'Silver Spoon_Calicut Railway Station':450,'D Landing_Calicut Railway Station':450,'Phase V_Calicut Railway Station':450,'C&D Housing_Calicut Railway Station':450,'Maingate_Calicut Railway Station':400,
+  'Silver Spoon_Hilite Mall':350,'D Landing_Hilite Mall':350,'Phase V_Hilite Mall':350,'C&D Housing_Hilite Mall':350,'Maingate_Hilite Mall':350,
+  'Silver Spoon_Gokulum Mall':400,'D Landing_Gokulum Mall':400,'Phase V_Gokulum Mall':400,'C&D Housing_Gokulum Mall':400,'Maingate_Gokulum Mall':400,
+  'Silver Spoon_Springway':100,'D Landing_Springway':100,'Phase V_Springway':100,'C&D Housing_Springway':100,'Maingate_Springway':80,
+  'Silver Spoon_Kappad Beach':900,'D Landing_Kappad Beach':900,'Phase V_Kappad Beach':900,'C&D Housing_Kappad Beach':900,'Maingate_Kappad Beach':900,
+  'Silver Spoon_Baby Memorial Hospital':250,'D Landing_Baby Memorial Hospital':250,'Phase V_Baby Memorial Hospital':250,'C&D Housing_Baby Memorial Hospital':250,'Maingate_Baby Memorial Hospital':250,
+  'Silver Spoon_Nirmala Hospital':250,'D Landing_Nirmala Hospital':250,'Phase V_Nirmala Hospital':250,'C&D Housing_Nirmala Hospital':250,'Maingate_Nirmala Hospital':250,
+  'Silver Spoon_Dr. Cafe':250,'D Landing_Dr. Cafe':250,'Phase V_Dr. Cafe':250,'C&D Housing_Dr. Cafe':250,'Maingate_Dr. Cafe':250,
+};
+
 function getFare(from,to,seats){
-  const k=from+'_'+to,rk=to+'_'+from,dist=DIST[k]||DIST[rk]||null;
-  if(!dist)return null;
-  const total=dist<=2?70:Math.round(70+(dist-2)*30);
-  return{total,perPerson:seats>1?Math.round(total/seats):total,dist};
+  const k=from+'_'+to, rk=to+'_'+from;
+  const total=ROUTE_FARES[k]||ROUTE_FARES[rk]||null;
+  if(!total)return null;
+  return{total, perPerson:seats>1?Math.round(total/seats):total};
 }
 window.updateHomeFare=function(){
-  const from=document.getElementById('h-from').value,to=document.getElementById('h-to').value;
+  const from=getLocValue('h-from','h-custom-from'),to=getLocValue('h-to','h-custom-to');
   const el=document.getElementById('home-fare');
-  if(!from||!to){el.innerHTML='';return;}
+  if(!from||!to||from==='custom'||to==='custom'){el.innerHTML='';return;}
   const f=getFare(from,to,3);if(!f){el.innerHTML='';return;}
   el.innerHTML=`<div class="fare-box">
-    <div class="fare-row"><span>Estimated total fare</span><span style="font-weight:700">₹${f.total}</span></div>
+    <div class="fare-row"><span>Reference fare (Team Namo)</span><span style="font-weight:700">₹${f.total}</span></div>
     <div class="fare-row"><span>Per person (3 sharing)</span><span class="fare-total">₹${f.perPerson}</span></div>
-    <div class="fare-row"><span style="font-size:11px;color:var(--text-sec)">Avg auto rates only. <button onclick="showFareCard()" style="background:none;border:none;color:var(--maroon);font-size:11px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline">See Team Namo rate card</button></span></div>
+    <div class="fare-row"><span style="font-size:11px;color:var(--text-sec)">Rates from Team Namo card. <button onclick="showFareCard()" style="background:none;border:none;color:var(--maroon);font-size:11px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline">View full rate card</button></span></div>
   </div>`;
 }
 window.updatePostFare=function(){
-  const from=document.getElementById('p-from').value,to=document.getElementById('p-to').value;
+  const from=getLocValue('p-from','p-custom-from'),to=getLocValue('p-to','p-custom-to');
   const el=document.getElementById('post-fare'),ml=document.getElementById('maps-link');
-  if(!from||!to){el.innerHTML='';ml.style.display='none';return;}
+  if(!from||!to||from==='custom'||to==='custom'){el.innerHTML='';ml.style.display='none';return;}
   const f=getFare(from,to,3);
-  el.innerHTML=f?`<div class="fare-box"><div class="fare-row"><span>Estimated total fare</span><span style="font-weight:700">₹${f.total}</span></div><div class="fare-row"><span>Per person (${seats} sharing)</span><span class="fare-total">₹${f.perPerson}</span></div><div class="fare-row"><span style="font-size:11px;color:var(--text-sec)">Based on avg auto rates. <button onclick="showFareCard()" style="background:none;border:none;color:var(--maroon);font-size:11px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline">See rate card</button></span></div></div>`:'';
+  el.innerHTML=f?`<div class="fare-box"><div class="fare-row"><span>Reference fare (Team Namo)</span><span style="font-weight:700">₹${f.total}</span></div><div class="fare-row"><span>Per person (${seats} sharing)</span><span class="fare-total">₹${f.perPerson}</span></div><div class="fare-row"><span style="font-size:11px;color:var(--text-sec)">From Team Namo rate card. <button onclick="showFareCard()" style="background:none;border:none;color:var(--maroon);font-size:11px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline">View full rate card</button></span></div></div>`:'';
   ml.href=`https://www.google.com/maps/dir/${encodeURIComponent(from+' Kozhikode')}/${encodeURIComponent(to+' Kozhikode')}`;
   ml.style.display='flex';
 }
@@ -1483,8 +1524,8 @@ function rideCardHtml(r,showOwner=false){
 
 // ── RIDES ────────────────────────────────────────────────────
 window.findRides=function(){
-  const from=document.getElementById('h-from').value,to=document.getElementById('h-to').value;
-  if(!from||!to){toast('Please select pickup and drop');return;}
+  const from=getLocValue('h-from','h-custom-from'),to=getLocValue('h-to','h-custom-to');
+  if(!from||!to||from==='custom'||to==='custom'){toast('Please enter pickup and drop locations');return;}
   if(!fbReady){toast('Connecting... try again in a moment');return;}
   goTo('s-rides');
   document.getElementById('rides-title').textContent=from+' → '+to;
@@ -1497,19 +1538,54 @@ window.findRides=function(){
   });
 }
 window.loadFeed=function(){
-  if(!fbReady){document.getElementById('feed-list').innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting to server...<br>Make sure you have internet.</div>';return;}
   const el=document.getElementById('feed-list');
   el.innerHTML='<div class="loading"><span class="spinner"></span>Loading…</div>';
+  if(!fbReady){el.innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting to server...<br>Make sure you have internet.</div>';return;}
   const q=query(collection(db,'rides'),orderBy('createdAt','desc'));
   onSnapshot(q,snap=>{
+    const now=Date.now();
     const all=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!all.length){el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>No rides posted yet.</div>';return;}
-    el.innerHTML=all.map(r=>rideCardHtml(r,r.uid===currentUid)).join('');
+    // Filter: remove completed rides older than 24 hours from view
+    const visible=all.filter(r=>{
+      if(r.status==='completed'&&r.createdAt){
+        const ms=r.createdAt.toMillis?r.createdAt.toMillis():(r.createdAt.seconds*1000);
+        if(now-ms>86400000)return false;
+      }
+      return true;
+    });
+    if(!visible.length){el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>No active rides posted yet.</div>';return;}
+    const ongoing=visible.filter(r=>r.status!=='completed');
+    const completed=visible.filter(r=>r.status==='completed');
+    let html=ongoing.map(r=>rideCardHtml(r,r.uid===currentUid)).join('');
+    if(completed.length){
+      html+=`<div style="margin:12px 12px 6px;font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.06em;padding-top:4px;border-top:1px solid var(--border)">Completed rides (last 24h)</div>`;
+      html+=completed.map(r=>`<div style="opacity:0.6">${rideCardHtml(r,r.uid===currentUid)}</div>`).join('');
+    }
+    el.innerHTML=html;
   });
 }
+
+
+// ── CUSTOM LOCATION HANDLER ─────────────────────────────────
+window.handleCustomLoc=function(selectId, wrapId){
+  const sel=document.getElementById(selectId);
+  const wrap=document.getElementById(wrapId);
+  if(wrap) wrap.style.display=sel&&sel.value==='custom'?'block':'none';
+};
+
+function getLocValue(selectId, customId){
+  const sel=document.getElementById(selectId);
+  if(!sel)return'';
+  if(sel.value==='custom'){
+    const inp=document.getElementById(customId);
+    return inp?inp.value.trim():'';
+  }
+  return sel.value;
+}
+
 window.postRide=function(){
   if(!fbReady){toast('Connecting... try again in a moment');return;}
-  const from=document.getElementById('p-from').value,to=document.getElementById('p-to').value;
+  const from=getLocValue('p-from','p-custom-from'),to=getLocValue('p-to','p-custom-to');
   const slot=window.selectedSlot||'Now',seats=parseInt(document.getElementById('p-seats').value);
   const autoNum=document.getElementById('p-auto').value.trim();
   const quotedFare=document.getElementById('p-quoted').value.trim();
@@ -1520,23 +1596,98 @@ window.postRide=function(){
   if(from===to){toast('Pickup and drop cannot be the same');return;}
   if(!/^\d{10}$/.test(phone)){toast('Enter a valid 10-digit number');return;}
   const btn=document.querySelector('#s-post .btn-primary');
-  btn.textContent='Posting…';btn.disabled=true;
+  btn.textContent='Posting...';btn.disabled=true;
   addDoc(collection(db,'rides'),{from,to,slot,seats,joined:0,name,phone,autoNum,quotedFare,upi,uid:currentUid,status:'active',createdAt:serverTimestamp()})
     .then(()=>{
       toast('Ride posted! 🎉');
-      ['p-from','p-to','p-auto','p-quoted','p-name','p-phone','p-upi'].forEach(id=>document.getElementById(id).value='');
+      ['p-from','p-to','p-auto','p-quoted','p-name','p-phone','p-upi'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
       document.getElementById('post-fare').innerHTML='';
       document.getElementById('maps-link').style.display='none';
+      ['p-custom-from-wrap','p-custom-to-wrap'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
       btn.textContent='Post ride';btn.disabled=false;
       setTimeout(()=>{goTo('s-feed');loadFeed();},1000);
     }).catch(e=>{toast('Error: '+e.message);btn.textContent='Post ride';btn.disabled=false;});
 }
+
 window.cancelRide=function(id){
-  if(!fbReady){toast('Connecting...');return;}
   if(!confirm('Cancel this ride? It will be removed.'))return;
   deleteDoc(doc(db,'rides',id)).then(()=>{toast('Ride cancelled');loadMyRides();});
 }
-// ── FIX 4: Update joined count ──────────────────────────────
+
+window.markComplete=function(id){
+  if(!confirm('Mark this ride as complete? Riders will see your UPI to pay their share.'))return;
+  updateDoc(doc(db,'rides',id),{status:'completed'}).then(()=>{toast('Ride marked complete. UPI now visible.');loadMyRides();});
+}
+
+window.loadMyRides=function(){
+  const el=document.getElementById('my-list');
+  el.innerHTML='<div class="loading"><span class="spinner"></span>Loading...</div>';
+  if(!fbReady){el.innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting to server...</div>';return;}
+  getDocs(collection(db,'rides')).then(snap=>{
+    const mine=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.uid===currentUid);
+    if(!mine.length){el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>You haven\'t posted any rides yet.</div>';return;}
+    el.innerHTML=mine.map(r=>rideCardHtml(r,true)).join('');
+    setTimeout(()=>{
+      mine.forEach(r=>{
+        const container=document.getElementById('reqs-'+r.id);
+        if(container) loadRideRequests(r.id, r.seats, r.joined||0, container);
+      });
+    },100);
+  });
+}
+
+// ── CHETTAS ──────────────────────────────────────────────────
+function loadChettas(){
+  if(!fbReady)return;
+  document.getElementById('r-chetta').innerHTML=CHETTAS.map(c=>`<option>${c.name}</option>`).join('');
+  getDocs(collection(db,'reviews')).then(snap=>{
+    const reviews=snap.docs.map(d=>d.data());
+    document.getElementById('chetta-list').innerHTML=CHETTAS.map(c=>{
+      const cr=reviews.filter(r=>r.chetta===c.name);
+      const avg=cr.length?cr.reduce((s,r)=>s+r.overall,0)/cr.length:0;
+      const last=cr.length?cr[cr.length-1]:null;
+      const commentHtml=last&&last.comment?`<div style="font-size:12px;color:var(--text-sec);font-style:italic;margin-top:6px;padding:8px;background:var(--gold-pale);border-radius:8px">"${last.comment}"</div>`:'';
+      return`<div class="ride-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div class="avatar">${c.name[0]}</div>
+          <div style="flex:1"><div style="font-size:15px;font-weight:700;color:var(--text)">${c.name}</div><div style="font-size:12px;color:var(--text-sec)">${c.area}</div><div style="margin-top:4px">${starsHtml(avg,cr.length)}</div></div>
+        </div>${commentHtml}
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <a href="tel:${c.phone}" class="btn-call">📞 ${c.phone}</a>
+          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent(`Hi ${c.name} Chetta, I want to book an auto. Start: [mention your pickup point], Destination: [mention destination], Time: [mention time]. Could you share the estimated price? Thank you!`)}" target="_blank" class="btn-wa">💬 WhatsApp</a>
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
+
+window.rateStar=function(container,e){
+  const span=e.target.closest('span[data-i]');if(!span)return;
+  const val=parseInt(span.dataset.i);container.dataset.val=val;
+  container.querySelectorAll('span').forEach(s=>s.classList.toggle('lit',parseInt(s.dataset.i)<=val));
+}
+
+window.submitReview=function(){
+  if(!fbReady){toast('Connecting... try again in a moment');return;}
+  const chetta=document.getElementById('r-chetta').value;
+  const punct=parseInt(document.getElementById('r-punct').dataset.val)||0;
+  const safety=parseInt(document.getElementById('r-safety').dataset.val)||0;
+  const behav=parseInt(document.getElementById('r-behav').dataset.val)||0;
+  const price=parseInt(document.getElementById('r-price').dataset.val)||0;
+  const comment=document.getElementById('r-comment').value.trim();
+  const vals=[punct,safety,behav,price].filter(v=>v>0);
+  if(!vals.length){toast('Please rate at least one category');return;}
+  const overall=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+  addDoc(collection(db,'reviews'),{chetta,punct,safety,behav,price,overall,comment,uid:currentUid,createdAt:serverTimestamp()})
+    .then(()=>{
+      toast('Review submitted! ⭐');
+      document.querySelectorAll('.star-input').forEach(si=>{si.dataset.val=0;si.querySelectorAll('span').forEach(s=>s.classList.remove('lit'));});
+      document.getElementById('r-comment').value='';
+      setTimeout(()=>{goTo('s-chettas');loadChettas();},900);
+    });
+}
+
+// ── FARE CARD MODAL ───────────────────────────────────────────
 window.showFareCard=function(){
   const overlay=document.getElementById('fare-modal-overlay');
   overlay.style.display='flex';
@@ -1563,6 +1714,29 @@ function renderModalFares(filter){
 }
 window.filterModalFares=function(val){ renderModalFares(val); };
 
+// ── CHETTA TABS & FARE TAB ────────────────────────────────────
+window.switchChettatab=function(btn, panelId){
+  document.querySelectorAll('#s-chettas .bus-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#s-chettas .bus-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+  if(panelId==='ct-fare') renderFares('');
+};
+
+function renderFares(filter){
+  const el=document.getElementById('fare-rows');
+  if(!el)return;
+  const f=filter.toLowerCase().trim();
+  const rows=FARE_CARD.filter(r=>!f||r.place.toLowerCase().includes(f));
+  if(!rows.length){el.innerHTML='<div style="padding:14px;text-align:center;font-size:13px;color:var(--text-sec)">No results found</div>';return;}
+  el.innerHTML=rows.map((r,i)=>`
+    <div style="display:grid;grid-template-columns:1fr 72px 72px;padding:10px 14px;border-bottom:1px solid #F5EAEC;background:${i%2===0?'#fff':'var(--cream)'}">
+      <div style="font-size:13px;font-weight:500;color:var(--text);line-height:1.4">${r.place}</div>
+      <div style="font-size:13px;font-weight:700;color:var(--maroon-dark);text-align:center">₹${r.drop}</div>
+      <div style="font-size:13px;font-weight:500;color:var(--text-sec);text-align:center">${r.ret?'₹'+r.ret:'-'}</div>
+    </div>`).join('');
+}
+window.filterFares=function(val){ renderFares(val); };
 
 // ── JOIN REQUEST SYSTEM ──────────────────────────────────────
 let _reqRideId=null, _reqFrom='', _reqTo='', _reqSlot='', _reqPosterName='', _reqPosterPhone='';
@@ -1590,34 +1764,20 @@ window.submitJoinRequest=function(){
   if(!name){toast('Please enter your name');return;}
   if(!/^\d{10}$/.test(phone)){toast('Enter a valid 10-digit number');return;}
   if(!_reqPosterPhone){toast('Error: poster contact missing');return;}
-
-  // Build WhatsApp message to poster
   const waText='Hi '+_reqPosterName+'! I want to join your auto from '+_reqFrom+' to '+_reqTo
     +(_reqSlot&&_reqSlot!=='Now'?' at '+_reqSlot:'')
     +'.\nMy name: '+name+'\nMy number: '+phone
     +(msg?'\nNote: '+msg:'')
     +'\n\nSent via IIMK AutoPool';
   const waUrl='https://wa.me/91'+_reqPosterPhone+'?text='+encodeURIComponent(waText);
-
-  // Save to Firebase too (so poster sees it in My Rides)
-  const saveToDb = fbReady && _reqRideId
-    ? addDoc(collection(db,'requests'),{
-        rideId:_reqRideId, from:_reqFrom, to:_reqTo, slot:_reqSlot,
-        requesterName:name, requesterPhone:phone, message:msg,
-        posterPhone:_reqPosterPhone, status:'pending',
-        createdAt:serverTimestamp()
-      })
-    : Promise.resolve();
-
+  const saveToDb=fbReady&&_reqRideId
+    ?addDoc(collection(db,'requests'),{rideId:_reqRideId,from:_reqFrom,to:_reqTo,slot:_reqSlot,requesterName:name,requesterPhone:phone,message:msg,posterPhone:_reqPosterPhone,status:'pending',createdAt:serverTimestamp()})
+    :Promise.resolve();
   saveToDb.then(()=>{
     closeReqModal();
     toast('Opening WhatsApp to notify poster...');
     setTimeout(()=>window.open(waUrl,'_blank'),400);
-  }).catch(()=>{
-    // Even if Firebase fails, still send WhatsApp
-    closeReqModal();
-    window.open(waUrl,'_blank');
-  });
+  }).catch(()=>{closeReqModal();window.open(waUrl,'_blank');});
 };
 
 window.acceptRequest=function(reqId, rideId, rPhone, rName, seats, joined){
@@ -1644,14 +1804,10 @@ window.declineRequest=function(reqId, rPhone, rName){
     }).catch(e=>toast('Error: '+e.message));
 };
 
-// Load pending requests for a ride (called in My Rides for poster)
 function loadRideRequests(rideId, seats, joined, containerEl){
   if(!fbReady||!containerEl)return;
-  const q=query(collection(db,'requests'),orderBy('createdAt','asc'));
-  getDocs(q).then(snap=>{
-    const pending=snap.docs
-      .map(d=>({id:d.id,...d.data()}))
-      .filter(r=>r.rideId===rideId&&r.status==='pending');
+  getDocs(query(collection(db,'requests'),orderBy('createdAt','asc'))).then(snap=>{
+    const pending=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.rideId===rideId&&r.status==='pending');
     if(!pending.length){containerEl.innerHTML='';return;}
     containerEl.innerHTML=`
       <div style="margin-top:10px;background:#FFF8E1;border:1.5px solid var(--gold);border-radius:12px;overflow:hidden">
@@ -1660,102 +1816,30 @@ function loadRideRequests(rideId, seats, joined, containerEl){
         </div>
         ${pending.map(req=>`
           <div style="padding:10px 12px;border-bottom:1px solid rgba(201,168,76,0.25)">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-              <div>
-                <div style="font-size:13px;font-weight:700;color:var(--text)">${req.requesterName}</div>
-                <div style="font-size:12px;color:var(--text-sec)">📱 ${req.requesterPhone}</div>
-                ${req.message?`<div style="font-size:12px;color:var(--text-sec);margin-top:2px;font-style:italic">"${req.message}"</div>`:''}
-              </div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="font-size:13px;font-weight:700;color:var(--text)">${req.requesterName}</div>
+            <div style="font-size:12px;color:var(--text-sec)">📱 ${req.requesterPhone}</div>
+            ${req.message?`<div style="font-size:12px;color:var(--text-sec);margin-top:2px;font-style:italic">"${req.message}"</div>`:''}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
               <button onclick="acceptRequest('${req.id}','${rideId}','${req.requesterPhone}','${req.requesterName.split(',')[0]}',${seats},${joined})"
-                style="padding:9px;background:#DCFCE7;color:#166534;border:1.5px solid #86efac;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">
-                Accept
-              </button>
+                style="padding:9px;background:#DCFCE7;color:#166534;border:1.5px solid #86efac;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Accept</button>
               <button onclick="declineRequest('${req.id}','${req.requesterPhone}','${req.requesterName.split(',')[0]}')"
-                style="padding:9px;background:#FEE2E2;color:#991B1B;border:1.5px solid #FCA5A5;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">
-                Decline
-              </button>
+                style="padding:9px;background:#FEE2E2;color:#991B1B;border:1.5px solid #FCA5A5;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Decline</button>
             </div>
           </div>`).join('')}
       </div>`;
   });
 }
 
-window.switchChettatab=function(btn, panelId){
-  document.querySelectorAll('#s-chettas .bus-tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('#s-chettas .bus-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(panelId).classList.add('active');
-  if(panelId==='ct-fare') renderFares('');
-};
-
-// Fare data from Team Namo rate card
-const FARE_CARD = [
-  // Image 2 — standard routes
-  {place:'Gate to Hostel',          drop:70,   ret:null},
-  {place:'KGM to Hostel',           drop:80,   ret:null},
-  {place:'Monad / Springway Bar',   drop:100,  ret:null},
-  {place:'Hostel to Kozhikode City',drop:400,  ret:800},
-  {place:'Railway Station / Beach / Seaqueen / Taj', drop:450, ret:800},
-  {place:'Medical College',         drop:270,  ret:null},
-  {place:'CBI - Moozhikkal',        drop:220,  ret:null},
-  {place:'Passport Seva Kendra West Hill', drop:450, ret:null},
-  {place:'Dr. Cafe / E Max / NIT / Nirmala', drop:250, ret:500},
-  {place:'KMCT',                    drop:370,  ret:null},
-  {place:'Mukkam Movie',            drop:450,  ret:null},
-  {place:'Foreign Office',          drop:550,  ret:null},
-  {place:'Kadav Resort',            drop:550,  ret:900},
-  {place:'Kappad Beach',            drop:900,  ret:1200},
-  {place:'Beypore Beach',           drop:750,  ret:1100},
-  {place:'Thusharagiri',            drop:950,  ret:1400},
-  {place:'Hilite Mall',             drop:350,  ret:700},
-  {place:'Decathlon',               drop:400,  ret:800},
-  // Image 1 — more destinations
-  {place:'Silver Spoon / Harahara Temple', drop:140, ret:null},
-  {place:'VR Residency / Lissy Hotel', drop:120, ret:null},
-  {place:'Miracle',                 drop:100,  ret:null},
-  {place:'Gulmohar / Choco Lick',   drop:350,  ret:700},
-  {place:'Regal Movie',             drop:400,  ret:800},
-  {place:'Lady Loafella',           drop:500,  ret:900},
-  {place:'Katsu / Le Arabia / Gokulam Mall', drop:400, ret:800},
-  {place:'Copper Kitchen / Eatmosphere', drop:500, ret:850},
-  {place:'Natural Ice Cream',       drop:350,  ret:700},
-  {place:'Chandrettante Chayakkada',drop:150,  ret:null},
-  {place:'Milma',                   drop:150,  ret:null},
-  {place:'Wakka Wakka',             drop:120,  ret:null},
-  {place:'Airport Drop and Pickup', drop:900,  ret:null},
-  {place:'Airport Waiting and Coming Back', drop:1200, ret:null},
-];
-
-function renderFares(filter){
-  const el=document.getElementById('fare-rows');
-  if(!el)return;
-  const f=filter.toLowerCase().trim();
-  const rows=FARE_CARD.filter(r=>!f||r.place.toLowerCase().includes(f));
-  if(!rows.length){el.innerHTML='<div style="padding:14px;text-align:center;font-size:13px;color:var(--text-sec)">No results found</div>';return;}
-  el.innerHTML=rows.map((r,i)=>`
-    <div style="display:grid;grid-template-columns:1fr 72px 72px;padding:10px 14px;border-bottom:1px solid #F5EAEC;background:${i%2===0?'#fff':' var(--cream)'}">
-      <div style="font-size:13px;font-weight:500;color:var(--text);line-height:1.4">${r.place}</div>
-      <div style="font-size:13px;font-weight:700;color:var(--maroon-dark);text-align:center">₹${r.drop}</div>
-      <div style="font-size:13px;font-weight:500;color:var(--text-sec);text-align:center">${r.ret?'₹'+r.ret:'-'}</div>
-    </div>`).join('');
-}
-
-window.filterFares=function(val){ renderFares(val); };
-
+// ── UPDATE JOINED COUNT ───────────────────────────────────────
 window.updateJoined=function(id, current, seats, dir){
   if(!fbReady){toast('Connecting...');return;}
-  const newVal = dir==='dec' ? Math.max(0,current) : Math.min(seats, current+1);
+  const newVal=dir==='dec'?Math.max(0,current):Math.min(seats,current+1);
   updateDoc(doc(db,'rides',id),{joined:newVal})
-    .then(()=>{
-      toast(dir==='dec'?'Passenger removed':'Passenger added');
-      loadMyRides();
-    })
+    .then(()=>{toast(dir==='dec'?'Passenger removed':'Passenger added');loadMyRides();})
     .catch(e=>toast('Error: '+e.message));
 }
 
-// ── FIX 6: In-app ride chat ──────────────────────────────────
+// ── IN-APP CHAT ───────────────────────────────────────────────
 let activeChatRideId=null;
 window.openRideChat=function(rideId, from, to, slot, poster){
   activeChatRideId=rideId;
@@ -1771,10 +1855,7 @@ function loadChatMessages(rideId){
   if(!fbReady){el.innerHTML='<div style="text-align:center;padding:1rem;color:var(--text-sec);font-size:13px">Connecting...</div>';return;}
   const q=query(collection(db,'chats_'+rideId),orderBy('t','asc'));
   onSnapshot(q,snap=>{
-    if(!snap.docs.length){
-      el.innerHTML='<div style="text-align:center;padding:1rem;color:var(--text-sec);font-size:13px">No messages yet. Say hi!</div>';
-      return;
-    }
+    if(!snap.docs.length){el.innerHTML='<div style="text-align:center;padding:1rem;color:var(--text-sec);font-size:13px">No messages yet. Say hi!</div>';return;}
     el.innerHTML=snap.docs.map(d=>{
       const m=d.data();
       const isMe=m.uid===currentUid;
@@ -1793,221 +1874,72 @@ function loadChatMessages(rideId){
 window.sendChatMessage=function(){
   const inp=document.getElementById('chat-input');
   const text=inp.value.trim();
-  if(!text||!activeChatRideId){return;}
+  if(!text||!activeChatRideId)return;
   if(!fbReady){toast('Connecting...');return;}
-  const name=document.getElementById('p-name')?.value?.split(',')[0]?.split(' ')[0]||'Rider';
+  const nameEl=document.getElementById('p-name');
+  const name=nameEl&&nameEl.value?nameEl.value.split(',')[0].split(' ')[0]:'Rider';
   addDoc(collection(db,'chats_'+activeChatRideId),{text,uid:currentUid,name,t:serverTimestamp()})
-    .then(()=>{inp.value='';})
-    .catch(e=>toast('Error: '+e.message));
+    .then(()=>{inp.value='';}).catch(e=>toast('Error: '+e.message));
 }
 
-window.markComplete=function(id){
-  if(!fbReady){toast('Connecting...');return;}
-  if(!confirm('Mark this ride as complete? Riders will see your UPI to pay their share.'))return;
-  updateDoc(doc(db,'rides',id),{status:'completed'}).then(()=>{toast('Ride marked complete ✓ UPI is now visible');loadMyRides();});
-}
-window.loadMyRides=function(){
-  if(!fbReady){document.getElementById('my-list').innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting to server...</div>';return;}
-  const el=document.getElementById('my-list');
-  el.innerHTML='<div class="loading"><span class="spinner"></span>Loading…</div>';
-  getDocs(collection(db,'rides')).then(snap=>{
-    const mine=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.uid===currentUid);
-    if(!mine.length){el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>You haven\'t posted any rides yet.</div>';return;}
-    el.innerHTML=mine.map(r=>rideCardHtml(r,true)).join('');
-    // Load pending requests for each ride
-    setTimeout(()=>{
-      mine.forEach(r=>{
-        const container=document.getElementById('reqs-'+r.id);
-        if(container) loadRideRequests(r.id, r.seats, r.joined||0, container);
-      });
-    },100);
-  });
-}
-
-// ── CHETTAS ──────────────────────────────────────────────────
-function loadChettas(){
-  if(!fbReady)return;
-  document.getElementById('r-chetta').innerHTML=CHETTAS.map(c=>`<option>${c.name}</option>`).join('');
-  getDocs(collection(db,'reviews')).then(snap=>{
-    const reviews=snap.docs.map(d=>d.data());
-    document.getElementById('chetta-list').innerHTML=CHETTAS.map(c=>{
-      const cr=reviews.filter(r=>r.chetta===c.name);
-      const avg=cr.length?cr.reduce((s,r)=>s+r.overall,0)/cr.length:0;
-      const last=cr.length?cr[cr.length-1]:null;
-      const commentHtml=last&&last.comment?`<div style="font-size:12px;color:var(--text-sec);font-style:italic;margin-top:6px;padding:8px;background:var(--gold-pale);border-radius:8px">"${last.comment}"</div>`:'';
-      return`<div class="ride-card">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-          <div class="avatar">${c.name[0]}</div>
-          <div style="flex:1">
-            <div style="font-size:15px;font-weight:700;color:var(--text)">${c.name}</div>
-            <div style="font-size:12px;color:var(--text-sec)">${c.area}</div>
-            <div style="margin-top:4px">${starsHtml(avg,cr.length)}</div>
-          </div>
-        </div>${commentHtml}
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <a href="tel:${c.phone}" class="btn-call">📞 ${c.phone}</a>
-          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent('Hi Chetta, I want to book an auto. Start: ' + c.area + '. Please let me know the estimated price. Thank you!')}" target="_blank" class="btn-wa">💬 WhatsApp</a>
-        </div>
-      </div>`;
-    }).join('');
-  });
-}
-window.rateStar=function(container,e){
-  const span=e.target.closest('span[data-i]');if(!span)return;
-  const val=parseInt(span.dataset.i);container.dataset.val=val;
-  container.querySelectorAll('span').forEach(s=>s.classList.toggle('lit',parseInt(s.dataset.i)<=val));
-}
-window.submitReview=function(){
-  if(!fbReady){toast('Connecting... try again in a moment');return;}
-  const chetta=document.getElementById('r-chetta').value;
-  const punct=parseInt(document.getElementById('r-punct').dataset.val)||0;
-  const safety=parseInt(document.getElementById('r-safety').dataset.val)||0;
-  const behav=parseInt(document.getElementById('r-behav').dataset.val)||0;
-  const price=parseInt(document.getElementById('r-price').dataset.val)||0;
-  const comment=document.getElementById('r-comment').value.trim();
-  const vals=[punct,safety,behav,price].filter(v=>v>0);
-  if(!vals.length){toast('Please rate at least one category');return;}
-  const overall=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
-  addDoc(collection(db,'reviews'),{chetta,punct,safety,behav,price,overall,comment,uid:currentUid,createdAt:serverTimestamp()})
-    .then(()=>{
-      toast('Review submitted! ⭐');
-      document.querySelectorAll('.star-input').forEach(si=>{si.dataset.val=0;si.querySelectorAll('span').forEach(s=>s.classList.remove('lit'));});
-      document.getElementById('r-comment').value='';
-      setTimeout(()=>{goTo('s-chettas');loadChettas();},900);
-    });
-}
-
-// Chettas load after Firebase is ready
-
-// ── CAMPUS MAP ───────────────────────────────────────────────
-const TRAIL_STOPS = {
-  0:  {title:'Start - MDC Parking Entrance', desc:'Beginning of the campus walk. Near the MDC area main entrance.'},
-  1:  {title:'Downhill View', desc:'Beautiful view of the valley and surrounding landscape.'},
-  2:  {title:'Rubber Trees', desc:'Grove of rubber trees along the trail path.'},
-  3:  {title:'Mantharam Tree', desc:'Bauhinia acuminata flowering tree. Opposite to Milma Parlour.'},
-  4:  {title:'Fruit Tree Cluster', desc:'Jack fruit, Malayan apple, Manimaruthu, Almond, Gulmohar, Peral, Mango, Kanikonna trees. Near Commercial Plaza and Milma Parlour.'},
-  5:  {title:"Peral Tree + Children's Park 1", desc:"T Junction. Peral (Ficus benghalensis) tree. Beautiful downhill view of IIMK pond, playground and Kunnamangalam town."},
-  6:  {title:"Gooseberry Trees - H Junction", desc:"Gooseberry tree grove. Another excellent downhill viewpoint. Can see the IIMK pond and playground."},
-  7:  {title:"Children's Park 2", desc:"Second children's park along the trail."},
-  8:  {title:'Acacia Grove', desc:"Acacia auriculiformis groove. Opposite to children's park 2 and Apartment block II."},
-  9:  {title:'Hill Top', desc:'BEST SPOT. Serene atmosphere with sunrise and sunset views. Cashew and Gooseberry garden. Sandal wood trees. Bird watching point. View of Kunnamangalam town and Academic Hill.'},
-  10: {title:'Guest House 1', desc:'Guava, Custard apple, Irrumbanpuli, Jackfruit trees on the way. Great bird watching spot early morning. Jamia Markazu Ssaquafathi Ssunniya visible from here.'},
-  11: {title:'Acacia Grove (after Guest House 2)', desc:"Acacia groove after Guest House 2 and Director's Bungalow."},
-  12: {title:'Thick Forest + Bird Watch', desc:'Dense forest vegetation and excellent bird watching area. Opposite to quarter no. A6A.'},
-  13: {title:'Acacia Grove', desc:'Adjacent to quarter no. C5B.'},
-  14: {title:'Thick Forest Vegetation', desc:'Curve leading to second gate. End of short trail.'},
-  15: {title:'Banyan + Malayan Apple', desc:"Ficus religiosa and Malayan apple trees. Curve after children's park 1."},
-  16: {title:'Apartment Block 1 - Tree Lane', desc:'Fig, Almond, Peral, Mango, Mantharam, Manimaruthu and Asoka trees in front of Apartment block I.'},
-  17: {title:'Rain Water Catchment', desc:'Rainwater catchment area for pond with thick forest vegetation. Left of road after Apartment block I.'},
-  18: {title:'Manimaruthu Lane + Jamun Trees', desc:'Beautiful lane of Manimaruthu trees. Also Naaval and Jamun trees lining the path.'},
-  19: {title:'Teak Plantation', desc:'Tectona grandis teak tree plantation. Durable hardwood trees.'},
-  20: {title:'Gooseberry Trees', desc:'Gooseberry trees on both sides of the road. Rich in vitamin C.'},
-  21: {title:'Areca Nut Plantation', desc:'Areca nut plantation and rainwater catchment area for IIMK pond with thick forest vegetation.'},
-  22: {title:'Rainwater Harvesting Pond 1', desc:'One of two rainwater harvesting ponds on campus.'},
-  23: {title:'Oongu Trees', desc:'Pongamia pinnata trees on left side of road along the playground. Evergreen with cooling effect.'},
-  24: {title:'Rainwater Harvesting Pond 2', desc:'Second rainwater harvesting pond.'},
-  25: {title:'Forest Catchment Area', desc:'Rainwater catchment area for IIMK pond with thick forest vegetation.'},
-  26: {title:'Beautiful Downhill View', desc:'Stunning view point. Road leading down to hostels. Great for sunset watching.'},
-  27: {title:'END - Arjuna Statue, Waterfall, Circle of Contemplation', desc:'Campus walk ends here. The iconic Arjuna statue, a small waterfall and the circle of contemplation. Perfect spot to rest after the trail.'},
+// ── CAMPUS MAP ────────────────────────────────────────────────
+window.showMapInfo=function(key, fallbackDesc){
+  const info=MAP_INFO[key]||{title:key,desc:fallbackDesc||''};
+  document.getElementById('popup-title').textContent=info.title;
+  document.getElementById('popup-desc').textContent=info.desc;
+  const mapsBtn=document.getElementById('popup-maps-btn');
+  if(info.maps){mapsBtn.href=info.maps;mapsBtn.style.display='inline-flex';}
+  else{mapsBtn.style.display='none';}
+  document.getElementById('map-popup').style.display='block';
+  document.getElementById('map-popup').scrollIntoView({behavior:'smooth',block:'nearest'});
 };
 
-const MAP_INFO = {
-  'Maingate':    {title:'Maingate',       desc:'Main entrance of IIMK campus. Auto pickup point. Bus stop for city routes.', maps:'https://maps.google.com/?q=IIM+Kozhikode+Main+Gate,+Kunnamangalam,+Kozhikode'},
-  'D Landing':   {title:'D Landing',      desc:'Key auto pickup checkpoint. Central campus connecting hostels to maingate.', maps:'https://maps.google.com/?q=11.3175,75.9370'},
-  'Silver Spoon':{title:'Silver Spoon',   desc:'Auto pickup checkpoint near J Canteen. Popular spot before and after classes.', maps:'https://maps.google.com/?q=11.3189,75.9368'},
-  'Phase V':     {title:'Phase V',        desc:'Auto pickup checkpoint near lower campus road. Common morning pickup.', maps:'https://maps.google.com/?q=11.3160,75.9375'},
-  'C&D Housing': {title:'C and D Housing',desc:'Major auto pickup checkpoint near A, B, C hostel blocks. Busy evenings.', maps:'https://maps.google.com/?q=11.3195,75.9360'},
-  'Hostel A':    {title:'Hostel A',       desc:'PGP student hostel block. Lower residential area.', maps:'https://maps.google.com/?q=IIM+Kozhikode+Hostel'},
-  'Hostel B':    {title:'Hostel B',       desc:'PGP student hostel block. Near A block.', maps:''},
-  'Hostel C':    {title:'Hostel C',       desc:'PGP student hostel block. Rightmost lower cluster block.', maps:''},
-  'Hostel D':    {title:'Hostel D',       desc:'PGP student hostel block. Central mid-campus.', maps:''},
-  'Hostel E':    {title:'Hostel E',       desc:'PGP student hostel block. Near Guruprasad Canteen.', maps:''},
-  'Hostel F':    {title:'Hostel F',       desc:'PGP student hostel block. Upper mid-campus.', maps:''},
-  'Hostel G':    {title:'Hostel G',       desc:'PGP student hostel block. Upper area near H block.', maps:''},
-  'Hostel H':    {title:'Hostel H',       desc:'PGP student hostel block. Topmost block near H Canteen.', maps:''},
-  'Hostel J':    {title:'Hostel J',       desc:'Large hostel block near J Canteen and Health Club.', maps:''},
-  'Hostel K1':   {title:'Hostel K1',      desc:'Hostel block below J. Near J Canteen.', maps:''},
-  'Hostel K2':   {title:'Hostel K2',      desc:'Hostel block below K1. Southern end of campus.', maps:''},
-  'Hostel L1':   {title:'Hostel L1',      desc:'Hostel block on western side near badminton court.', maps:''},
-  'Hostel L2':   {title:'Hostel L2',      desc:'Westernmost hostel block. Near main road entry.', maps:''},
-  'H Canteen + Staff Canteen':{title:'H Canteen + Staff Canteen',desc:'Located at the top near H block. Popular for late-night snacks and meals.',maps:'https://maps.google.com/?q=IIM+Kozhikode+H+Canteen'},
-  'J Canteen':   {title:'J Canteen',      desc:'The main student canteen. Most popular food spot on campus. Open late.', maps:'https://maps.google.com/?q=IIM+Kozhikode+J+Canteen'},
-
-  'Health Club': {title:'Health Club',    desc:'Campus gym and fitness centre near J block.', maps:''},
-  'Parking':     {title:'Parking',        desc:'Main campus parking area near H block and upper road.', maps:''},
-  'Power House': {title:'Power House',    desc:'Campus power supply building. Do not enter.', maps:''},
-  'Laundry':     {title:'Laundry',        desc:'Campus laundry facility. Located centrally between hostel blocks.', maps:''},
-  'Common Room': {title:'Common Room',    desc:'Student common room for recreation and socialising.', maps:''},
-  'FPM Married Accommodation':{title:'FPM Married Accommodation',desc:'Housing for FPM married scholars.',maps:''},
-}
-
-window.showMapInfo = function(key, fallbackDesc) {
-  const info = MAP_INFO[key] || {title: key, desc: fallbackDesc || ''};
-  document.getElementById('popup-title').textContent = info.title;
-  document.getElementById('popup-desc').textContent = info.desc;
-  const mapsBtn = document.getElementById('popup-maps-btn');
-  if(info.maps){
-    mapsBtn.href = info.maps;
-    mapsBtn.style.display = 'inline-flex';
-  } else {
-    mapsBtn.style.display = 'none';
-  }
-  document.getElementById('map-popup').style.display = 'block';
-  document.getElementById('map-popup').scrollIntoView({behavior:'smooth', block:'nearest'});
+window.showTrailInfo=function(num){
+  const stop=TRAIL_STOPS[num];if(!stop)return;
+  document.getElementById('trail-popup-title').textContent='Stop '+num+': '+stop.title;
+  document.getElementById('trail-popup-desc').textContent=stop.desc;
+  document.getElementById('trail-popup').style.display='block';
+  document.getElementById('trail-popup').scrollIntoView({behavior:'smooth',block:'nearest'});
 };
 
-window.showTrailInfo = function(num) {
-  const stop = TRAIL_STOPS[num];
-  if (!stop) return;
-  document.getElementById('trail-popup-title').textContent = 'Stop ' + num + ': ' + stop.title;
-  document.getElementById('trail-popup-desc').textContent = stop.desc;
-  document.getElementById('trail-popup').style.display = 'block';
-  document.getElementById('trail-popup').scrollIntoView({behavior:'smooth', block:'nearest'});
-};
-
-window.switchCampusTab = function(btn, panelId) {
-  document.querySelectorAll('#s-campus .bus-tab').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('#s-campus .bus-panel').forEach(p => p.classList.remove('active'));
+window.switchCampusTab=function(btn,panelId){
+  document.querySelectorAll('#s-campus .bus-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#s-campus .bus-panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById(panelId).classList.add('active');
 };
 
-window.setTrail = function(type) {
-  const shortBtn = document.getElementById('trail-short-btn');
-  const longBtn = document.getElementById('trail-long-btn');
-  const longPath = document.getElementById('trail-long-path');
-  if (type === 'short') {
-    shortBtn.style.background = '#16A34A'; shortBtn.style.color = 'white'; shortBtn.style.borderColor = '#16A34A';
-    longBtn.style.background = 'var(--white)'; longBtn.style.color = 'var(--text-sec)'; longBtn.style.borderColor = 'var(--border)';
-    if (longPath) longPath.style.opacity = '0.2';
-    // Dim long-only stops
-    document.querySelectorAll('#trail-svg circle[fill="#DC2626"]').forEach(el => el.parentElement.style.opacity = '0.25');
+window.setTrail=function(type){
+  const shortBtn=document.getElementById('trail-short-btn');
+  const longBtn=document.getElementById('trail-long-btn');
+  const longPath=document.getElementById('trail-long-path');
+  if(type==='short'){
+    shortBtn.style.background='#16A34A';shortBtn.style.color='white';shortBtn.style.borderColor='#16A34A';
+    longBtn.style.background='var(--white)';longBtn.style.color='var(--text-sec)';longBtn.style.borderColor='var(--border)';
+    if(longPath)longPath.style.opacity='0.2';
+    document.querySelectorAll('#trail-svg circle[fill="#DC2626"]').forEach(el=>el.parentElement.style.opacity='0.25');
   } else {
-    longBtn.style.background = '#DC2626'; longBtn.style.color = 'white'; longBtn.style.borderColor = '#DC2626';
-    shortBtn.style.background = 'var(--white)'; shortBtn.style.color = 'var(--text-sec)'; shortBtn.style.borderColor = 'var(--border)';
-    if (longPath) longPath.style.opacity = '1';
-    document.querySelectorAll('#trail-svg circle[fill="#DC2626"]').forEach(el => el.parentElement.style.opacity = '1');
+    longBtn.style.background='#DC2626';longBtn.style.color='white';longBtn.style.borderColor='#DC2626';
+    shortBtn.style.background='var(--white)';shortBtn.style.color='var(--text-sec)';shortBtn.style.borderColor='var(--border)';
+    if(longPath)longPath.style.opacity='1';
+    document.querySelectorAll('#trail-svg circle[fill="#DC2626"]').forEach(el=>el.parentElement.style.opacity='1');
   }
 };
 
-window.initCampus = function() {
-  // Build trail stop list
-  const el = document.getElementById('trail-stop-list');
-  if (!el || el.innerHTML) return;
-  el.innerHTML = Object.entries(TRAIL_STOPS).map(([num, s]) => {
-    const isLong = parseInt(num) > 14;
-    return `<div onclick="showTrailInfo(${num})" style="display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border-radius:8px;margin-bottom:4px;background:var(--white);border:1px solid var(--border);cursor:pointer">
+window.initCampus=function(){
+  const el=document.getElementById('trail-stop-list');
+  if(!el||el.innerHTML)return;
+  el.innerHTML=Object.entries(TRAIL_STOPS).map(([num,s])=>{
+    const isLong=parseInt(num)>14;
+    return`<div onclick="showTrailInfo(${num})" style="display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border-radius:8px;margin-bottom:4px;background:var(--white);border:1px solid var(--border);cursor:pointer">
       <div style="width:26px;height:26px;border-radius:50%;background:${isLong?'#DC2626':'#16A34A'};color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${num}</div>
-      <div>
-        <div style="font-size:13px;font-weight:600;color:var(--text)">${s.title}</div>
-        <div style="font-size:11px;color:var(--text-sec);margin-top:1px">${isLong?'Long trail only':'Short + Long trail'}</div>
-      </div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--text)">${s.title}</div><div style="font-size:11px;color:var(--text-sec);margin-top:1px">${isLong?'Long trail only':'Short + Long trail'}</div></div>
     </div>`;
   }).join('');
 };
 
-// goTo handles all nav including campus
-
+// goTo handled all nav already defined above
+// Chettas load after Firebase ready (called in initFirebase)
 </script>
 </body>
 </html>

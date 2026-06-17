@@ -1424,7 +1424,16 @@ function rideCardHtml(r,showOwner=false){
   const waUrl=`https://wa.me/91${r.phone}?text=${encodeURIComponent('Hi! I want to join your auto from '+r.from+' to '+r.to+' at '+r.slot+'. IIMK AutoPool')}`;
   let actionHtml='';
   if(isCompleted){
-    actionHtml=upiBlock(r.upi,r.quotedFare?Math.round(parseInt(r.quotedFare)/r.seats):fare?fare.perPerson:70);
+    // Fix 1: poster doesn't pay themselves; Fix 2: prorate correctly
+    if(!showOwner){
+      const totalFare = r.quotedFare ? parseInt(r.quotedFare) : (fare ? fare.total : 70);
+      const perPerson = Math.round(totalFare / r.seats);
+      actionHtml=upiBlock(r.upi, perPerson);
+    } else {
+      actionHtml=`<div style="padding:10px 12px;background:var(--gold-pale);border:1.5px solid var(--gold);border-radius:10px;font-size:13px;color:var(--maroon-dark);font-weight:600;margin-top:8px">
+        ✓ Ride complete. Co-passengers can now pay their share via UPI.
+      </div>`;
+    }
   } else if(open){
     actionHtml=`<div style="margin-top:8px">
       <button onclick="requestSeat('${r.id}','${r.from}','${r.to}','${r.slot||'Now'}','${displayName}','${r.phone}')"

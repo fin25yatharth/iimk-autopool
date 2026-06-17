@@ -1366,9 +1366,16 @@ function rideCardHtml(r,showOwner=false){
   if(isCompleted){
     actionHtml=upiBlock(r.upi,r.quotedFare?Math.round(parseInt(r.quotedFare)/r.seats):fare?fare.perPerson:70);
   } else if(open){
-    actionHtml=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-      <button onclick="openRideChat('${r.id}','${r.from}','${r.to}','${r.slot||'Now'}','${displayName}')" style="padding:9px 6px;background:var(--gold-pale);border:1.5px solid var(--gold);border-radius:10px;font-size:12px;font-weight:700;color:var(--maroon-dark);cursor:pointer">💬 Chat</button>
-      <a href="${waUrl}" target="_blank" style="padding:9px 6px;background:#e7f8ef;border:1.5px solid #86efac;border-radius:10px;font-size:12px;font-weight:700;color:#166534;text-decoration:none;text-align:center">📱 WhatsApp</a>
+    // Notify poster via WhatsApp when someone taps Join
+    const notifyUrl=`https://wa.me/91${r.phone}?text=${encodeURIComponent('Hi '+displayName+'! Someone wants to join your auto from '+r.from+' to '+r.to+' at '+(r.slot||'Now')+'. Check the IIMK AutoPool app.')}`;
+    actionHtml=`<div style="margin-top:8px">
+      <a href="${notifyUrl}" target="_blank" onclick="void(0)" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;background:var(--maroon);color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;margin-bottom:8px">
+        🚗 Request to join — notify poster
+      </a>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button onclick="openRideChat('${r.id}','${r.from}','${r.to}','${r.slot||'Now'}','${displayName}')" style="padding:9px 6px;background:var(--gold-pale);border:1.5px solid var(--gold);border-radius:10px;font-size:12px;font-weight:700;color:var(--maroon-dark);cursor:pointer">💬 Chat</button>
+        <a href="${waUrl}" target="_blank" style="padding:9px 6px;background:#e7f8ef;border:1.5px solid #86efac;border-radius:10px;font-size:12px;font-weight:700;color:#166534;text-decoration:none;text-align:center">📱 WhatsApp</a>
+      </div>
     </div>`;
   } else {
     actionHtml=`<button class="join-btn-dis" disabled>Ride is full</button>`;

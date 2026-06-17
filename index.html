@@ -1341,9 +1341,13 @@ function upiBlock(upi,amount){
 function rideCardHtml(r,showOwner=false){
   const open=r.joined<r.seats, left=r.seats-r.joined;
   const fare=getFare(r.from,r.to,r.seats);
-  const perPerson=fare?`₹${fare.perPerson}/person`:'';
+  // Use chetta's quoted fare if available, else estimated fare — both divided by seats
+  const quotedTotal = r.quotedFare ? parseInt(r.quotedFare) : null;
+  const perPersonAmt = quotedTotal ? Math.round(quotedTotal/r.seats) : (fare ? fare.perPerson : null);
+  const perPerson = perPersonAmt ? `₹${perPersonAmt}/person` : '';
+  const fareLabel = quotedTotal ? 'Quoted' : 'Est.';
   const autoStr=r.autoNum?`<span class="auto-badge">🚗 ${r.autoNum}</span> `:'';
-  const quotedStr=r.quotedFare?`<span class="quoted-badge">💬 Chetta quoted ₹${r.quotedFare}</span> `:'';
+  const quotedStr=r.quotedFare?`<span class="quoted-badge">💬 Chetta quoted ₹${r.quotedFare} total</span> `:'';
   const isCompleted=r.status==='completed';
 
   // ── FIX 1: Only show first name ──────────────────────────
@@ -1472,7 +1476,7 @@ function rideCardHtml(r,showOwner=false){
     <div style="margin-left:3.5px;margin-bottom:4px"><div class="route-line"></div></div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div class="dot-gold"></div><div style="font-size:13px;font-weight:500">${r.to}</div></div>
     ${paxHtml}
-    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:4px">${autoStr}${quotedStr}${perPerson?`<span style="font-size:12px;color:var(--text-sec)">Est. ${perPerson}</span>`:''}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:4px">${autoStr}${quotedStr}${perPerson?`<span style="font-size:12px;color:var(--text-sec)">${fareLabel} ${perPerson}</span>`:''}</div>
     ${actionHtml}${ownerHtml}
   </div>`;
 }
@@ -1585,17 +1589,35 @@ window.submitJoinRequest=function(){
   const msg=document.getElementById('req-msg').value.trim();
   if(!name){toast('Please enter your name');return;}
   if(!/^\d{10}$/.test(phone)){toast('Enter a valid 10-digit number');return;}
-  if(!fbReady){toast('Connecting... try again');return;}
-  if(!_reqRideId){toast('Error: ride not found');return;}
-  addDoc(collection(db,'requests'),{
-    rideId:_reqRideId, from:_reqFrom, to:_reqTo, slot:_reqSlot,
-    requesterName:name, requesterPhone:phone, message:msg,
-    posterPhone:_reqPosterPhone, status:'pending',
-    createdAt:serverTimestamp()
-  }).then(()=>{
+  if(!_reqPosterPhone){toast('Error: poster contact missing');return;}
+
+  // Build WhatsApp message to poster
+  const waText='Hi '+_reqPosterName+'! I want to join your auto from '+_reqFrom+' to '+_reqTo
+    +(_reqSlot&&_reqSlot!=='Now'?' at '+_reqSlot:'')
+    +'.\nMy name: '+name+'\nMy number: '+phone
+    +(msg?'\nNote: '+msg:'')
+    +'\n\nSent via IIMK AutoPool';
+  const waUrl='https://wa.me/91'+_reqPosterPhone+'?text='+encodeURIComponent(waText);
+
+  // Save to Firebase too (so poster sees it in My Rides)
+  const saveToDb = fbReady && _reqRideId
+    ? addDoc(collection(db,'requests'),{
+        rideId:_reqRideId, from:_reqFrom, to:_reqTo, slot:_reqSlot,
+        requesterName:name, requesterPhone:phone, message:msg,
+        posterPhone:_reqPosterPhone, status:'pending',
+        createdAt:serverTimestamp()
+      })
+    : Promise.resolve();
+
+  saveToDb.then(()=>{
     closeReqModal();
-    toast('Request sent! Poster will accept or decline.');
-  }).catch(e=>toast('Error: '+e.message));
+    toast('Opening WhatsApp to notify poster...');
+    setTimeout(()=>window.open(waUrl,'_blank'),400);
+  }).catch(()=>{
+    // Even if Firebase fails, still send WhatsApp
+    closeReqModal();
+    window.open(waUrl,'_blank');
+  });
 };
 
 window.acceptRequest=function(reqId, rideId, rPhone, rName, seats, joined){

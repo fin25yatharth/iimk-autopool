@@ -1,8 +1,8 @@
 {
-  "name": "IIMK AutoPool",
-  "short_name": "AutoPool",
-  "description": "Campus carpooling for IIM Kozhikode students",
-  "start_url": "/iimk-autopool/",
+  "name": "Call a Chetta",
+  "short_name": "Call a Chetta",
+  "description": "Auto booking and sharing for IIM Kozhikode students",
+  "start_url": "/call-a-chetta/",
   "display": "standalone",
   "background_color": "#5A0D1A",
   "theme_color": "#7B1226",

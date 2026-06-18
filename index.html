@@ -417,13 +417,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </div>
 
 <!-- ══ RIDES LIST ═════════════════════════════════════════════ -->
-<div id="s-rides" class="screen">
-  <div class="topbar">
-    <button class="back-btn" onclick="goTo('s-home')">←</button>
-    <h2 id="rides-title">Rides</h2>
-  </div>
-  <div id="rides-list"><div class="loading"><span class="spinner"></span>Loading rides…</div></div>
-</div>
+
 
 <!-- ══ POST RIDE ══════════════════════════════════════════════ -->
 <div id="s-post" class="screen">
@@ -785,26 +779,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 </div>
 
-<!-- IN-APP RIDE CHAT -->
-<div id="s-chat" class="screen" style="display:flex;flex-direction:column;height:calc(100vh - 74px)">
-  <div class="topbar" style="flex-shrink:0">
-    <button class="back-btn" onclick="goTo('s-feed');loadFeed()">←</button>
-    <div style="flex:1">
-      <div style="font-size:15px;font-weight:700;color:var(--maroon-dark);font-family:'Playfair Display',serif">Ride chat</div>
-      <div id="chat-ride-label" style="font-size:11px;color:var(--text-sec);margin-top:1px"></div>
-    </div>
-  </div>
-  <div id="chat-messages" style="flex:1;overflow-y:auto;padding:12px;background:var(--cream)"></div>
-  <div style="padding:10px 12px;background:var(--white);border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0">
-    <input type="text" id="chat-input" placeholder="Type a message..." style="flex:1;padding:10px 14px;border-radius:24px;border:1.5px solid var(--border);font-size:14px;outline:none"
-      onkeydown="if(event.key==='Enter')sendChatMessage()"
-      onfocus="this.style.borderColor='var(--maroon)'" onblur="this.style.borderColor='var(--border)'">
-    <button onclick="sendChatMessage()" style="width:42px;height:42px;border-radius:50%;background:var(--maroon);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    </button>
-  </div>
-</div>
-
+<!-- in-app chat removed -->
 
 <!-- FARE CARD MODAL -->
 <div id="fare-modal-overlay" onclick="hideFareCard()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:flex-end;justify-content:center">
@@ -1474,7 +1449,6 @@ function rideCardHtml(r,showOwner=false){
         🚗 Request to join this ride
       </button>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div style="padding:9px 6px;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;font-size:11px;color:var(--text-sec);text-align:center">💬 Chat on WhatsApp →</div>
         <a href="${waUrl}" target="_blank" style="padding:9px 6px;background:#e7f8ef;border:1.5px solid #86efac;border-radius:10px;font-size:12px;font-weight:700;color:#166534;text-decoration:none;text-align:center">📱 WhatsApp</a>
       </div>
     </div>`;
@@ -1515,9 +1489,9 @@ window.findRides=function(){
   const from=getLocValue('h-from','h-custom-from'),to=getLocValue('h-to','h-custom-to');
   if(!from||!to||from==='custom'||to==='custom'){toast('Please enter pickup and drop locations');return;}
   if(!fbReady){toast('Connecting... try again in a moment');return;}
-  goTo('s-rides');
-  document.getElementById('rides-title').textContent=from+' → '+to;
-  const el=document.getElementById('rides-list');
+  goTo('s-feed');loadFeed();
+  // rides screen removed
+  const el=document.getElementById('feed-list');
   el.innerHTML='<div class="loading"><span class="spinner"></span>Loading rides…</div>';
   getDocs(collection(db,'rides')).then(snap=>{
     const filtered=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.from===from&&r.to===to);
@@ -1909,8 +1883,7 @@ window.openRideChat=function(rideId, from, to, slot, poster){
   activeChatRideId=rideId;
   document.getElementById('chat-ride-label').textContent=`${from} to ${to} at ${slot} (${poster}'s ride)`;
   document.getElementById('chat-input').value='';
-  loadChatMessages(rideId);
-  goTo('s-chat');
+  // chat removed — coordinate on WhatsApp
 }
 
 function loadChatMessages(rideId){

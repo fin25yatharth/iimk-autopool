@@ -242,6 +242,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         <input type="email" id="signup-email" placeholder="yourname@iimk.ac.in" autocomplete="email">
       </div>
       <div class="input-group" style="margin-top:10px">
+        <span class="lbl">UPI ID <span style="font-weight:400;color:var(--text-sec)">(for ride payment splits)</span></span>
+        <input type="text" id="signup-upi" placeholder="e.g. name@upi or 9876543210@ybl">
+      </div>
+      <div class="input-group" style="margin-top:10px">
         <span class="lbl">Password <span style="font-weight:400;color:var(--text-sec)">(min 6 chars)</span></span>
         <input type="password" id="signup-password" placeholder="Create a password" autocomplete="new-password">
       </div>
@@ -515,8 +519,48 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
 <!-- ══ MY RIDES ══════════════════════════════════════════════ -->
 <div id="s-myrides" class="screen">
-  <div class="topbar"><h2>My rides</h2></div>
-  <div id="my-list"><div class="loading"><span class="spinner"></span>Loading…</div></div>
+  <div class="topbar"><h2>Mine</h2></div>
+
+  <!-- Profile card -->
+  <div id="mine-profile-card" style="margin:12px 12px 0;background:var(--white);border-radius:16px;border:1px solid var(--border);overflow:hidden">
+    <div style="background:linear-gradient(135deg,var(--maroon-dark),var(--maroon-light));padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="mine-avatar" style="width:44px;height:44px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--maroon-dark);flex-shrink:0"></div>
+        <div>
+          <div id="mine-name" style="font-size:16px;font-weight:700;color:#fff;font-family:'Playfair Display',serif"></div>
+          <div id="mine-room" style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:2px"></div>
+        </div>
+      </div>
+      <button onclick="openEditProfile()" style="background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.35);border-radius:10px;color:#fff;font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;font-family:'Inter',sans-serif">Edit</button>
+    </div>
+    <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:16px">📱</span>
+        <div><div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.05em">WhatsApp</div>
+        <div id="mine-phone" style="font-size:14px;font-weight:600;color:var(--text)"></div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:16px">💳</span>
+        <div><div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.05em">UPI ID</div>
+        <div id="mine-upi" style="font-size:14px;font-weight:600;color:var(--text)"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bus-tabs" style="grid-template-columns:1fr 1fr;margin-top:12px">
+    <button class="bus-tab active" id="mine-tab-shared" onclick="switchMineTab(this,'mine-shared')">🚗 Shared rides</button>
+    <button class="bus-tab" id="mine-tab-requests" onclick="switchMineTab(this,'mine-requests')">🙋 My requests</button>
+  </div>
+
+  <!-- Rides I posted (share auto) -->
+  <div id="mine-shared" class="bus-panel active" style="padding:10px 12px">
+    <div id="my-list"><div class="loading"><span class="spinner"></span>Loading…</div></div>
+  </div>
+
+  <!-- Ride requests I posted (book auto) -->
+  <div id="mine-requests" class="bus-panel" style="padding:10px 12px">
+    <div id="my-requests-list"><div class="loading"><span class="spinner"></span>Loading…</div></div>
+  </div>
 </div>
 
 <!-- ══ CHETTA DIRECTORY ═══════════════════════════════════════ -->
@@ -813,6 +857,34 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 </div>
 
+<!-- EDIT PROFILE MODAL -->
+<div id="edit-profile-overlay" onclick="closeEditProfile()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:flex-end;justify-content:center">
+  <div onclick="event.stopPropagation()" style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:0 16px 28px">
+    <div style="display:flex;justify-content:center;padding:12px 0 4px"><div style="width:40px;height:4px;border-radius:2px;background:var(--border)"></div></div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--maroon-dark);margin:8px 0 14px">Edit profile</div>
+    <div class="input-group">
+      <span class="lbl">Full name</span>
+      <input type="text" id="edit-name" placeholder="Your name">
+    </div>
+    <div class="input-group" style="margin-top:10px">
+      <span class="lbl">Room / Block <span style="font-weight:400;color:var(--text-sec)">(private)</span></span>
+      <input type="text" id="edit-room" placeholder="e.g. A-204">
+    </div>
+    <div class="input-group" style="margin-top:10px">
+      <span class="lbl">WhatsApp number</span>
+      <input type="tel" id="edit-phone" placeholder="10-digit number">
+    </div>
+    <div class="input-group" style="margin-top:10px">
+      <span class="lbl">UPI ID</span>
+      <input type="text" id="edit-upi" placeholder="e.g. name@upi or 9876543210@ybl">
+    </div>
+    <div id="edit-profile-error" style="display:none;color:#DC2626;font-size:12px;margin-top:8px;padding:8px;background:#FEE2E2;border-radius:8px;font-weight:600"></div>
+    <button onclick="saveProfile()" style="width:100%;margin-top:14px;padding:13px;background:var(--maroon);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Save changes</button>
+    <button onclick="closeEditProfile()" style="width:100%;margin-top:8px;padding:11px;background:transparent;color:var(--text-sec);border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancel</button>
+  </div>
+</div>
+
+
 <!-- JOIN REQUEST MODAL -->
 <div id="req-modal-overlay" onclick="closeReqModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:flex-end;justify-content:center">
   <div onclick="event.stopPropagation()" style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:0 16px 28px">
@@ -875,7 +947,7 @@ const firebaseConfig = {
 };
 
 let createUserFn,signInFn,signOutFn,onAuthFn,updateProfileFn,setDocFn,getDocFn;
-let currentUserName='',currentUserPhone='';
+let currentUserName='',currentUserPhone='',currentUserUpi='',currentUserRoom='';
 
 async function initFirebase(){
   try{
@@ -898,7 +970,7 @@ async function initFirebase(){
         currentUid=user.uid;
         try{
           const snap=await getDocFn(doc(db,'users',user.uid));
-          if(snap.exists()){const d=snap.data();currentUserName=d.name||'';currentUserPhone=d.phone||'';}
+          if(snap.exists()){const d=snap.data();currentUserName=d.name||'';currentUserPhone=d.phone||'';currentUserUpi=d.upi||'';currentUserRoom=d.room||'';}
         }catch(e){}
         const g=document.getElementById('home-greeting');
         if(g&&currentUserName) g.textContent='Hi '+currentUserName.split(' ')[0]+'! 👋';
@@ -957,7 +1029,8 @@ window.doSignup=function(){
   createUserFn(auth,email,pass)
     .then(async cred=>{
       await updateProfileFn(cred.user,{displayName:name});
-      await setDocFn(doc(db,'users',cred.user.uid),{name,room,phone,email,createdAt:serverTimestamp()});
+      const upi=document.getElementById('signup-upi')?document.getElementById('signup-upi').value.trim():'';
+      await setDocFn(doc(db,'users',cred.user.uid),{name,room,phone,upi,email,createdAt:serverTimestamp()});
       currentUserName=name;currentUserPhone=phone;
       btn.textContent='Create account';btn.disabled=false;
     })
@@ -1207,9 +1280,12 @@ document.getElementById('h-from').addEventListener('change',function(){
 });
 
 window.goTo=function(id){
+  if(id==='s-myrides') setTimeout(populateMineProfile, 50);
   if(id==='s-post'||id==='s-book'){
     const el=document.getElementById('post-rider-name');
     if(el&&currentUserName) el.textContent=currentUserName.split(' ')[0];
+    const upiEl=document.getElementById('p-upi');
+    if(upiEl&&currentUserUpi&&!upiEl.value) upiEl.value=currentUserUpi;
   }
   if(id!=='s-login'&&id!=='s-signup'&&!currentUid){goTo('s-login');return;}
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -1657,13 +1733,74 @@ window.markComplete=function(id){
   updateDoc(doc(db,'rides',id),{status:'completed'}).then(()=>{toast('Ride marked complete. UPI now visible.');loadMyRides();});
 }
 
+// ── PROFILE ─────────────────────────────────────────────────
+function populateMineProfile(){
+  const name=currentUserName, phone=currentUserPhone, upi=currentUserUpi, room=currentUserRoom;
+  const el=n=>document.getElementById(n);
+  if(el('mine-name')) el('mine-name').textContent=name||'—';
+  if(el('mine-avatar')) el('mine-avatar').textContent=(name||'?')[0].toUpperCase();
+  if(el('mine-room')) el('mine-room').textContent=room?'🏠 '+room:'Room not set';
+  if(el('mine-phone')) el('mine-phone').textContent=phone||'Not set';
+  if(el('mine-upi')) el('mine-upi').textContent=upi||'Not set';
+}
+
+window.openEditProfile=function(){
+  document.getElementById('edit-name').value=currentUserName||'';
+  document.getElementById('edit-room').value=currentUserRoom||'';
+  document.getElementById('edit-phone').value=currentUserPhone||'';
+  document.getElementById('edit-upi').value=currentUserUpi||'';
+  document.getElementById('edit-profile-error').style.display='none';
+  document.getElementById('edit-profile-overlay').style.display='flex';
+  document.body.style.overflow='hidden';
+};
+
+window.closeEditProfile=function(){
+  document.getElementById('edit-profile-overlay').style.display='none';
+  document.body.style.overflow='';
+};
+
+window.saveProfile=function(){
+  if(!fbReady||!currentUid){closeEditProfile();return;}
+  const name=document.getElementById('edit-name').value.trim();
+  const room=document.getElementById('edit-room').value.trim();
+  const phone=document.getElementById('edit-phone').value.trim();
+  const upi=document.getElementById('edit-upi').value.trim();
+  const errEl=document.getElementById('edit-profile-error');
+  if(!name){errEl.textContent='Name cannot be empty.';errEl.style.display='block';return;}
+  setDocFn(doc(db,'users',currentUid),{name,room,phone,upi,email:auth.currentUser.email,updatedAt:serverTimestamp()},{merge:true})
+    .then(()=>{
+      currentUserName=name; currentUserRoom=room;
+      currentUserPhone=phone; currentUserUpi=upi;
+      const g=document.getElementById('home-greeting');
+      if(g) g.textContent='Hi '+name.split(' ')[0]+'! 👋';
+      populateMineProfile();
+      closeEditProfile();
+      toast('Profile updated ✓');
+    })
+    .catch(e=>{errEl.textContent='Error: '+e.message;errEl.style.display='block';});
+};
+
+window.switchMineTab=function(btn, panelId){
+  document.querySelectorAll('#s-myrides .bus-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#s-myrides .bus-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+};
+
 window.loadMyRides=function(){
+  if(!fbReady){
+    document.getElementById('my-list').innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting...</div>';
+    return;
+  }
+  // ── Tab 1: rides I posted (share auto) ──
   const el=document.getElementById('my-list');
-  el.innerHTML='<div class="loading"><span class="spinner"></span>Loading...</div>';
-  if(!fbReady){el.innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting to server...</div>';return;}
+  el.innerHTML='<div class="loading"><span class="spinner"></span>Loading…</div>';
   getDocs(collection(db,'rides')).then(snap=>{
     const mine=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.uid===currentUid);
-    if(!mine.length){el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>You haven\'t posted any rides yet.</div>';return;}
+    if(!mine.length){
+      el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>You haven\'t shared any rides yet.<br><button onclick="goTo(\'s-post\')" style="margin-top:12px;padding:10px 20px;background:var(--maroon);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:\'Inter\',sans-serif">Share a ride →</button></div>';
+      return;
+    }
     el.innerHTML=mine.map(r=>rideCardHtml(r,true)).join('');
     setTimeout(()=>{
       mine.forEach(r=>{
@@ -1671,6 +1808,33 @@ window.loadMyRides=function(){
         if(container) loadRideRequests(r.id, r.seats, r.joined||0, container);
       });
     },100);
+  });
+
+  // ── Tab 2: ride requests I posted (book auto) ──
+  const el2=document.getElementById('my-requests-list');
+  el2.innerHTML='<div class="loading"><span class="spinner"></span>Loading…</div>';
+  getDocs(collection(db,'rideRequests')).then(snap=>{
+    const mine=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.uid===currentUid);
+    if(!mine.length){
+      el2.innerHTML='<div class="empty"><span class="empty-icon">🙋</span>No active requests.<br><button onclick="goTo(\'s-book\')" style="margin-top:12px;padding:10px 20px;background:var(--maroon);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:\'Inter\',sans-serif">Book an auto →</button></div>';
+      return;
+    }
+    const now=Date.now();
+    el2.innerHTML=mine.map(r=>{
+      const isActive=r.status==='open';
+      const timeAgo=r.createdAt?timeSince(r.createdAt):'just now';
+      return`<div class="ride-card" style="margin-bottom:8px;${isActive?'':'opacity:0.6'}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:13px;font-weight:700;color:var(--text)">${r.from} → ${r.to}</span>
+          <span style="font-size:11px;padding:3px 8px;border-radius:12px;font-weight:600;background:${isActive?'#DCFCE7':'#F3F4F6'};color:${isActive?'#166534':'#6B7280'}">${isActive?'Active':'Closed'}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-sec);margin-bottom:8px">
+          ${r.slot&&r.slot!=='Now'?'🕐 '+r.slot:'🕐 Now'} · Posted ${timeAgo}
+        </div>
+        ${isActive?`<button onclick="closeRideRequest('${r.id}')" style="width:100%;padding:9px;background:#FEE2E2;color:#991B1B;border:1.5px solid #FCA5A5;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancel request</button>`
+        :'<div style="font-size:12px;color:var(--text-sec);text-align:center">Closed</div>'}
+      </div>`;
+    }).join('');
   });
 }
 
@@ -1692,7 +1856,7 @@ function loadChettas(){
         </div>${commentHtml}
         <div style="display:flex;gap:8px;margin-top:10px">
           <a href="tel:${c.phone}" class="btn-call">📞 ${c.phone}</a>
-          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent(`Hi ${c.name} Chetta, I want to book an auto. Start: [mention your pickup point], Destination: [mention destination], Time: [mention time]. Could you share the estimated price? Thank you!`)}" target="_blank" class="btn-wa">💬 WhatsApp</a>
+          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent(`Hi ${c.name} Chetta, I want to book an auto. Start: [mention your pickup point], Destination: [mention destination], Time: [mention time]. Could you share the estimated price? Thank you! - ${currentUserName||'Student'}`)}" target="_blank" class="btn-wa">💬 WhatsApp</a>
         </div>
       </div>`;
     }).join('');

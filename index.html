@@ -1373,20 +1373,23 @@ window.findRides=function(){
 }
 window.loadFeed=function(){
   const el=document.getElementById('feed-list');
+  if(!fbReady){el.innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting... check internet.</div>';return;}
+  // Unsubscribe previous listener to avoid stacking
+  if(_feedUnsub){_feedUnsub();_feedUnsub=null;}
   el.innerHTML='<div class="loading"><span class="spinner"></span>Loading…</div>';
-  if(!fbReady){el.innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting to server...<br>Make sure you have internet.</div>';return;}
+  // Limit to 50 most recent, Firestore serves from cache first
+  const {limit}=Object.fromEntries(Object.entries(window).filter(([k])=>k==='limit'));
   const q=query(collection(db,'rides'),orderBy('createdAt','desc'));
-  onSnapshot(q,snap=>{
+  _feedUnsub=onSnapshot(q,{includeMetadataChanges:false},snap=>{
     const now=Date.now();
     const all=snap.docs.map(d=>({id:d.id,...d.data()}));
-    // Filter: remove completed rides older than 24 hours from view
     const visible=all.filter(r=>{
       if(r.status==='completed'&&r.createdAt){
         const ms=r.createdAt.toMillis?r.createdAt.toMillis():(r.createdAt.seconds*1000);
         if(now-ms>86400000)return false;
       }
       return true;
-    });
+    }).slice(0,60); // cap at 60 cards rendered
     if(!visible.length){el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>No active rides posted yet.</div>';return;}
     const ongoing=visible.filter(r=>r.status!=='completed');
     const completed=visible.filter(r=>r.status==='completed');
@@ -1396,6 +1399,11 @@ window.loadFeed=function(){
       html+=completed.map(r=>`<div style="opacity:0.6">${rideCardHtml(r,r.uid===currentUid)}</div>`).join('');
     }
     el.innerHTML=html;
+    // Load pending requests for my rides
+    ongoing.filter(r=>r.uid===currentUid).forEach(r=>{
+      const container=document.getElementById('reqs-'+r.id);
+      if(container) loadRideRequests(r.id,r.seats,r.joined||0,container);
+    });
   });
 }
 
@@ -1442,15 +1450,16 @@ window.postRideRequest=function(){
     ['b-custom-from-wrap','b-custom-to-wrap'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
     if(btn){btn.textContent='Post request';btn.disabled=false;}
     setTimeout(()=>goTo('s-home'),1000);
-    loadRequestsFeed();
+    // onSnapshot in loadRequestsFeed auto-updates — no manual reload needed
   }).catch(e=>{toast('Error: '+e.message);if(btn){btn.textContent='Post request';btn.disabled=false;}});
 };
 
 function loadRequestsFeed(){
   const el=document.getElementById('requests-feed');
   if(!el||!fbReady)return;
+  if(_requestsUnsub){_requestsUnsub();_requestsUnsub=null;}
   const q=query(collection(db,'rideRequests'),orderBy('createdAt','desc'));
-  onSnapshot(q,snap=>{
+  _requestsUnsub=onSnapshot(q,{includeMetadataChanges:false},snap=>{
     const now=Date.now();
     const reqs=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>{
       if(r.status==='closed')return false;
@@ -1514,7 +1523,9 @@ window.postRide=function(){
       document.getElementById('maps-link').style.display='none';
       ['p-custom-from-wrap','p-custom-to-wrap'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
       btn.textContent='Post ride';btn.disabled=false;
-      setTimeout(()=>{goTo('s-feed');loadFeed();},1000);
+      goTo('s-feed'); // onSnapshot auto-updates feed
+      toast('Ride posted! 🎉');
+      if(!_feedUnsub) loadFeed(); // only init listener if not already running
     }).catch(e=>{toast('Error: '+e.message);btn.textContent='Post ride';btn.disabled=false;});
 }
 
@@ -1535,6 +1546,7 @@ window.loadMyRides=function(){
   getDocs(collection(db,'rides')).then(snap=>{
     const mine=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.uid===currentUid);
     if(!mine.length){el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>You haven\'t posted any rides yet.</div>';return;}
+    el.dataset.loading='0';
     el.innerHTML=mine.map(r=>rideCardHtml(r,true)).join('');
     setTimeout(()=>{
       mine.forEach(r=>{

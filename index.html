@@ -819,6 +819,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 // ── Firebase loaded dynamically so UI never breaks if CDN is slow/blocked ──
 let db=null, auth=null, currentUid=null, fbReady=false;
 let collection,addDoc,getDocs,doc,deleteDoc,updateDoc,onSnapshot,query,orderBy,serverTimestamp;
+let currentUserName='',currentUserPhone='',currentUserUpi='',currentUserRoom='';
+let _feedUnsub=null,_requestsUnsub=null;
 
 const firebaseConfig = {
   apiKey: "AIzaSyAiFs5wxchLLJdyjWwVuTbVDcznfJDI7_c",

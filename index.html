@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Call a Chetta — IIMK</title>
+<title>Call a Chetta</title>
 
 <!-- PWA + Home screen icon -->
 <link rel="manifest" href="manifest.json">
@@ -62,14 +62,14 @@ body{font-family:'Inter',sans-serif;background:var(--cream);max-width:480px;marg
 
 /* NAV */
 nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--white);border-top:1px solid var(--border);z-index:100;box-shadow:0 -2px 12px rgba(123,18,38,0.08)}
-.nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#999;padding:10px 0 8px;font-family:'Inter',sans-serif}
+.nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#999;padding:8px 0;font-family:'Inter',sans-serif}
 .nav-btn.active{color:var(--maroon)}
 .nav-btn svg{width:20px;height:20px}
 .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);margin:0 auto;display:none}
 .nav-btn.active .nav-dot{display:block}
 
 /* TOPBAR */
-.topbar{display:flex;align-items:center;gap:12px;padding:16px 20px 14px;background:var(--white);border-bottom:1px solid var(--border)}
+.topbar{display:flex;align-items:center;gap:10px;padding:14px 16px 12px;background:var(--white);border-bottom:1px solid var(--border)}
 .topbar h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;flex:1;color:var(--maroon-dark)}
 .back-btn{background:none;border:none;cursor:pointer;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--gold-pale);color:var(--maroon)}
 
@@ -81,44 +81,10 @@ nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;bottom:0;lef
 .input-group{margin-bottom:14px}
 .input-group:last-child{margin-bottom:0}
 .lbl{font-size:12px;font-weight:600;color:var(--text-sec);display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em}
-select,input[type=text],input[type=tel],input[type=email],input[type=password],textarea{
-  width:100%;
-  padding:14px 16px;
-  border:1.5px solid var(--border);
-  border-radius:12px;
-  font-size:16px;
-  color:var(--text);
-  background:var(--white);
-  outline:none;
-  font-family:'Inter',sans-serif;
-  -webkit-appearance:none;
-  appearance:none;
-  box-sizing:border-box;
-  transition:border-color 0.15s;
-}
-input[type=text]:focus,input[type=tel]:focus,input[type=email]:focus,input[type=password]:focus,textarea:focus{
-  border-color:var(--maroon);
-  box-shadow:0 0 0 3px rgba(123,18,38,0.08);
-}
-select{
-  width:100%;
-  padding:14px 16px;
-  border:1.5px solid var(--border);
-  border-radius:12px;
-  font-size:16px;
-  color:var(--text);
-  background:var(--white);
-  outline:none;
-  font-family:'Inter',sans-serif;
-  -webkit-appearance:none;
-  appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 14px center;
-  padding-right:40px;
-  box-sizing:border-box;
-}
-select:focus{border-color:var(--maroon);}
+select,input[type=text],input[type=tel],input[type=email],input[type=password],textarea{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:16px;color:var(--text);background:var(--white);outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;appearance:none;box-sizing:border-box;transition:border-color 0.15s}
+input[type=text]:focus,input[type=tel]:focus,input[type=email]:focus,input[type=password]:focus,textarea:focus{border-color:var(--maroon);box-shadow:0 0 0 3px rgba(123,18,38,0.07)}
+select{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:16px;color:var(--text);background:var(--white);outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:42px;box-sizing:border-box}
+select:focus{border-color:var(--maroon)}
 select:focus,input:focus,textarea:focus{border-color:var(--maroon);box-shadow:0 0 0 3px rgba(123,18,38,0.08)}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237B1226' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
 
@@ -228,102 +194,18 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </style>
 </head>
 <body>
-<div id="s-login" class="screen active" style="min-height:100vh;display:flex;flex-direction:column">
-  <div class="hero-bar" style="padding:52px 24px 40px;flex-shrink:0">
-    <div class="hero-eyebrow" style="font-size:11px;letter-spacing:0.14em">IIM KOZHIKODE</div>
-    <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#fff;margin:6px 0 4px;line-height:1.2">Call a Chetta</div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.7);font-weight:400">Book and share autos on campus</div>
-  </div>
-  <div style="padding:28px 20px 32px;flex:1;display:flex;flex-direction:column;gap:0">
-    <div class="input-group">
-      <span class="lbl">IIMK Email</span>
-      <input type="email" id="login-email" placeholder="yourname@iimk.ac.in" autocomplete="email" autocapitalize="none">
-    </div>
-    <div class="input-group" style="margin-top:6px">
-      <span class="lbl">4-digit PIN</span>
-      <input type="password" id="login-password" placeholder="Enter PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="current-password" style="letter-spacing:0.25em;font-size:22px;text-align:center;font-weight:700">
-    </div>
-    <div id="login-error" style="display:none;color:#DC2626;font-size:13px;margin-top:4px;font-weight:600;padding:10px 14px;background:#FEF2F2;border-radius:10px;border:1px solid #FECACA"></div>
-    <button id="login-btn" onclick="doLogin()" style="width:100%;margin-top:20px;padding:16px;background:var(--maroon);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.02em">Sign in</button>
-    <div style="display:flex;align-items:center;gap:10px;margin:20px 0">
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-      <span style="font-size:13px;color:var(--text-sec);font-weight:500">New here?</span>
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-    </div>
-    <button onclick="goTo('s-signup')" style="width:100%;padding:15px;background:var(--white);color:var(--maroon);border:2px solid var(--maroon);border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Create account</button>
-    <div style="margin-top:16px;padding:12px 16px;background:var(--gold-pale);border-radius:12px;border:1px solid rgba(201,168,76,0.3);text-align:center">
-      <span style="font-size:12px;color:var(--text-sec)">Only <strong style="color:var(--maroon-dark)">@iimk.ac.in</strong> email addresses</span>
-    </div>
-  </div>
-</div>
-
-<div id="s-signup" class="screen">
-  <div class="topbar">
-    <button class="back-btn" onclick="goTo('s-login')">←</button>
-    <h2>Create account</h2>
-  </div>
-  <div style="padding:20px 20px 32px">
-    <div class="card" style="margin:0 0 12px">
-      <div class="input-group">
-        <span class="lbl">Full name</span>
-        <input type="text" id="signup-name" placeholder="e.g. Priya Sharma" autocomplete="name">
-      </div>
-      <div class="input-group" style="margin-top:10px">
-        <span class="lbl">Room / Block <span style="font-weight:400;color:var(--text-sec)">(private, never shown)</span></span>
-        <input type="text" id="signup-room" placeholder="e.g. A-204 or K2-112">
-      </div>
-      <div class="input-group" style="margin-top:10px">
-        <span class="lbl">WhatsApp number</span>
-        <input type="tel" id="signup-phone" placeholder="10-digit number" autocomplete="tel">
-      </div>
-      <div class="input-group" style="margin-top:10px">
-        <span class="lbl">IIMK Email</span>
-        <input type="email" id="signup-email" placeholder="yourname@iimk.ac.in" autocomplete="email">
-      </div>
-      <div class="input-group" style="margin-top:10px">
-        <span class="lbl">UPI ID <span style="font-weight:400;color:var(--text-sec)">(for ride payment splits)</span></span>
-        <input type="text" id="signup-upi" placeholder="e.g. name@upi or 9876543210@ybl">
-      </div>
-      <div class="input-group" style="margin-top:10px">
-        <span class="lbl">Create a 4-digit PIN</span>
-        <input type="password" id="signup-password" placeholder="• • • •" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="new-password" style="letter-spacing:0.3em;font-size:20px;text-align:center">
-      </div>
-      <div id="signup-error" style="display:none;color:#DC2626;font-size:12px;margin-top:8px;font-weight:600;padding:8px;background:#FEE2E2;border-radius:8px"></div>
-      <button id="signup-btn" onclick="doSignup()" class="btn-primary">Create account →</button>
-    </div>
-    <div style="padding:10px;background:var(--gold-pale);border-radius:10px;border:1px solid rgba(201,168,76,0.3);text-align:center">
-      <div style="font-size:12px;color:var(--text-sec)">Only <strong>@iimk.ac.in</strong> emails allowed. Room number is private.</div>
-    </div>
-  </div>
-</div>
-
 <div id="app">
 
 <!-- ══ HOME ══════════════════════════════════════════════════ -->
-<div id="s-home" class="screen">
+<div id="s-home" class="screen active">
   <div class="hero-bar">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
-      <div class="hero-eyebrow" style="margin:0;letter-spacing:0.14em">IIM KOZHIKODE</div>
-      <button onclick="doLogout()" style="background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.35);border-radius:16px;color:#fff;font-size:11px;font-weight:600;cursor:pointer;padding:4px 10px;font-family:'Inter',sans-serif;flex-shrink:0">Sign out</button>
-    </div>
+    <div class="hero-eyebrow" style="letter-spacing:0.12em">IIM KOZHIKODE</div>
     <div class="hero-title" style="font-family:'Playfair Display',serif">Call a Chetta</div>
-    <div id="home-greeting" style="font-size:13px;color:rgba(255,255,255,0.8);margin-bottom:2px"></div>
-    <div class="hero-sub">Book solo or share with batchmates</div>
+    <div class="hero-sub">Book and share autos with batchmates</div>
     <button onclick="showFareCard()" style="margin-top:10px;padding:6px 14px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.4);border-radius:20px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">💰 Team Namo rate card</button>
   </div>
 
   <div style="padding:12px 12px 0">
-
-    <!-- Primary CTAs -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-      <button onclick="goTo('s-book')" style="padding:14px 8px;background:var(--maroon);color:#fff;border:none;border-radius:14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 12px rgba(123,18,38,0.25);text-align:center;line-height:1.5">
-        <span style="font-size:15px;font-weight:800;display:block;margin-bottom:2px">Book</span><span style="font-size:12px;font-weight:400;opacity:0.85">I need an auto</span>
-      </button>
-      <button onclick="goTo('s-post')" style="padding:14px 8px;background:var(--white);border:2px solid var(--maroon);border-radius:14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;color:var(--maroon);text-align:center;line-height:1.5">
-        <span style="font-size:15px;font-weight:800;display:block;margin-bottom:2px;color:var(--maroon)">Share</span><span style="font-size:12px;font-weight:400;color:var(--text-sec)">Offer seats</span>
-      </button>
-    </div>
-
     <div class="card" style="margin:0 0 10px">
       <div class="input-group">
         <span class="lbl">From</span>
@@ -408,45 +290,51 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       </div>
       <div id="home-fare"></div>
     </div>
-      <!-- Students looking for rides -->
-    <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;margin-top:4px">Looking for an auto</div>
-    <div id="requests-feed"><div class="loading"><span class="spinner"></span>Loading...</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <button onclick="goTo('s-book')" style="padding:18px 10px;background:var(--maroon);color:#fff;border:none;border-radius:16px;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 14px rgba(123,18,38,0.28);text-align:center;line-height:1.6">
+        <div style="font-size:18px;font-weight:800">Book</div>
+        <div style="font-size:12px;opacity:0.82;font-weight:400">I need an auto</div>
+      </button>
+      <button onclick="goTo('s-post')" style="padding:18px 10px;background:var(--white);border:2px solid var(--maroon);border-radius:16px;cursor:pointer;font-family:'Inter',sans-serif;color:var(--maroon);text-align:center;line-height:1.6">
+        <div style="font-size:18px;font-weight:800">Share</div>
+        <div style="font-size:12px;font-weight:400;color:var(--text-sec)">Offer seats</div>
+      </button>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Looking for an auto</div>
+    <div id="requests-feed"></div>
   </div>
 </div>
 
-<!-- ══ BOOK AN AUTO SCREEN ════════════════════════════════════ -->
+<!-- ══ BOOK AN AUTO ══════════════════════════════════════════ -->
 <div id="s-book" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('s-home')">←</button>
     <h2>Book an auto</h2>
   </div>
-  <div style="padding:14px 12px">
-    <div class="card" style="margin:0 0 12px">
-      <div style="font-size:12px;color:var(--text-sec);margin-bottom:12px;line-height:1.5">Post your trip. Students going the same way can message you and share the auto — saving everyone money.</div>
+  <div style="padding:20px">
+    <p style="font-size:14px;color:var(--text-sec);margin:0 0 20px;line-height:1.6">Post your trip. Batchmates going the same way can message you to share.</p>
+    <div class="card" style="margin:0 0 14px">
       <div class="input-group">
         <span class="lbl">From</span>
         <select id="b-from" onchange="handleCustomLoc('b-from','b-custom-from-wrap')">
           <option value="">Select pickup</option>
           <optgroup label="Campus"><option>Silver Spoon</option><option>D Landing</option><option>Phase V</option><option>C&amp;D Housing</option><option>Maingate</option></optgroup>
-          <optgroup label="City"><option>Calicut Beach</option><option>Monad</option><option>SM Street</option><option>Calicut Airport</option><option>Calicut Railway Station</option><option>Hilite Mall</option><option>Gokulum Mall</option><option>Springway</option><option>Kappad Beach</option><option>Baby Memorial Hospital</option><option>Nirmala Hospital</option><option>Dr. Cafe</option><option value="custom">✏️ Other - type below</option></optgroup>
+          <optgroup label="City"><option>Calicut Beach</option><option>Monad</option><option>SM Street</option><option>Calicut Airport</option><option>Calicut Railway Station</option><option>Hilite Mall</option><option>Gokulum Mall</option><option>Springway</option><option>Kappad Beach</option><option>Baby Memorial Hospital</option><option>Nirmala Hospital</option><option>Dr. Cafe</option><option value="custom">Other — type below</option></optgroup>
         </select>
       </div>
-      <div id="b-custom-from-wrap" style="display:none;margin-top:6px">
-        <input type="text" id="b-custom-from" placeholder="Type pickup location..." style="border-color:var(--gold)">
-      </div>
-      <div style="text-align:center;margin:8px 0"><div style="width:2px;height:18px;background:var(--border);margin:0 auto"></div></div>
+      <div id="b-custom-from-wrap" style="display:none;margin-top:8px"><input type="text" id="b-custom-from" placeholder="Type pickup location"></div>
+      <div style="text-align:center;padding:4px 0"><div style="width:2px;height:16px;background:var(--border);margin:0 auto"></div></div>
       <div class="input-group">
         <span class="lbl">To</span>
         <select id="b-to" onchange="handleCustomLoc('b-to','b-custom-to-wrap')">
           <option value="">Select destination</option>
           <optgroup label="Campus"><option>Silver Spoon</option><option>D Landing</option><option>Phase V</option><option>C&amp;D Housing</option><option>Maingate</option></optgroup>
-          <optgroup label="City"><option>Calicut Beach</option><option>Monad</option><option>SM Street</option><option>Calicut Airport</option><option>Calicut Railway Station</option><option>Hilite Mall</option><option>Gokulum Mall</option><option>Springway</option><option>Kappad Beach</option><option>Baby Memorial Hospital</option><option>Nirmala Hospital</option><option>Dr. Cafe</option><option value="custom">✏️ Other - type below</option></optgroup>
+          <optgroup label="City"><option>Calicut Beach</option><option>Monad</option><option>SM Street</option><option>Calicut Airport</option><option>Calicut Railway Station</option><option>Hilite Mall</option><option>Gokulum Mall</option><option>Springway</option><option>Kappad Beach</option><option>Baby Memorial Hospital</option><option>Nirmala Hospital</option><option>Dr. Cafe</option><option value="custom">Other — type below</option></optgroup>
         </select>
       </div>
-      <div id="b-custom-to-wrap" style="display:none;margin-top:6px">
-        <input type="text" id="b-custom-to" placeholder="Type destination..." style="border-color:var(--gold)">
-      </div>
-      <div class="input-group" style="margin-top:10px">
+      <div id="b-custom-to-wrap" style="display:none;margin-top:8px"><input type="text" id="b-custom-to" placeholder="Type destination"></div>
+      <div class="input-group" style="margin-top:4px">
         <span class="lbl">When</span>
         <select id="b-slot">
           <option value="Now">Now</option><option>In 15 mins</option><option>In 30 mins</option><option>In 1 hour</option>
@@ -454,13 +342,19 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         </select>
       </div>
     </div>
-    <button onclick="postRideRequest()" style="width:100%;padding:13px;background:var(--maroon);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 12px rgba(123,18,38,0.25)">Post request</button>
-    <p style="font-size:12px;color:var(--text-sec);text-align:center;margin-top:10px;line-height:1.5">Your name will be visible. Others can WhatsApp you directly.</p>
+    <div class="card" style="margin:0 0 16px">
+      <div class="input-group">
+        <span class="lbl">Your name</span>
+        <input type="text" id="b-name" placeholder="e.g. Priya" autocomplete="name">
+      </div>
+      <div class="input-group">
+        <span class="lbl">WhatsApp number</span>
+        <input type="tel" id="b-phone" placeholder="10-digit number" autocomplete="tel">
+      </div>
+    </div>
+    <button onclick="postRideRequest()" style="width:100%;padding:16px;background:var(--maroon);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Post request</button>
   </div>
 </div>
-
-<!-- ══ RIDES LIST ═════════════════════════════════════════════ -->
-
 
 <!-- ══ POST RIDE ══════════════════════════════════════════════ -->
 <div id="s-post" class="screen">
@@ -534,8 +428,12 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         <input type="text" id="p-quoted" placeholder="e.g. 120 (what chetta said)">
       </div>
       <div class="input-group">
-        <span class="lbl">Posting as</span>
-        <div id="post-rider-name" style="padding:9px 12px;background:var(--cream);border-radius:10px;font-size:14px;font-weight:600;color:var(--maroon-dark);border:1.5px solid var(--border)">Loading...</div>
+        <span class="lbl">Your name &amp; room</span>
+        <input type="text" id="p-name" placeholder="e.g. Mike Ross, F 27">
+      </div>
+      <div class="input-group">
+        <span class="lbl">WhatsApp number</span>
+        <input type="tel" id="p-phone" placeholder="10-digit number">
       </div>
       <div class="input-group">
         <span class="lbl">Your UPI ID (for payment after ride)</span>
@@ -558,48 +456,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
 <!-- ══ MY RIDES ══════════════════════════════════════════════ -->
 <div id="s-myrides" class="screen">
-  <div class="topbar"><h2>Mine</h2></div>
-
-  <!-- Profile card -->
-  <div id="mine-profile-card" style="margin:12px 12px 0;background:var(--white);border-radius:16px;border:1px solid var(--border);overflow:hidden">
-    <div style="background:linear-gradient(135deg,var(--maroon-dark),var(--maroon-light));padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div id="mine-avatar" style="width:44px;height:44px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--maroon-dark);flex-shrink:0"></div>
-        <div>
-          <div id="mine-name" style="font-size:16px;font-weight:700;color:#fff;font-family:'Playfair Display',serif"></div>
-          <div id="mine-room" style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:2px"></div>
-        </div>
-      </div>
-      <button onclick="openEditProfile()" style="background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.35);border-radius:10px;color:#fff;font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;font-family:'Inter',sans-serif">Edit</button>
-    </div>
-    <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:16px">📱</span>
-        <div><div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.05em">WhatsApp</div>
-        <div id="mine-phone" style="font-size:14px;font-weight:600;color:var(--text)"></div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:16px">💳</span>
-        <div><div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.05em">UPI ID</div>
-        <div id="mine-upi" style="font-size:14px;font-weight:600;color:var(--text)"></div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="bus-tabs" style="grid-template-columns:1fr 1fr;margin-top:12px">
-    <button class="bus-tab active" id="mine-tab-shared" onclick="switchMineTab(this,'mine-shared')">Shared rides</button>
-    <button class="bus-tab" id="mine-tab-requests" onclick="switchMineTab(this,'mine-requests')">My requests</button>
-  </div>
-
-  <!-- Rides I posted (share auto) -->
-  <div id="mine-shared" class="bus-panel active" style="padding:10px 12px">
-    <div id="my-list"><div class="loading"><span class="spinner"></span>Loading…</div></div>
-  </div>
-
-  <!-- Ride requests I posted (book auto) -->
-  <div id="mine-requests" class="bus-panel" style="padding:10px 12px">
-    <div id="my-requests-list"><div class="loading"><span class="spinner"></span>Loading…</div></div>
-  </div>
+  <div class="topbar"><h2>My rides</h2></div>
+  <div id="my-list"><div class="loading"><span class="spinner"></span>Loading…</div></div>
 </div>
 
 <!-- ══ CHETTA DIRECTORY ═══════════════════════════════════════ -->
@@ -610,12 +468,12 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 
   <div class="bus-tabs" style="grid-template-columns:1fr 1fr">
-    <button class="bus-tab active" onclick="switchChettatab(this,'ct-dir')">Directory</button>
-    <button class="bus-tab" onclick="switchChettatab(this,'ct-fare')">Rates</button>
+    <button class="bus-tab active" onclick="switchChettatab(this,'ct-dir')">📞 Directory</button>
+    <button class="bus-tab" onclick="switchChettatab(this,'ct-fare')">💰 Fare rates</button>
   </div>
 
   <div id="ct-dir" class="bus-panel active" style="padding:8px 0 0">
-    <p style="padding:0 16px 8px;font-size:13px;color:var(--text-sec)">Tap to call or message directly.</p>
+    <p style="padding:0 16px 8px;font-size:13px;color:var(--text-sec)">Tap call to dial directly. WhatsApp sends a pre-filled message.</p>
     <div id="chetta-list"></div>
     <div style="padding:0 12px 12px">
       <button class="btn-gold" onclick="goTo('s-review')">⭐ Rate a chetta</button>
@@ -700,9 +558,9 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
   <!-- Tab switcher -->
   <div class="bus-tabs" style="grid-template-columns:1fr 1fr 1fr">
-    <button class="bus-tab active" onclick="switchCampusTab(this,'ct-hostel')">Hostel map</button>
-    <button class="bus-tab" onclick="switchCampusTab(this,'ct-trail')">Walking trail</button>
-    <button class="bus-tab" onclick="switchCampusTab(this,'ct-gmaps')">Full map</button>
+    <button class="bus-tab active" onclick="switchCampusTab(this,'ct-hostel')">🏠 Hostel map</button>
+    <button class="bus-tab" onclick="switchCampusTab(this,'ct-trail')">🥾 Walking trail</button>
+    <button class="bus-tab" onclick="switchCampusTab(this,'ct-gmaps')">🗺️ Full map</button>
   </div>
 
   <!-- HOSTEL MAP -->
@@ -746,7 +604,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
     <!-- Quick building index -->
     <div style="padding:10px 12px 12px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Buildings</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Quick building info</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="building-index"></div>
     </div>
   </div>
@@ -816,7 +674,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </a>
 
     <!-- Quick directions grid -->
-    <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">Directions from campus</div>
+    <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">Quick directions from IIMK</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
       <a href="https://www.google.com/maps/dir/IIM+Kozhikode/Calicut+Beach" target="_blank" style="display:flex;align-items:center;gap:8px;padding:11px 12px;background:var(--white);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text)">
         <span style="font-size:20px">🏖️</span><div><div style="font-size:12px;font-weight:700">Calicut Beach</div><div style="font-size:10px;color:var(--text-sec)">~22 km</div></div>
@@ -847,11 +705,26 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <!-- Auto pickup points -->
     <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">Auto pickup points on campus</div>
     <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px">
-      <div style="padding:11px 14px;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">Maingate</span></div></div>
-      <div style="padding:11px 14px;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">Silver Spoon</span></div></div>
-      <div style="padding:11px 14px;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">D Landing</span></div></div>
-      <div style="padding:11px 14px;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">Phase V</span></div></div>
-      <div style="padding:11px 14px"><div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">C &amp; D Housing</span></div></div>
+      <a href="https://maps.google.com/?q=IIM+Kozhikode+Main+Gate" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);text-decoration:none">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">Maingate</span></div>
+        <span style="font-size:12px;color:var(--maroon);font-weight:600">Open maps →</span>
+      </a>
+      <a href="https://maps.google.com/?q=11.3189,75.9368" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);text-decoration:none">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">Silver Spoon</span></div>
+        <span style="font-size:12px;color:var(--maroon);font-weight:600">Open maps →</span>
+      </a>
+      <a href="https://maps.google.com/?q=11.3175,75.9370" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);text-decoration:none">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">D Landing</span></div>
+        <span style="font-size:12px;color:var(--maroon);font-weight:600">Open maps →</span>
+      </a>
+      <a href="https://maps.google.com/?q=11.3160,75.9375" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);text-decoration:none">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">Phase V</span></div>
+        <span style="font-size:12px;color:var(--maroon);font-weight:600">Open maps →</span>
+      </a>
+      <a href="https://maps.google.com/?q=11.3195,75.9360" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;text-decoration:none">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--maroon);border:2px solid var(--gold)"></div><span style="font-size:13px;font-weight:600;color:var(--text)">C and D Housing</span></div>
+        <span style="font-size:12px;color:var(--maroon);font-weight:600">Open maps →</span>
+      </a>
     </div>
 
     <!-- Save tip -->
@@ -862,7 +735,6 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 </div>
 
-<!-- in-app chat removed -->
 
 <!-- FARE CARD MODAL -->
 <div id="fare-modal-overlay" onclick="hideFareCard()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:flex-end;justify-content:center">
@@ -896,34 +768,6 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 </div>
 
-<!-- EDIT PROFILE MODAL -->
-<div id="edit-profile-overlay" onclick="closeEditProfile()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:flex-end;justify-content:center">
-  <div onclick="event.stopPropagation()" style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:0 16px 28px">
-    <div style="display:flex;justify-content:center;padding:12px 0 4px"><div style="width:40px;height:4px;border-radius:2px;background:var(--border)"></div></div>
-    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--maroon-dark);margin:8px 0 14px">Edit profile</div>
-    <div class="input-group">
-      <span class="lbl">Full name</span>
-      <input type="text" id="edit-name" placeholder="Your name">
-    </div>
-    <div class="input-group" style="margin-top:10px">
-      <span class="lbl">Room / Block <span style="font-weight:400;color:var(--text-sec)">(private)</span></span>
-      <input type="text" id="edit-room" placeholder="e.g. A-204">
-    </div>
-    <div class="input-group" style="margin-top:10px">
-      <span class="lbl">WhatsApp number</span>
-      <input type="tel" id="edit-phone" placeholder="10-digit number">
-    </div>
-    <div class="input-group" style="margin-top:10px">
-      <span class="lbl">UPI ID</span>
-      <input type="text" id="edit-upi" placeholder="e.g. name@upi or 9876543210@ybl">
-    </div>
-    <div id="edit-profile-error" style="display:none;color:#DC2626;font-size:12px;margin-top:8px;padding:8px;background:#FEE2E2;border-radius:8px;font-weight:600"></div>
-    <button onclick="saveProfile()" class="btn-primary">Save changes</button>
-    <button onclick="closeEditProfile()" style="width:100%;margin-top:8px;padding:11px;background:transparent;color:var(--text-sec);border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancel</button>
-  </div>
-</div>
-
-
 <!-- JOIN REQUEST MODAL -->
 <div id="req-modal-overlay" onclick="closeReqModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:flex-end;justify-content:center">
   <div onclick="event.stopPropagation()" style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:0 16px 28px">
@@ -948,18 +792,18 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </div>
 </div><!-- #app -->
 
-<nav id="main-nav" style="grid-template-columns:repeat(6,1fr);display:none">
+<nav style="grid-template-columns:repeat(6,1fr)">
   <button class="nav-btn active" id="nav-home" onclick="goTo('s-home')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>Home<div class="nav-dot"></div>
   </button>
   <button class="nav-btn" id="nav-book" onclick="goTo('s-book')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h5l3 5v3h-8V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Book<div class="nav-dot"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Book<div class="nav-dot"></div>
   </button>
   <button class="nav-btn" id="nav-feed" onclick="goTo('s-feed');loadFeed()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Rides<div class="nav-dot"></div>
   </button>
   <button class="nav-btn" id="nav-post" onclick="goTo('s-post')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Share<div class="nav-dot"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h5l3 5v3h-8V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Share<div class="nav-dot"></div>
   </button>
   <button class="nav-btn" id="nav-bus" onclick="goTo('s-bus');initBus()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M7 19v2M17 19v2"/></svg>Bus<div class="nav-dot"></div>
@@ -985,116 +829,23 @@ const firebaseConfig = {
   appId: "1:406197881915:web:dc47d45a03598ce4a4601e"
 };
 
-let createUserFn,signInFn,signOutFn,onAuthFn,updateProfileFn,setDocFn,getDocFn;
-let currentUserName='',currentUserPhone='',currentUserUpi='',currentUserRoom='';
-
 async function initFirebase(){
   try{
-    const appMod  = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-    const fsMod   = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    const authMod = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+    const appMod = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const fsMod  = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
     ({collection,addDoc,getDocs,doc,deleteDoc,updateDoc,onSnapshot,query,orderBy,serverTimestamp}=fsMod);
-    setDocFn=fsMod.setDoc; getDocFn=fsMod.getDoc;
-    createUserFn=authMod.createUserWithEmailAndPassword;
-    signInFn=authMod.signInWithEmailAndPassword;
-    signOutFn=authMod.signOut;
-    onAuthFn=authMod.onAuthStateChanged;
-    updateProfileFn=authMod.updateProfile;
     const fbApp = appMod.initializeApp(firebaseConfig);
-    db   = fsMod.getFirestore(fbApp);
-    auth = authMod.getAuth(fbApp);
-    fbReady=true;
-    onAuthFn(auth,async user=>{
-      if(user){
-        currentUid=user.uid;
-        // Load profile from Firestore
-        try{
-          const snap=await getDocFn(doc(db,'users',user.uid));
-          if(snap.exists()){
-            const d=snap.data();
-            currentUserName=d.name||'';
-            currentUserPhone=d.phone||'';
-            currentUserUpi=d.upi||'';
-            currentUserRoom=d.room||'';
-          }
-        }catch(e){}
-        // Show app
-        document.getElementById('main-nav').style.display='grid';
-        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-        document.getElementById('s-home').classList.add('active');
-        // Update greeting
-        const g=document.getElementById('home-greeting');
-        if(g) g.textContent=currentUserName?'Hi '+currentUserName.split(' ')[0]+'! 👋':'';
-        // Update nav active state
-        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-        const nh=document.getElementById('nav-home');
-        if(nh) nh.classList.add('active');
-        loadChettas();
-        if(typeof loadRequestsFeed==='function') loadRequestsFeed();
-      } else {
-        // Not logged in — force login screen
-        currentUid=null; currentUserName=''; currentUserPhone=''; currentUserUpi=''; currentUserRoom='';
-        document.getElementById('main-nav').style.display='none';
-        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-        document.getElementById('s-login').classList.add('active');
-      }
-    });
+    db = fsMod.getFirestore(fbApp);
+    fbReady = true;
+    currentUid = 'u_' + Math.random().toString(36).slice(2,10);
+    loadChettas();
+    if(typeof loadRequestsFeed==='function') loadRequestsFeed();
   }catch(e){
-    console.error('Firebase failed:',e);
+    console.error('Firebase failed:', e);
     toast('Offline mode – rides need internet');
   }
 }
 initFirebase();
-
-window.doLogin=function(){
-  const email=document.getElementById('login-email').value.trim().toLowerCase();
-  const pass=document.getElementById('login-password').value;
-  const errEl=document.getElementById('login-error');
-  const btn=document.getElementById('login-btn');
-  errEl.style.display='none';
-  if(!email.endsWith('@iimk.ac.in')){errEl.textContent='Only @iimk.ac.in emails are allowed.';errEl.style.display='block';return;}
-  if(!pass){errEl.textContent='Enter your password.';errEl.style.display='block';return;}
-  if(!fbReady){errEl.textContent='Connecting... try again.';errEl.style.display='block';return;}
-  btn.textContent='Signing in...';btn.disabled=true;
-  signInFn(auth,email,pass+'##')
-    .then(()=>{btn.textContent='Sign in';btn.disabled=false;document.getElementById('login-password').value='';})
-    .catch(e=>{btn.textContent='Sign in';btn.disabled=false;
-      errEl.textContent=(['auth/user-not-found','auth/wrong-password','auth/invalid-credential'].includes(e.code))
-        ?'Incorrect email or password.':'Error: '+e.message;
-      errEl.style.display='block';});
-};
-
-window.doSignup=function(){
-  const name=document.getElementById('signup-name').value.trim();
-  const room=document.getElementById('signup-room').value.trim();
-  const email=document.getElementById('signup-email').value.trim().toLowerCase();
-  const pass=document.getElementById('signup-password').value;
-  const phone=document.getElementById('signup-phone')?document.getElementById('signup-phone').value.trim():'';
-  const errEl=document.getElementById('signup-error');
-  const btn=document.getElementById('signup-btn');
-  errEl.style.display='none';
-  if(!name){errEl.textContent='Please enter your name.';errEl.style.display='block';return;}
-  if(!email.endsWith('@iimk.ac.in')){errEl.textContent='Only @iimk.ac.in emails allowed.';errEl.style.display='block';return;}
-  if(!/^[0-9]{4}$/.test(pass)){errEl.textContent='PIN must be exactly 4 digits (numbers only).';errEl.style.display='block';return;}
-  if(!fbReady){errEl.textContent='Connecting... try again.';errEl.style.display='block';return;}
-  btn.textContent='Creating...';btn.disabled=true;
-  createUserFn(auth,email,pass+'##')
-    .then(async cred=>{
-      await updateProfileFn(cred.user,{displayName:name});
-      const upi=document.getElementById('signup-upi')?document.getElementById('signup-upi').value.trim():'';
-      await setDocFn(doc(db,'users',cred.user.uid),{name,room,phone,upi,email,createdAt:serverTimestamp()});
-      currentUserName=name;currentUserPhone=phone;
-      btn.textContent='Create account';btn.disabled=false;
-    })
-    .catch(e=>{btn.textContent='Create account';btn.disabled=false;
-      errEl.textContent=e.code==='auth/email-already-in-use'?'Account already exists. Sign in instead.':'Error: '+e.message;
-      errEl.style.display='block';});
-};
-
-window.doLogout=function(){
-  if(!confirm('Sign out?'))return;
-  signOutFn(auth).catch(e=>toast('Error: '+e.message));
-};
 
 // ── REAL CHETTAS ─────────────────────────────────────────────
 const CHETTAS = [
@@ -1215,7 +966,7 @@ window.initBus=function(){
 function updateClock(){
   const n=new Date(),h=n.getHours(),m=n.getMinutes();
   const ap=h>=12?'PM':'AM',hh=h%12||12,mm=String(m).padStart(2,'0');
-  document.getElementById('live-clock').textContent=`Current time: ${hh}:${mm} ${ap}`;
+  document.getElementById('live-clock').textContent=`🕐 Current time: ${hh}:${mm} ${ap}`;
 }
 function getNowMins(){const n=new Date();return n.getHours()*60+n.getMinutes();}
 function filteredBus(){return busFilter==='All'?BUS:BUS.filter(b=>b[1]===busFilter);}
@@ -1277,7 +1028,7 @@ function buildSlotList(){
   if(!el)return;
   el.innerHTML=window._timeSlots.map(t=>{
     const isSel=t===window.selectedSlot;
-    return `<div onclick="pickTime('${t}')" style="padding:9px 10px;border-radius:8px;font-size:14px;font-weight:${isSel?'700':'500'};color:${isSel?'var(--maroon)':'var(--text)'};background:${isSel?'rgba(123,18,38,0.07)':'transparent'};cursor:pointer;border-bottom:1px solid var(--border)">${t==='Now'?'Now':t}</div>`;
+    return `<div onclick="pickTime('${t}')" style="padding:9px 10px;border-radius:8px;font-size:14px;font-weight:${isSel?'700':'500'};color:${isSel?'var(--maroon)':'var(--text)'};background:${isSel?'rgba(123,18,38,0.07)':'transparent'};cursor:pointer;border-bottom:1px solid var(--border)">${t==='Now'?'🕐 Now':t}</div>`;
   }).join('');
 }
 
@@ -1332,21 +1083,11 @@ document.getElementById('h-from').addEventListener('change',function(){
 });
 
 window.goTo=function(id){
-  if(id==='s-myrides') setTimeout(populateMineProfile, 50);
-  if(id==='s-post'||id==='s-book'){
-    const el=document.getElementById('post-rider-name');
-    if(el&&currentUserName) el.textContent=currentUserName.split(' ')[0];
-    const upiEl=document.getElementById('p-upi');
-    if(upiEl&&currentUserUpi&&!upiEl.value) upiEl.value=currentUserUpi;
-  }
-  // Auth guard — only block protected screens, never block login/signup
-  const publicScreens=['s-login','s-signup'];
-  if(!publicScreens.includes(id)&&!currentUid&&fbReady){goTo('s-login');return;}
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const screen=document.getElementById(id);
   if(screen) screen.classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const navMap={'s-home':'nav-home','s-feed':'nav-feed','s-post':'nav-post','s-myrides':'nav-myrides','s-bus':'nav-bus','s-campus':'nav-campus','s-chettas':null,'s-rides':null,'s-review':null,'s-chat':'nav-feed'};
+  const navMap={'s-home':'nav-home','s-feed':'nav-feed','s-book':'nav-book','s-post':'nav-post','s-myrides':'nav-myrides','s-bus':'nav-bus','s-campus':null,'s-chettas':null,'s-rides':null,'s-review':null,'s-chat':'nav-feed'};
   const navId=navMap[id];
   if(navId){const nb=document.getElementById(navId);if(nb)nb.classList.add('active');}
   window.scrollTo(0,0);
@@ -1579,7 +1320,8 @@ function rideCardHtml(r,showOwner=false){
         🚗 Request to join this ride
       </button>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <a href="${waUrl}" target="_blank" style="padding:9px 6px;background:#e7f8ef;border:1.5px solid #86efac;border-radius:10px;font-size:12px;font-weight:700;color:#166534;text-decoration:none;text-align:center">WhatsApp</a>
+        <button onclick="openRideChat('${r.id}','${r.from}','${r.to}','${r.slot||'Now'}','${displayName}')" style="padding:9px 6px;background:var(--gold-pale);border:1.5px solid var(--gold);border-radius:10px;font-size:12px;font-weight:700;color:var(--maroon-dark);cursor:pointer;font-family:'Inter',sans-serif">💬 Chat</button>
+        <a href="${waUrl}" target="_blank" style="padding:9px 6px;background:#e7f8ef;border:1.5px solid #86efac;border-radius:10px;font-size:12px;font-weight:700;color:#166534;text-decoration:none;text-align:center">📱 WhatsApp</a>
       </div>
     </div>`;
   } else {
@@ -1620,8 +1362,8 @@ window.findRides=function(){
   if(!from||!to||from==='custom'||to==='custom'){toast('Please enter pickup and drop locations');return;}
   if(!fbReady){toast('Connecting... try again in a moment');return;}
   goTo('s-feed');loadFeed();
-  // rides screen removed
-  const el=document.getElementById('feed-list');
+  document.getElementById('rides-title').textContent=from+' → '+to;
+  const el=document.getElementById('rides-list');
   el.innerHTML='<div class="loading"><span class="spinner"></span>Loading rides…</div>';
   getDocs(collection(db,'rides')).then(snap=>{
     const filtered=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.from===from&&r.to===to);
@@ -1677,31 +1419,31 @@ function getLocValue(selectId, customId){
 
 window.postRideRequest=function(){
   if(!fbReady){toast('Connecting... try again');return;}
-  if(!currentUid){toast('Please sign in first');return;}
   const from=getLocValue('b-from','b-custom-from');
   const to=getLocValue('b-to','b-custom-to');
   const slot=document.getElementById('b-slot').value||'Now';
-  if(!from||from==='custom'){toast('Please select a pickup location');return;}
-  if(!to||to==='custom'){toast('Please select a destination');return;}
+  const bname=document.getElementById('b-name').value.trim();
+  const bphone=document.getElementById('b-phone').value.trim();
+  if(!from||from==='custom'){toast('Select a pickup location');return;}
+  if(!to||to==='custom'){toast('Select a destination');return;}
   if(from===to){toast('Pickup and drop cannot be the same');return;}
+  if(!bname){toast('Enter your name');return;}
+  if(!/^\d{10}$/.test(bphone)){toast('Enter a valid 10-digit WhatsApp number');return;}
   const btn=document.querySelector('#s-book button[onclick="postRideRequest()"]');
   if(btn){btn.textContent='Posting...';btn.disabled=true;}
   addDoc(collection(db,'rideRequests'),{
-    from,to,slot,
-    name:currentUserName,
-    phone:currentUserPhone,
-    uid:currentUid,
-    status:'open',
-    createdAt:serverTimestamp()
+    from,to,slot,name:bname,phone:bphone,uid:currentUid,status:'open',createdAt:serverTimestamp()
   }).then(()=>{
-    toast('Request posted successfully.');
+    toast('Request posted!');
     document.getElementById('b-from').value='';
     document.getElementById('b-to').value='';
+    document.getElementById('b-name').value='';
+    document.getElementById('b-phone').value='';
     ['b-custom-from-wrap','b-custom-to-wrap'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-    if(btn){btn.textContent='Post ride request';btn.disabled=false;}
-    setTimeout(()=>goTo('s-home'),1200);
+    if(btn){btn.textContent='Post request';btn.disabled=false;}
+    setTimeout(()=>goTo('s-home'),1000);
     loadRequestsFeed();
-  }).catch(e=>{toast('Error: '+e.message);if(btn){btn.textContent='Post ride request';btn.disabled=false;}});
+  }).catch(e=>{toast('Error: '+e.message);if(btn){btn.textContent='Post request';btn.disabled=false;}});
 };
 
 function loadRequestsFeed(){
@@ -1715,29 +1457,29 @@ function loadRequestsFeed(){
       if(r.createdAt){const ms=r.createdAt.toMillis?r.createdAt.toMillis():(r.createdAt.seconds*1000);if(now-ms>86400000)return false;}
       return true;
     });
-    if(!reqs.length){el.innerHTML='<div class="empty" style="padding:16px 0"><span class="empty-icon" style="font-size:24px">🙋</span><p style="font-size:13px;color:var(--text-sec)">No ride requests right now.</p></div>';return;}
+    if(!reqs.length){
+      el.innerHTML='<div class="empty" style="padding:16px 0 8px"><p style="font-size:13px;color:var(--text-sec)">No requests right now.</p></div>';
+      return;
+    }
     el.innerHTML=reqs.map(r=>{
       const isMe=r.uid===currentUid;
       const timeAgo=r.createdAt?timeSince(r.createdAt):'just now';
-      const waText=encodeURIComponent('Hi '+r.name+'! I saw your Call a Chetta request from '+r.from+' to '+r.to+(r.slot&&r.slot!=='Now'?' at '+r.slot:' (now)')+'. I can share my auto — want to share a ride? - Call a Chetta');
+      const waText=encodeURIComponent('Hi '+r.name+'! I saw your request on Call a Chetta — from '+r.from+' to '+r.to+(r.slot&&r.slot!=='Now'?' at '+r.slot:'')+'. I can share my auto, want to carpool?');
       const waUrl='https://wa.me/91'+r.phone+'?text='+waText;
-      return`<div class="ride-card" style="margin-bottom:8px${isMe?';border-left:3px solid var(--maroon)':''}">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-          <div>
-            <span style="font-size:15px;font-weight:700;color:var(--text)">${r.name.split(' ')[0]}</span>
-            <span style="font-size:12px;color:var(--text-sec);margin-left:6px">${timeAgo}</span>
-          </div>
-          <span style="font-size:11px;background:#FEF3C7;color:#92400E;padding:3px 8px;border-radius:12px;font-weight:600">Needs a ride</span>
+      return`<div class="ride-card" style="margin-bottom:10px${isMe?';border-left:3px solid var(--maroon)':''}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:14px;font-weight:700;color:var(--text)">${r.name.split(' ')[0]}</span>
+          <span style="font-size:11px;background:#FEF3C7;color:#92400E;padding:3px 9px;border-radius:12px;font-weight:600">${timeAgo}</span>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
-          <div style="font-size:13px;font-weight:600;color:var(--text)">${r.from}</div>
-          <div style="color:var(--text-sec);font-size:12px">→</div>
-          <div style="font-size:13px;font-weight:600;color:var(--text)">${r.to}</div>
-          ${r.slot&&r.slot!=='Now'?`<span style="font-size:11px;background:var(--gold-pale);color:var(--maroon-dark);padding:2px 7px;border-radius:10px;font-weight:600">${r.slot}</span>`:'<span style="font-size:11px;background:#DCFCE7;color:#166534;padding:2px 7px;border-radius:10px;font-weight:600">Now</span>'}
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-size:13px;font-weight:600;color:var(--text)">${r.from}</span>
+          <span style="color:var(--text-sec)">→</span>
+          <span style="font-size:13px;font-weight:600;color:var(--text)">${r.to}</span>
+          ${r.slot&&r.slot!=='Now'?`<span style="font-size:11px;background:var(--gold-pale);color:var(--maroon-dark);padding:2px 8px;border-radius:10px;font-weight:600">${r.slot}</span>`:'<span style="font-size:11px;background:#DCFCE7;color:#166534;padding:2px 8px;border-radius:10px;font-weight:600">Now</span>'}
         </div>
         ${isMe
-          ?`<button onclick="closeRideRequest('${r.id}')" style="width:100%;padding:9px;background:#FEE2E2;color:#991B1B;border:1.5px solid #FCA5A5;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Cancel my request</button>`
-          :`<a href="${waUrl}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;background:#DCFCE7;color:#166534;border:1.5px solid #86efac;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">📱 Message to share auto</a>`
+          ?`<button onclick="closeRideRequest('${r.id}')" style="width:100%;padding:10px;background:#FEF2F2;color:#991B1B;border:1.5px solid #FECACA;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancel my request</button>`
+          :`<a href="${waUrl}" target="_blank" style="display:flex;align-items:center;justify-content:center;width:100%;padding:11px;background:#DCFCE7;color:#166534;border:1.5px solid #86efac;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none">Message to share auto</a>`
         }
       </div>`;
     }).join('');
@@ -1746,7 +1488,7 @@ function loadRequestsFeed(){
 
 window.closeRideRequest=function(id){
   if(!fbReady)return;
-  updateDoc(doc(db,'rideRequests',id),{status:'closed'}).then(()=>toast('Request removed.'));
+  updateDoc(doc(db,'rideRequests',id),{status:'closed'}).then(()=>toast('Request cancelled.'));
 };
 
 
@@ -1756,11 +1498,10 @@ window.postRide=function(){
   const slot=window.selectedSlot||'Now',seats=parseInt(document.getElementById('p-seats').value);
   const autoNum=document.getElementById('p-auto').value.trim();
   const quotedFare=document.getElementById('p-quoted').value.trim();
-  const name=currentUserName||'Rider';
-  const phone=currentUserPhone||'';
+  const name=document.getElementById('p-name').value.trim();
+  const phone=document.getElementById('p-phone').value.trim();
   const upi=document.getElementById('p-upi').value.trim();
-  if(!from||!to){toast('Please select pickup and destination');return;}
-  if(!currentUid){toast('Please sign in first');return;}
+  if(!from||!to||!name||!phone){toast('Please fill all required fields');return;}
   if(from===to){toast('Pickup and drop cannot be the same');return;}
   if(!/^\d{10}$/.test(phone)){toast('Enter a valid 10-digit number');return;}
   const btn=document.querySelector('#s-post .btn-primary');
@@ -1787,74 +1528,13 @@ window.markComplete=function(id){
   updateDoc(doc(db,'rides',id),{status:'completed'}).then(()=>{toast('Ride marked complete. UPI now visible.');loadMyRides();});
 }
 
-// ── PROFILE ─────────────────────────────────────────────────
-function populateMineProfile(){
-  const name=currentUserName, phone=currentUserPhone, upi=currentUserUpi, room=currentUserRoom;
-  const el=n=>document.getElementById(n);
-  if(el('mine-name')) el('mine-name').textContent=name||'—';
-  if(el('mine-avatar')) el('mine-avatar').textContent=(name||'?')[0].toUpperCase();
-  if(el('mine-room')) el('mine-room').textContent=room?'🏠 '+room:'Room not set';
-  if(el('mine-phone')) el('mine-phone').textContent=phone||'Not set';
-  if(el('mine-upi')) el('mine-upi').textContent=upi||'Not set';
-}
-
-window.openEditProfile=function(){
-  document.getElementById('edit-name').value=currentUserName||'';
-  document.getElementById('edit-room').value=currentUserRoom||'';
-  document.getElementById('edit-phone').value=currentUserPhone||'';
-  document.getElementById('edit-upi').value=currentUserUpi||'';
-  document.getElementById('edit-profile-error').style.display='none';
-  document.getElementById('edit-profile-overlay').style.display='flex';
-  document.body.style.overflow='hidden';
-};
-
-window.closeEditProfile=function(){
-  document.getElementById('edit-profile-overlay').style.display='none';
-  document.body.style.overflow='';
-};
-
-window.saveProfile=function(){
-  if(!fbReady||!currentUid){closeEditProfile();return;}
-  const name=document.getElementById('edit-name').value.trim();
-  const room=document.getElementById('edit-room').value.trim();
-  const phone=document.getElementById('edit-phone').value.trim();
-  const upi=document.getElementById('edit-upi').value.trim();
-  const errEl=document.getElementById('edit-profile-error');
-  if(!name){errEl.textContent='Name cannot be empty.';errEl.style.display='block';return;}
-  setDocFn(doc(db,'users',currentUid),{name,room,phone,upi,email:auth.currentUser.email,updatedAt:serverTimestamp()},{merge:true})
-    .then(()=>{
-      currentUserName=name; currentUserRoom=room;
-      currentUserPhone=phone; currentUserUpi=upi;
-      const g=document.getElementById('home-greeting');
-      if(g) g.textContent='Hi '+name.split(' ')[0]+'! 👋';
-      populateMineProfile();
-      closeEditProfile();
-      toast('Profile updated ✓');
-    })
-    .catch(e=>{errEl.textContent='Error: '+e.message;errEl.style.display='block';});
-};
-
-window.switchMineTab=function(btn, panelId){
-  document.querySelectorAll('#s-myrides .bus-tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('#s-myrides .bus-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(panelId).classList.add('active');
-};
-
 window.loadMyRides=function(){
-  if(!fbReady){
-    document.getElementById('my-list').innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting...</div>';
-    return;
-  }
-  // ── Tab 1: rides I posted (share auto) ──
   const el=document.getElementById('my-list');
-  el.innerHTML='<div class="loading"><span class="spinner"></span>Loading…</div>';
+  el.innerHTML='<div class="loading"><span class="spinner"></span>Loading...</div>';
+  if(!fbReady){el.innerHTML='<div class="empty"><span class="empty-icon">📡</span>Connecting to server...</div>';return;}
   getDocs(collection(db,'rides')).then(snap=>{
     const mine=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.uid===currentUid);
-    if(!mine.length){
-      el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>You haven\'t shared any rides yet.<br><button onclick="goTo(\'s-post\')" style="margin-top:12px;padding:10px 20px;background:var(--maroon);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:\'Inter\',sans-serif">Share a ride</button></div>';
-      return;
-    }
+    if(!mine.length){el.innerHTML='<div class="empty"><span class="empty-icon">🚗</span>You haven\'t posted any rides yet.</div>';return;}
     el.innerHTML=mine.map(r=>rideCardHtml(r,true)).join('');
     setTimeout(()=>{
       mine.forEach(r=>{
@@ -1862,33 +1542,6 @@ window.loadMyRides=function(){
         if(container) loadRideRequests(r.id, r.seats, r.joined||0, container);
       });
     },100);
-  });
-
-  // ── Tab 2: ride requests I posted (book auto) ──
-  const el2=document.getElementById('my-requests-list');
-  el2.innerHTML='<div class="loading"><span class="spinner"></span>Loading…</div>';
-  getDocs(collection(db,'rideRequests')).then(snap=>{
-    const mine=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.uid===currentUid);
-    if(!mine.length){
-      el2.innerHTML='<div class="empty"><span class="empty-icon">🙋</span>No active requests.<br><button onclick="goTo(\'s-book\')" style="margin-top:12px;padding:10px 20px;background:var(--maroon);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:\'Inter\',sans-serif">Book an auto</button></div>';
-      return;
-    }
-    const now=Date.now();
-    el2.innerHTML=mine.map(r=>{
-      const isActive=r.status==='open';
-      const timeAgo=r.createdAt?timeSince(r.createdAt):'just now';
-      return`<div class="ride-card" style="margin-bottom:8px;${isActive?'':'opacity:0.6'}">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <span style="font-size:13px;font-weight:700;color:var(--text)">${r.from} → ${r.to}</span>
-          <span style="font-size:11px;padding:3px 8px;border-radius:12px;font-weight:600;background:${isActive?'#DCFCE7':'#F3F4F6'};color:${isActive?'#166534':'#6B7280'}">${isActive?'Active':'Closed'}</span>
-        </div>
-        <div style="font-size:12px;color:var(--text-sec);margin-bottom:8px">
-          ${r.slot&&r.slot!=='Now'?''+r.slot:'Now'} · Posted ${timeAgo}
-        </div>
-        ${isActive?`<button onclick="closeRideRequest('${r.id}')" style="width:100%;padding:9px;background:#FEE2E2;color:#991B1B;border:1.5px solid #FCA5A5;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancel request</button>`
-        :'<div style="font-size:12px;color:var(--text-sec);text-align:center">Closed</div>'}
-      </div>`;
-    }).join('');
   });
 }
 
@@ -1910,7 +1563,7 @@ function loadChettas(){
         </div>${commentHtml}
         <div style="display:flex;gap:8px;margin-top:10px">
           <a href="tel:${c.phone}" class="btn-call">📞 ${c.phone}</a>
-          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent(`Hi ${c.name} Chetta, I want to book an auto. Start: [mention your pickup point], Destination: [mention destination], Time: [mention time]. Could you share the estimated price? Thank you! - ${currentUserName||'Student'}`)}" target="_blank" class="btn-wa">💬 WhatsApp</a>
+          <a href="https://wa.me/91${c.phone}?text=${encodeURIComponent(`Hi ${c.name} Chetta, I want to book an auto. Start: [mention your pickup point], Destination: [mention destination], Time: [mention time]. Could you share the estimated price? Thank you!`)}" target="_blank" class="btn-wa">💬 WhatsApp</a>
         </div>
       </div>`;
     }).join('');
@@ -2068,7 +1721,7 @@ function loadRideRequests(rideId, seats, joined, containerEl){
     containerEl.innerHTML=`
       <div style="margin-top:10px;background:#FFF8E1;border:1.5px solid var(--gold);border-radius:12px;overflow:hidden">
         <div style="padding:8px 12px;background:var(--gold);display:flex;align-items:center;gap:6px">
-          <span style="font-size:13px;font-weight:700;color:var(--maroon-dark)">${pending.length} pending request${pending.length>1?'s':''}</span>
+          <span style="font-size:13px;font-weight:700;color:var(--maroon-dark)">🔔 ${pending.length} pending request${pending.length>1?'s':''}</span>
         </div>
         ${pending.map(req=>`
           <div style="padding:10px 12px;border-bottom:1px solid rgba(201,168,76,0.25)">
@@ -2101,7 +1754,8 @@ window.openRideChat=function(rideId, from, to, slot, poster){
   activeChatRideId=rideId;
   document.getElementById('chat-ride-label').textContent=`${from} to ${to} at ${slot} (${poster}'s ride)`;
   document.getElementById('chat-input').value='';
-  // chat removed — coordinate on WhatsApp
+  loadChatMessages(rideId);
+  // chat removed;
 }
 
 function loadChatMessages(rideId){
